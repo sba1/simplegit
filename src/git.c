@@ -20,6 +20,7 @@ cmd_handler lookup_handler(char *cmd){
 
 int main(int argc, char **argv){
 	git_support_register_arguments(argc, argv);
+
 	//register argument so that we can fallback to git
 	//if we can't achieve the job
 	

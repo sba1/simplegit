@@ -16,6 +16,7 @@ set(SRC_DIRECTORY ${ROOT_DIRECTORY}/src)
 include_directories(
 	${SRC_DIRECTORY}
 	${SRC_DIRECTORY}/common
+	${SRC_DIRECTORY}/common/utils
 	${SRC_DIRECTORY}/builtin
 	#place new include directories here
 )
@@ -32,9 +33,9 @@ set(CMAKE_C_FLAGS_DEBUG "-g -O0 ${CMAKE_C_FLAGS}")
 set(CMAKE_C_FLAGS_RELEASE "-O2 ${CMAKE_C_FLAGS}")
 
 #include libssl
-FIND_PACKAGE(OpenSSL)
-ADD_DEFINITIONS(-DOPENSSL_SHA1)
-INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})
+find_package(OpenSSL)
+add_definitions(-DOPENSSL_SHA1)
+include_directories(${OPENSSL_INCLUDE_DIR})
 set(LIB_SHA1 ${OPENSSL_CRYPTO_LIBRARIES})
 
 
