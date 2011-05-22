@@ -103,4 +103,5 @@ void warning(const char *warn, ...)
 void libgit_error(int error_code)
 {
 	libgit_error_routine(error_code);
+	exit(128);
 }

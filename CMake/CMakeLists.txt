@@ -50,10 +50,10 @@ add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} 
 add_custom_target(
 	build_libgit2
 	COMMAND
-		cd ${LIBGIT2_BUILD_DIRECTORY} &&
 		cmake -D BUILD_SHARED_LIBS:OPTION=OFF -D BUILD_TESTS:OPTION=OFF . &&
-		cmake --build ${LIBGIT2_BUILD_DIRECTORY}
+		cmake --build .
 	DEPENDS "${LIBGIT2_BUILD_DIRECTORY}/Makefile"
+	WORKING_DIRECTORY ${LIBGIT2_BUILD_DIRECTORY}
 )
 
 add_custom_command(
