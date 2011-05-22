@@ -1,5 +1,9 @@
+#include <unistd.h>
 #include "run-command.h"
 #include "exec-cmd.h"
+#include "utils.h"
+#include "errors.h"
+#include "strbuf.h"
 
 static inline void close_pair(int fd[2])
 {
@@ -53,7 +57,7 @@ static const char **prepare_shell_cmd(const char **argv)
 static int execv_shell_cmd(const char **argv)
 {
 	const char **nargv = prepare_shell_cmd(argv);
-	trace_argv_printf(nargv, "trace: exec:");
+	//trace_argv_printf(nargv, "trace: exec:");
 	execvp(nargv[0], (char **)nargv);
 	free(nargv);
 	return -1;
@@ -78,7 +82,7 @@ static NORETURN void die_child(const char *err, va_list params)
 {
 	char msg[4096];
 	int len = vsnprintf(msg, sizeof(msg), err, params);
-	if (len > sizeof(msg))
+	if ((size_t)len > sizeof(msg))
 		len = sizeof(msg);
 
 	write_in_full(child_err, "fatal: ", 7);
@@ -195,7 +199,7 @@ fail_pipe:
 		cmd->err = fderr[0];
 	}
 
-	trace_argv_printf(cmd->argv, "trace: run_command:");
+	//trace_argv_printf(cmd->argv, "trace: run_command:");
 	fflush(NULL);
 
 #ifndef WIN32
@@ -605,7 +609,7 @@ int finish_async(struct async *async)
 #endif
 }
 
-int run_hook(const char *index_file, const char *name, ...)
+/*int run_hook(const char *index_file, const char *name, ...)
 {
 	struct child_process hook;
 	const char **argv = NULL, *env[2];
@@ -640,4 +644,4 @@ int run_hook(const char *index_file, const char *name, ...)
 	ret = run_command(&hook);
 	free(argv);
 	return ret;
-}
+}*/

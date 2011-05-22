@@ -1,9 +1,6 @@
 #ifndef QUOTE_H
 #define QUOTE_H
 
-#include <stdio.h>
-#include "strbuf.h"
-
 /* Help to copy the thing properly quoted for the shell safety.
  * any single quote is replaced with '\'', any exclamation point
  * is replaced with '\!', and the whole thing is enclosed in a
@@ -27,6 +24,9 @@
  * will return the number of characters that would have been written
  * excluding the final null regardless of the buffer size.
  */
+
+#include <stdio.h>
+#include "strbuf.h"
 
 void sq_quote_print(FILE *stream, const char *src);
 

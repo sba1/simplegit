@@ -1,4 +1,3 @@
-#include "cache.h"
 #include "quote.h"
 
 int quote_path_fully = 1;
@@ -171,7 +170,7 @@ static size_t next_quote_pos(const char *s, ssize_t maxlen)
 	if (maxlen < 0) {
 		for (len = 0; !sq_must_quote(s[len]); len++);
 	} else {
-		for (len = 0; len < maxlen && !sq_must_quote(s[len]); len++);
+		for (len = 0; len < (size_t)maxlen && !sq_must_quote(s[len]); len++);
 	}
 	return len;
 }
@@ -213,7 +212,7 @@ static size_t quote_c_style_counted(const char *name, ssize_t maxlen,
 		int ch;
 
 		len = next_quote_pos(p, maxlen);
-		if (len == maxlen || (maxlen < 0 && !p[len]))
+		if (len == (size_t)maxlen || (maxlen < 0 && !p[len]))
 			break;
 
 		if (!no_dq && p == name)

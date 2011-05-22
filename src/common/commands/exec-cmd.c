@@ -1,11 +1,14 @@
 #include "exec-cmd.h"
 #include "quote.h"
-#define MAX_ARGS	32
+#include "abspath.h"
+
+#define MAX_ARGS 32
+#define EXEC_PATH_ENVIRONMENT "GIT_EXEC_PATH"
 
 static const char *argv_exec_path;
 static const char *argv0_path;
 
-const char *system_path(const char *path)
+/*const char *system_path(const char *path)
 {
 #ifdef RUNTIME_PREFIX
 	static const char *prefix;
@@ -35,7 +38,7 @@ const char *system_path(const char *path)
 	strbuf_addf(&d, "%s/%s", prefix, path);
 	path = strbuf_detach(&d, NULL);
 	return path;
-}
+}*/
 
 const char *git_extract_argv0_path(const char *argv0)
 {
@@ -67,7 +70,7 @@ void git_set_argv_exec_path(const char *exec_path)
 
 
 /* Returns the highest-priority, location to look for git programs. */
-const char *git_exec_path(void)
+/*const char *git_exec_path(void)
 {
 	const char *env;
 
@@ -80,7 +83,7 @@ const char *git_exec_path(void)
 	}
 
 	return system_path(GIT_EXEC_PATH);
-}
+}*/
 
 static void add_path(struct strbuf *out, const char *path)
 {
@@ -99,7 +102,7 @@ void setup_path(void)
 	const char *old_path = getenv("PATH");
 	struct strbuf new_path = STRBUF_INIT;
 
-	add_path(&new_path, git_exec_path());
+	//add_path(&new_path, git_exec_path());
 	add_path(&new_path, argv0_path);
 
 	if (old_path)
@@ -130,12 +133,12 @@ const char **prepare_git_cmd(const char **argv)
 
 int execv_git_cmd(const char **argv) {
 	const char **nargv = prepare_git_cmd(argv);
-	trace_argv_printf(nargv, "trace: exec:");
+	//trace_argv_printf(nargv, "trace: exec:");
 
 	/* execvp() can only ever return if it fails */
 	execvp("git", (char **)nargv);
 
-	trace_printf("trace: exec failed: %s\n", strerror(errno));
+	//trace_printf("trace: exec failed: %s\n", strerror(errno));
 
 	free(nargv);
 	return -1;
