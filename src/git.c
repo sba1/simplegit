@@ -1,6 +1,7 @@
 #include "builtin.h"
 #include "exec-cmd.h"
 #include "git-support.h"
+#include "common/strbuf.h"
 
 #include <string.h>
 

@@ -37,7 +37,7 @@ static void (*error_routine)(const char *err, va_list params) = error_builtin;
 static void (*warn_routine)(const char *err, va_list params) = warn_builtin;
 static void (*libgit_error_routine)(int error_code) = libgit_error_builtin;
 
-void set_die_routine(void (*routine)(const char *err, va_list params))
+void set_die_routine(NORETURN_PTR void (*routine)(const char *err, va_list params))
 {
 		die_routine = routine;
 }
@@ -103,4 +103,5 @@ void warning(const char *warn, ...)
 void libgit_error(int error_code)
 {
 	libgit_error_routine(error_code);
+	exit(128);
 }

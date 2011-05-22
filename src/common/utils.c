@@ -4,6 +4,7 @@
  */
 #include "utils.h"
 #include "errors.h"
+#include "abspath.h"
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
@@ -173,4 +174,53 @@ FILE *xfdopen(int fd, const char *mode)
 	if (stream == NULL)
 		die_errno("Out of memory? fdopen failed");
 	return stream;
+}
+
+void *xmallocz(size_t size)
+{
+	void *ret;
+	if (unsigned_add_overflows(size, 1))
+		die("Data too large to fit into virtual memory space.");
+	ret = xmalloc(size + 1);
+	((char*)ret)[size] = 0;
+	return ret;
+}
+
+/*
+ * xmemdupz() allocates (len + 1) bytes of memory, duplicates "len" bytes of
+ * "data" to the allocated memory, zero terminates the allocated memory,
+ * and returns a pointer to the allocated memory. If the allocation fails,
+ * the program dies.
+ */
+void *xmemdupz(const void *data, size_t len)
+{
+	return memcpy(xmallocz(len), data, len);
+}
+
+/*
+ * Unlike prefix_path, this should be used if the named file does
+ * not have to interact with index entry; i.e. name of a random file
+ * on the filesystem.
+ */
+const char *prefix_filename(const char *pfx, int pfx_len, const char *arg)
+{
+	static char path[PATH_MAX];
+#ifndef WIN32
+	if (!pfx_len || is_absolute_path(arg))
+		return arg;
+	memcpy(path, pfx, pfx_len);
+	strcpy(path + pfx_len, arg);
+#else
+	char *p;
+	/* don't add prefix to absolute paths, but still replace '\' by '/' */
+	if (is_absolute_path(arg))
+		pfx_len = 0;
+	else if (pfx_len)
+		memcpy(path, pfx, pfx_len);
+	strcpy(path + pfx_len, arg);
+	for (p = path + pfx_len; *p; p++)
+		if (*p == '\\')
+			*p = '/';
+#endif
+	return path;
 }
