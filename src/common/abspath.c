@@ -139,7 +139,7 @@ const char *absolute_path(const char *path)
 	return buf;
 }
 
-inline int is_absolute_path(const char *path)
+int is_absolute_path(const char *path)
 {
 	return path[0] == '/' || has_dos_drive_prefix(path);
 }
