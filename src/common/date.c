@@ -7,8 +7,9 @@
 #include <stdio.h>
 #include <time.h>
 #include <sys/time.h>
-#include "date.h"
 #include "git-compat-util.h"
+#include "date.h"
+#include "ctype.h"
 
 /*
  * This is like mktime, but without normalization of tm_wday and tm_yday.
