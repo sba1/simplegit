@@ -27,7 +27,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 set(EXECUTABLE_OUTPUT_PATH ${BINARIES_DIRECTORY})
 file(GLOB_RECURSE C_SOURCE_FILES ${SRC_DIRECTORY}/*.c)
 
-set(CMAKE_C_FLAGS "-std=c99 -Werror -Wall -Wextra -pedantic")
+set(CMAKE_C_FLAGS "-std=gnu99 -Werror -Wall -Wextra -pedantic")
 set(CMAKE_C_FLAGS_DEBUG "-g -O0 ${CMAKE_C_FLAGS}")
 set(CMAKE_C_FLAGS_RELEASE "-O2 ${CMAKE_C_FLAGS}")
 
