@@ -18,5 +18,9 @@ ssize_t read_in_full(int fd, void *buf, size_t count);
 ssize_t write_in_full(int fd, const void *buf, size_t count);
 int xdup(int fd);
 FILE *xfdopen(int fd, const char *mode);
+void *xmallocz(size_t size);
+void *xmemdupz(const void *data, size_t len);
+
+const char *prefix_filename(const char *pfx, int pfx_len, const char *arg);
 
 #endif
