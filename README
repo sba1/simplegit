@@ -1,0 +1,9 @@
+A VERY minimal git client that relies on libgit2.
+
+The original source comes from https://github.com/vfr-nl/git2/
+(thanks to Vincent van Ravesteijn and Motiejus Jakštys)
+
+For every commands (including tricky options and switchs) that
+we do not support (yet), the call is forwarded to the usual "git"
+(found in PATH) and thus git2 is completely transparent for
+users and works exactly as git do.
