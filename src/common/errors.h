@@ -7,6 +7,7 @@ void die(const char *err, ...) __attribute__((noreturn, format (printf, 1, 2)));
 void die_errno(const char *err, ...) __attribute__((noreturn, format (printf, 1, 2)));
 int error(const char *err, ...) __attribute__((format (printf, 1, 2)));
 void warning(const char *err, ...) __attribute__((format (printf, 1, 2)));
+void libgit_error(int error_code);
 
 void set_die_routine(void (*routine)(const char *err, va_list params));
 
