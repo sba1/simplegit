@@ -40,8 +40,22 @@ set(LIBS ${LIBS} git2.a)
 link_directories(${LIBGIT2_BUILD_DIRECTORY})
 
 add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS git2-bin)
-add_custom_target(build_libgit2 COMMAND cd ${LIBGIT2_BUILD_DIRECTORY} && cmake --build . DEPENDS "${LIBGIT2_BUILD_DIRECTORY}/Makefile")
-add_custom_command(OUTPUT "${LIBGIT2_BUILD_DIRECTORY}/Makefile" COMMAND mkdir -p ${LIBGIT2_BUILD_DIRECTORY} && cd ${LIBGIT2_BUILD_DIRECTORY} && cmake ${LIBGIT2_DIRECTORY})
+add_custom_target(
+	build_libgit2
+	COMMAND
+		cd ${LIBGIT2_BUILD_DIRECTORY} &&
+		cmake -D BUILD_SHARED_LIBS:OPTION=OFF -D BUILD_TESTS:OPTION=OFF . &&
+		cmake --build ${LIBGIT2_BUILD_DIRECTORY}
+	DEPENDS "${LIBGIT2_BUILD_DIRECTORY}/Makefile"
+)
+
+add_custom_command(
+	OUTPUT "${LIBGIT2_BUILD_DIRECTORY}/Makefile"
+	COMMAND
+		mkdir -p ${LIBGIT2_BUILD_DIRECTORY} &&
+		cd ${LIBGIT2_BUILD_DIRECTORY} &&
+		cmake ${LIBGIT2_DIRECTORY}
+)
 
 add_executable(git2-bin ${C_SOURCE_FILES})
 set_target_properties(git2-bin PROPERTIES OUTPUT_NAME git2)
