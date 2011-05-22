@@ -31,12 +31,19 @@ set(CMAKE_C_FLAGS "-std=gnu99 -Werror -Wall -Wextra -pedantic")
 set(CMAKE_C_FLAGS_DEBUG "-g -O0 ${CMAKE_C_FLAGS}")
 set(CMAKE_C_FLAGS_RELEASE "-O2 ${CMAKE_C_FLAGS}")
 
+#include libssl
+FIND_PACKAGE(OpenSSL)
+ADD_DEFINITIONS(-DOPENSSL_SHA1)
+INCLUDE_DIRECTORIES(${OPENSSL_INCLUDE_DIR})
+set(LIB_SHA1 ${OPENSSL_CRYPTO_LIBRARIES})
+
+
 set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 
 include_directories(${INCLUDE_DIRECTORIES})
 include_directories(${LIBGIT2_DIRECTORY}/include)
-set(LIBS ${LIBS} git2.a)
+set(LIBS ${LIBS} git2.a ${LIB_SHA1})
 link_directories(${LIBGIT2_BUILD_DIRECTORY})
 
 add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS git2-bin)
