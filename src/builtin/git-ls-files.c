@@ -36,9 +36,8 @@ int cmd_ls_files(int argc, const char **argv)
 	if(argc != 1)
 		please_git_do_it_for_me();
 	
-	if( strcmp(argv[0], "--stage") != 0)
+	if( strcmp(argv[0], "--stage") != 0 && strcmp(argv[0], "-s") != 0)
 		please_git_do_it_for_me();
-	
 	
 	git_repository *repo = get_git_repository();
 	
