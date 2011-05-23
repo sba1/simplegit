@@ -1,6 +1,3 @@
-Import the parse options code from git that might be very
-powerful.
-
 Write please_git_help_me so that we can fallback to git when we
 can't achieve the job.
 
@@ -8,8 +5,5 @@ Import some git functionnalities to libgit2 (on a new branch) :
 	- find current git directory (currently hold through a call
 	  to please_git_help_me)
 	- find an oid from one of its prefix
-
-Rewrite git-init and git-log currently self executable to be used
-by the main dispatcher (on the git model).
 
 Feel free to add any ideas here !
