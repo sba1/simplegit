@@ -7,10 +7,10 @@
 #include "repository.h"
 
 /*
+ * => see http://www.kernel.org/pub/software/scm/git/docs/git-ls-files.html
+ * 
  * Works :
  * git ls-files --stage
- * => miss <stage>
- * => see http://www.kernel.org/pub/software/scm/git/docs/git-ls-files.html
  * 
  */
 
