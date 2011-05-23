@@ -7,7 +7,7 @@ typedef int (*cmd_handler)(int, const char**);
 
 typedef struct cmd_struct{
 	char *cmd;
-		cmd_handler handler;
+	cmd_handler handler;
 } cmd_struct;
 
 //void git_set_argv_exec_path(const char *exec_path);

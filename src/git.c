@@ -1,11 +1,10 @@
 #include "builtin.h"
 #include "exec-cmd.h"
 #include "git-support.h"
+#include "run-command.h"
 #include <string.h>
 
 // original source : https://github.com/vfr-nl/git2
-
-#include <stdio.h>
 
 cmd_handler lookup_handler(char *cmd){
 	unsigned int i;
@@ -18,6 +17,7 @@ cmd_handler lookup_handler(char *cmd){
 }
 
 int main(int argc, char **argv){
+	git_extract_argv0_path(argv[0]);
 	git_support_register_arguments(argc, argv);
 
 	//register argument so that we can fallback to git
