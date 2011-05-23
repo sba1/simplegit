@@ -44,8 +44,10 @@ int cmd_ls_files(int argc, const char **argv)
 	git_repository *repo = get_git_repository();
 	
 	git_index *index_cur;
-	if (git_index_open_inrepo(&index_cur, repo) < 0)
-		die("index file corrupt");
+	int e = git_index_open_inrepo(&index_cur, repo);
+
+	if (e)
+		libgit_error(e);
 	
 	char *buf = (char*)xmalloc(GIT_OID_HEXSZ+1);
 	
