@@ -70,26 +70,26 @@ int run_command_v_opt_cd_env(const char **argv, int opt, const char *dir, const 
  * the caller and the feed function is necessary so that the function
  * can run in a thread without interfering with the caller.
  */
-struct async {
-	/*
-	 * proc reads from in; closes it before return
-	 * proc writes to out; closes it before return
-	 * returns 0 on success, non-zero on failure
-	 */
-	int (*proc)(int in, int out, void *data);
-	void *data;
-	int in;		/* caller writes here and closes it */
-	int out;	/* caller reads from here and closes it */
-#ifdef NO_PTHREADS
-	pid_t pid;
-#else
-	pthread_t tid;
-	int proc_in;
-	int proc_out;
-#endif
-};
-
-int start_async(struct async *async);
-int finish_async(struct async *async);
+//struct async {
+//	/*
+//	 * proc reads from in; closes it before return
+//	 * proc writes to out; closes it before return
+//	 * returns 0 on success, non-zero on failure
+//	 */
+//	int (*proc)(int in, int out, void *data);
+//	void *data;
+//	int in;		/* caller writes here and closes it */
+//	int out;	/* caller reads from here and closes it */
+//#ifdef NO_PTHREADS
+//	pid_t pid;
+//#else
+//	pthread_t tid;
+//	int proc_in;
+//	int proc_out;
+//#endif
+//};
+//
+//int start_async(struct async *async);
+//int finish_async(struct async *async);
 
 #endif

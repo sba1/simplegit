@@ -455,193 +455,193 @@ int run_command_v_opt_cd_env(const char **argv, int opt, const char *dir, const 
 	return run_command(&cmd);
 }
 
-#ifndef NO_PTHREADS
-static pthread_t main_thread;
-static int main_thread_set;
-static pthread_key_t async_key;
-
-static void *run_thread(void *data)
-{
-	struct async *async = data;
-	intptr_t ret;
-
-	pthread_setspecific(async_key, async);
-	ret = async->proc(async->proc_in, async->proc_out, async->data);
-	return (void *)ret;
-}
-
-static NORETURN void die_async(const char *err, va_list params)
-{
-	vreportf("fatal: ", err, params);
-
-	if (!pthread_equal(main_thread, pthread_self())) {
-		struct async *async = pthread_getspecific(async_key);
-		if (async->proc_in >= 0)
-			close(async->proc_in);
-		if (async->proc_out >= 0)
-			close(async->proc_out);
-		pthread_exit((void *)128);
-	}
-
-	exit(128);
-}
-#endif
-
-int start_async(struct async *async)
-{
-	int need_in, need_out;
-	int fdin[2], fdout[2];
-	int proc_in, proc_out;
-
-	need_in = async->in < 0;
-	if (need_in) {
-		if (pipe(fdin) < 0) {
-			if (async->out > 0)
-				close(async->out);
-			return error("cannot create pipe: %s", strerror(errno));
-		}
-		async->in = fdin[1];
-	}
-
-	need_out = async->out < 0;
-	if (need_out) {
-		if (pipe(fdout) < 0) {
-			if (need_in)
-				close_pair(fdin);
-			else if (async->in)
-				close(async->in);
-			return error("cannot create pipe: %s", strerror(errno));
-		}
-		async->out = fdout[0];
-	}
-
-	if (need_in)
-		proc_in = fdin[0];
-	else if (async->in)
-		proc_in = async->in;
-	else
-		proc_in = -1;
-
-	if (need_out)
-		proc_out = fdout[1];
-	else if (async->out)
-		proc_out = async->out;
-	else
-		proc_out = -1;
-
-#ifdef NO_PTHREADS
-	/* Flush stdio before fork() to avoid cloning buffers */
-	fflush(NULL);
-
-	async->pid = fork();
-	if (async->pid < 0) {
-		error("fork (async) failed: %s", strerror(errno));
-		goto error;
-	}
-	if (!async->pid) {
-		if (need_in)
-			close(fdin[1]);
-		if (need_out)
-			close(fdout[0]);
-		exit(!!async->proc(proc_in, proc_out, async->data));
-	}
-
-	if (need_in)
-		close(fdin[0]);
-	else if (async->in)
-		close(async->in);
-
-	if (need_out)
-		close(fdout[1]);
-	else if (async->out)
-		close(async->out);
-#else
-	if (!main_thread_set) {
-		/*
-		 * We assume that the first time that start_async is called
-		 * it is from the main thread.
-		 */
-		main_thread_set = 1;
-		main_thread = pthread_self();
-		pthread_key_create(&async_key, NULL);
-		set_die_routine(die_async);
-	}
-
-	if (proc_in >= 0)
-		set_cloexec(proc_in);
-	if (proc_out >= 0)
-		set_cloexec(proc_out);
-	async->proc_in = proc_in;
-	async->proc_out = proc_out;
-	{
-		int err = pthread_create(&async->tid, NULL, run_thread, async);
-		if (err) {
-			error("cannot create thread: %s", strerror(err));
-			goto error;
-		}
-	}
-#endif
-	return 0;
-
-error:
-	if (need_in)
-		close_pair(fdin);
-	else if (async->in)
-		close(async->in);
-
-	if (need_out)
-		close_pair(fdout);
-	else if (async->out)
-		close(async->out);
-	return -1;
-}
-
-int finish_async(struct async *async)
-{
-#ifdef NO_PTHREADS
-	return wait_or_whine(async->pid, "child process", 0);
-#else
-	void *ret = (void *)(intptr_t)(-1);
-
-	if (pthread_join(async->tid, &ret))
-		error("pthread_join failed");
-	return (int)(intptr_t)ret;
-#endif
-}
-
-/*int run_hook(const char *index_file, const char *name, ...)
-{
-	struct child_process hook;
-	const char **argv = NULL, *env[2];
-	char index[PATH_MAX];
-	va_list args;
-	int ret;
-	size_t i = 0, alloc = 0;
-
-	if (access(git_path("hooks/%s", name), X_OK) < 0)
-		return 0;
-
-	va_start(args, name);
-	ALLOC_GROW(argv, i + 1, alloc);
-	argv[i++] = git_path("hooks/%s", name);
-	while (argv[i-1]) {
-		ALLOC_GROW(argv, i + 1, alloc);
-		argv[i++] = va_arg(args, const char *);
-	}
-	va_end(args);
-
-	memset(&hook, 0, sizeof(hook));
-	hook.argv = argv;
-	hook.no_stdin = 1;
-	hook.stdout_to_stderr = 1;
-	if (index_file) {
-		snprintf(index, sizeof(index), "GIT_INDEX_FILE=%s", index_file);
-		env[0] = index;
-		env[1] = NULL;
-		hook.env = env;
-	}
-
-	ret = run_command(&hook);
-	free(argv);
-	return ret;
-}*/
+//#ifndef NO_PTHREADS
+//static pthread_t main_thread;
+//static int main_thread_set;
+//static pthread_key_t async_key;
+//
+//static void *run_thread(void *data)
+//{
+//	struct async *async = data;
+//	intptr_t ret;
+//
+//	pthread_setspecific(async_key, async);
+//	ret = async->proc(async->proc_in, async->proc_out, async->data);
+//	return (void *)ret;
+//}
+//
+//static NORETURN void die_async(const char *err, va_list params)
+//{
+//	vreportf("fatal: ", err, params);
+//
+//	if (!pthread_equal(main_thread, pthread_self())) {
+//		struct async *async = pthread_getspecific(async_key);
+//		if (async->proc_in >= 0)
+//			close(async->proc_in);
+//		if (async->proc_out >= 0)
+//			close(async->proc_out);
+//		pthread_exit((void *)128);
+//	}
+//
+//	exit(128);
+//}
+//#endif
+//
+//int start_async(struct async *async)
+//{
+//	int need_in, need_out;
+//	int fdin[2], fdout[2];
+//	int proc_in, proc_out;
+//
+//	need_in = async->in < 0;
+//	if (need_in) {
+//		if (pipe(fdin) < 0) {
+//			if (async->out > 0)
+//				close(async->out);
+//			return error("cannot create pipe: %s", strerror(errno));
+//		}
+//		async->in = fdin[1];
+//	}
+//
+//	need_out = async->out < 0;
+//	if (need_out) {
+//		if (pipe(fdout) < 0) {
+//			if (need_in)
+//				close_pair(fdin);
+//			else if (async->in)
+//				close(async->in);
+//			return error("cannot create pipe: %s", strerror(errno));
+//		}
+//		async->out = fdout[0];
+//	}
+//
+//	if (need_in)
+//		proc_in = fdin[0];
+//	else if (async->in)
+//		proc_in = async->in;
+//	else
+//		proc_in = -1;
+//
+//	if (need_out)
+//		proc_out = fdout[1];
+//	else if (async->out)
+//		proc_out = async->out;
+//	else
+//		proc_out = -1;
+//
+//#ifdef NO_PTHREADS
+//	/* Flush stdio before fork() to avoid cloning buffers */
+//	fflush(NULL);
+//
+//	async->pid = fork();
+//	if (async->pid < 0) {
+//		error("fork (async) failed: %s", strerror(errno));
+//		goto error;
+//	}
+//	if (!async->pid) {
+//		if (need_in)
+//			close(fdin[1]);
+//		if (need_out)
+//			close(fdout[0]);
+//		exit(!!async->proc(proc_in, proc_out, async->data));
+//	}
+//
+//	if (need_in)
+//		close(fdin[0]);
+//	else if (async->in)
+//		close(async->in);
+//
+//	if (need_out)
+//		close(fdout[1]);
+//	else if (async->out)
+//		close(async->out);
+//#else
+//	if (!main_thread_set) {
+//		/*
+//		 * We assume that the first time that start_async is called
+//		 * it is from the main thread.
+//		 */
+//		main_thread_set = 1;
+//		main_thread = pthread_self();
+//		pthread_key_create(&async_key, NULL);
+//		set_die_routine(die_async);
+//	}
+//
+//	if (proc_in >= 0)
+//		set_cloexec(proc_in);
+//	if (proc_out >= 0)
+//		set_cloexec(proc_out);
+//	async->proc_in = proc_in;
+//	async->proc_out = proc_out;
+//	{
+//		int err = pthread_create(&async->tid, NULL, run_thread, async);
+//		if (err) {
+//			error("cannot create thread: %s", strerror(err));
+//			goto error;
+//		}
+//	}
+//#endif
+//	return 0;
+//
+//error:
+//	if (need_in)
+//		close_pair(fdin);
+//	else if (async->in)
+//		close(async->in);
+//
+//	if (need_out)
+//		close_pair(fdout);
+//	else if (async->out)
+//		close(async->out);
+//	return -1;
+//}
+//
+//int finish_async(struct async *async)
+//{
+//#ifdef NO_PTHREADS
+//	return wait_or_whine(async->pid, "child process", 0);
+//#else
+//	void *ret = (void *)(intptr_t)(-1);
+//
+//	if (pthread_join(async->tid, &ret))
+//		error("pthread_join failed");
+//	return (int)(intptr_t)ret;
+//#endif
+//}
+//
+//int run_hook(const char *index_file, const char *name, ...)
+//{
+//	struct child_process hook;
+//	const char **argv = NULL, *env[2];
+//	char index[PATH_MAX];
+//	va_list args;
+//	int ret;
+//	size_t i = 0, alloc = 0;
+//
+//	if (access(git_path("hooks/%s", name), X_OK) < 0)
+//		return 0;
+//
+//	va_start(args, name);
+//	ALLOC_GROW(argv, i + 1, alloc);
+//	argv[i++] = git_path("hooks/%s", name);
+//	while (argv[i-1]) {
+//		ALLOC_GROW(argv, i + 1, alloc);
+//		argv[i++] = va_arg(args, const char *);
+//	}
+//	va_end(args);
+//
+//	memset(&hook, 0, sizeof(hook));
+//	hook.argv = argv;
+//	hook.no_stdin = 1;
+//	hook.stdout_to_stderr = 1;
+//	if (index_file) {
+//		snprintf(index, sizeof(index), "GIT_INDEX_FILE=%s", index_file);
+//		env[0] = index;
+//		env[1] = NULL;
+//		hook.env = env;
+//	}
+//
+//	ret = run_command(&hook);
+//	free(argv);
+//	return ret;
+//}
