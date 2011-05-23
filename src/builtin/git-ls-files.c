@@ -4,6 +4,7 @@
 #include <git2.h>
 #include "errors.h"
 #include "git-support.h"
+#include "repository.h"
 
 /*
  * Works :
@@ -39,13 +40,7 @@ int cmd_ls_files(int argc, const char **argv)
 		please_git_do_it_for_me();
 	
 	
-	
-	/* open the repo */
-	git_repository *repo;
-	if (git_repository_open(&repo, ".git")) {
-		fprintf(stderr, "Not a valid repo !\n");
-		return 0;//failed to open the repo
-	}
+	git_repository *repo = get_git_repository();
 	
 	git_index *index_cur;
 	if (git_index_open_inrepo(&index_cur, repo) < 0)
@@ -61,7 +56,7 @@ int cmd_ls_files(int argc, const char **argv)
 		
 		git_tag * tag;
 		if(git_tag_lookup(&tag,repo,&gie->oid) == 0) {
-			fprintf(stderr, "%s ", git_tag_name(tag));
+			printf("%s ", git_tag_name(tag));
 		}
 		
 		/* computing the current stage */
@@ -87,14 +82,12 @@ int cmd_ls_files(int argc, const char **argv)
 		}
 		
 		
-		fprintf(stderr, "%s %s %i\t%s\n", parse_oid_mode(gie->mode), git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), stage, gie->path);
+		printf("%s %s %i\t%s\n", parse_oid_mode(gie->mode), git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), stage, gie->path);
 
 	}
 
 
 	git_index_free(index_cur);
-	git_repository_free(repo);
-	
 	
 	return 0;
 }
