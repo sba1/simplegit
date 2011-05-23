@@ -5,6 +5,7 @@
 #include "date.h"
 #include "errors.h"
 #include "strbuf.h"
+#include "ctype.h"
 
 int minimum_abbrev = 4, default_abbrev = 7;
 

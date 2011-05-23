@@ -62,6 +62,7 @@ int cmd_log(int argc, const char **argv){
 			msg  = git_commit_message(wcommit);
 			cauth = git_commit_author(wcommit);
 			ccommiter = git_commit_committer(wcommit);
+			(void)ccommiter;
 			time = (time_t)git_commit_time (wcommit);
 			time_string = ctime(&time);
 			time_string[strlen(time_string) - 1] = 0;

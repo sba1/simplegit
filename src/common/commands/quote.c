@@ -1,5 +1,6 @@
 #include "quote.h"
 #include "utils.h"
+#include "ctype.h"
 
 int quote_path_fully = 1;
 
