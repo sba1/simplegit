@@ -157,7 +157,7 @@
 #include <libgen.h>
 #else
 #define basename gitbasename
-extern char *gitbasename(char *);
+//char *gitbasename(char *);
 #endif
 
 #ifndef NO_ICONV
@@ -234,19 +234,6 @@ extern char *gitbasename(char *);
 
 #include "compat/bswap.h"
 
-/* General helper functions */
-extern NORETURN void usage(const char *err);
-extern NORETURN void usagef(const char *err, ...) __attribute__((format (printf, 1, 2)));
-extern NORETURN void die(const char *err, ...) __attribute__((format (printf, 1, 2)));
-extern NORETURN void die_errno(const char *err, ...) __attribute__((format (printf, 1, 2)));
-extern int error(const char *err, ...) __attribute__((format (printf, 1, 2)));
-extern void warning(const char *err, ...) __attribute__((format (printf, 1, 2)));
-
-extern void set_die_routine(NORETURN_PTR void (*routine)(const char *err, va_list params));
-
-extern int prefixcmp(const char *str, const char *prefix);
-extern int suffixcmp(const char *str, const char *suffix);
-
 static inline const char *skip_prefix(const char *str, const char *prefix)
 {
 	size_t len = strlen(prefix);
@@ -263,8 +250,8 @@ static inline const char *skip_prefix(const char *str, const char *prefix)
 
 #define mmap git_mmap
 #define munmap git_munmap
-extern void *git_mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
-extern int git_munmap(void *start, size_t length);
+//void *git_mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
+//int git_munmap(void *start, size_t length);
 
 #else /* NO_MMAP || USE_WIN32_MMAP */
 
@@ -302,65 +289,64 @@ extern int git_munmap(void *start, size_t length);
 
 #ifdef NO_PREAD
 #define pread git_pread
-extern ssize_t git_pread(int fd, void *buf, size_t count, off_t offset);
+//ssize_t git_pread(int fd, void *buf, size_t count, off_t offset);
 #endif
 /*
  * Forward decl that will remind us if its twin in cache.h changes.
  * This function is used in compat/pread.c.  But we can't include
  * cache.h there.
  */
-extern ssize_t read_in_full(int fd, void *buf, size_t count);
 
 #ifdef NO_SETENV
 #define setenv gitsetenv
-extern int gitsetenv(const char *, const char *, int);
+//int gitsetenv(const char *, const char *, int);
 #endif
 
 #ifdef NO_MKDTEMP
 #define mkdtemp gitmkdtemp
-extern char *gitmkdtemp(char *);
+//char *gitmkdtemp(char *);
 #endif
 
 #ifdef NO_MKSTEMPS
 #define mkstemps gitmkstemps
-extern int gitmkstemps(char *, int);
+//int gitmkstemps(char *, int);
 #endif
 
 #ifdef NO_UNSETENV
 #define unsetenv gitunsetenv
-extern void gitunsetenv(const char *);
+//void gitunsetenv(const char *);
 #endif
 
 #ifdef NO_STRCASESTR
 #define strcasestr gitstrcasestr
-extern char *gitstrcasestr(const char *haystack, const char *needle);
+//char *gitstrcasestr(const char *haystack, const char *needle);
 #endif
 
 #define NO_STRLCPY
 #ifdef NO_STRLCPY
 #define strlcpy gitstrlcpy
-extern size_t gitstrlcpy(char *, const char *, size_t);
+size_t gitstrlcpy(char *, const char *, size_t);
 #endif
 
 #ifdef NO_STRTOUMAX
 #define strtoumax gitstrtoumax
-extern uintmax_t gitstrtoumax(const char *, char **, int);
+//uintmax_t gitstrtoumax(const char *, char **, int);
 #endif
 
 #ifdef NO_STRTOK_R
 #define strtok_r gitstrtok_r
-extern char *gitstrtok_r(char *s, const char *delim, char **save_ptr);
+//char *gitstrtok_r(char *s, const char *delim, char **save_ptr);
 #endif
 
 #ifdef NO_HSTRERROR
 #define hstrerror githstrerror
-extern const char *githstrerror(int herror);
+//const char *githstrerror(int herror);
 #endif
 
 #ifdef NO_MEMMEM
 #define memmem gitmemmem
-void *gitmemmem(const void *haystack, size_t haystacklen,
-                const void *needle, size_t needlelen);
+//void *gitmemmem(const void *haystack, size_t haystacklen,
+//                const void *needle, size_t needlelen);
 #endif
 
 #ifdef FREAD_READS_DIRECTORIES
@@ -368,16 +354,16 @@ void *gitmemmem(const void *haystack, size_t haystacklen,
 #undef fopen
 #endif
 #define fopen(a,b) git_fopen(a,b)
-extern FILE *git_fopen(const char*, const char*);
+//FILE *git_fopen(const char*, const char*);
 #endif
 
 #ifdef SNPRINTF_RETURNS_BOGUS
 #define snprintf git_snprintf
-extern int git_snprintf(char *str, size_t maxsize,
-			const char *format, ...);
+//int git_snprintf(char *str, size_t maxsize,
+//			const char *format, ...);
 #define vsnprintf git_vsnprintf
-extern int git_vsnprintf(char *str, size_t maxsize,
-			 const char *format, va_list ap);
+//int git_vsnprintf(char *str, size_t maxsize,
+//			 const char *format, va_list ap);
 #endif
 
 #ifdef __GLIBC_PREREQ
@@ -406,31 +392,14 @@ static inline void *gitmempcpy(void *dest, const void *src, size_t n)
 #endif
 
 #ifdef NO_INET_PTON
-int inet_pton(int af, const char *src, void *dst);
+//int inet_pton(int af, const char *src, void *dst);
 #endif
 
 #ifdef NO_INET_NTOP
-const char *inet_ntop(int af, const void *src, char *dst, size_t size);
+//const char *inet_ntop(int af, const void *src, char *dst, size_t size);
 #endif
 
-extern void release_pack_memory(size_t, int);
-
-extern char *xstrdup(const char *str);
-extern void *xmalloc(size_t size);
-extern void *xmallocz(size_t size);
-extern void *xmemdupz(const void *data, size_t len);
-extern char *xstrndup(const char *str, size_t len);
-extern void *xrealloc(void *ptr, size_t size);
-extern void *xcalloc(size_t nmemb, size_t size);
-extern void *xmmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
-extern ssize_t xread(int fd, void *buf, size_t len);
-extern ssize_t xwrite(int fd, const void *buf, size_t len);
-extern int xdup(int fd);
-extern FILE *xfdopen(int fd, const char *mode);
-extern int xmkstemp(char *template);
-extern int xmkstemp_mode(char *template, int mode);
-extern int odb_mkstemp(char *template, size_t limit, const char *pattern);
-extern int odb_pack_keep(char *name, size_t namesz, unsigned char *sha1);
+//void release_pack_memory(size_t, int);
 
 static inline int has_extension(const char *filename, const char *ext)
 {
@@ -447,7 +416,7 @@ static inline int has_extension(const char *filename, const char *ext)
 #undef isalnum
 #undef tolower
 #undef toupper
-extern unsigned char sane_ctype[256];
+unsigned char sane_ctype[256];
 #define GIT_SPACE 0x01
 #define GIT_DIGIT 0x02
 #define GIT_ALPHA 0x04
@@ -498,8 +467,8 @@ static inline int strtol_i(char const *s, int base, int *result)
 }
 
 #ifdef INTERNAL_QSORT
-void git_qsort(void *base, size_t nmemb, size_t size,
-	       int(*compar)(const void *, const void *));
+//void git_qsort(void *base, size_t nmemb, size_t size,
+//	       int(*compar)(const void *, const void *));
 #define qsort git_qsort
 #endif
 
@@ -546,15 +515,15 @@ void git_qsort(void *base, size_t nmemb, size_t size,
  * Preserves errno, prints a message, but gives no warning for ENOENT.
  * Always returns the return value of unlink(2).
  */
-int unlink_or_warn(const char *path);
+//int unlink_or_warn(const char *path);
 /*
  * Likewise for rmdir(2).
  */
-int rmdir_or_warn(const char *path);
+//int rmdir_or_warn(const char *path);
 /*
  * Calls the correct function out of {unlink,rmdir}_or_warn based on
  * the supplied file mode.
  */
-int remove_or_warn(unsigned int mode, const char *path);
+//int remove_or_warn(unsigned int mode, const char *path);
 
 #endif

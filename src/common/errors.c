@@ -5,7 +5,7 @@
 #include <string.h>
 #include <errno.h>
 
-static void vreportf(const char *prefix, const char *err, va_list params)
+void vreportf(const char *prefix, const char *err, va_list params)
 {
 	char msg[4096];
 	vsnprintf(msg, sizeof(msg), err, params);

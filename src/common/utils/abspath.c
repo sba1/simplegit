@@ -1,4 +1,6 @@
 #include "abspath.h"
+#include "utils.h"
+#include "errors.h"
 
 /*
  * Do not use this for inspecting *tracked* content.  When path is a

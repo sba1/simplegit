@@ -1,8 +1,6 @@
 #include "builtin.h"
 #include "exec-cmd.h"
 #include "git-support.h"
-#include "common/strbuf.h"
-
 #include <string.h>
 
 // original source : https://github.com/vfr-nl/git2
@@ -21,7 +19,7 @@ cmd_handler lookup_handler(char *cmd){
 
 int main(int argc, char **argv){
 	git_support_register_arguments(argc, argv);
-	strbuf_trim(NULL);
+
 	//register argument so that we can fallback to git
 	//if we can't achieve the job
 	

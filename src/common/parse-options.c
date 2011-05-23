@@ -3,6 +3,8 @@
 #include "abspath.h"
 #include "utils.h"
 #include "date.h"
+#include "errors.h"
+#include "strbuf.h"
 
 int minimum_abbrev = 4, default_abbrev = 7;
 

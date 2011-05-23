@@ -2,6 +2,7 @@
 #include "strbuf.h"
 #include "git-compat-util.h"
 #include "ctype.h"
+#include "utils.h"
 
 int prefixcmp(const char *str, const char *prefix)
 {

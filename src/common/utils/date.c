@@ -9,6 +9,7 @@
 #include <sys/time.h>
 #include "date.h"
 #include "git-compat-util.h"
+#include "errors.h"
 
 /*
  * This is like mktime, but without normalization of tm_wday and tm_yday.

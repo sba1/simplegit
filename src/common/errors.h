@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include "git-compat-util.h"
 
+void vreportf(const char *prefix, const char *err, va_list params);
 NORETURN void die(const char *err, ...) __attribute__((format (printf, 1, 2)));
 NORETURN void die_errno(const char *err, ...) __attribute__((format (printf, 1, 2)));
 int error(const char *err, ...) __attribute__((format (printf, 1, 2)));
