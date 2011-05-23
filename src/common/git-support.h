@@ -1,8 +1,7 @@
 #ifndef GIT_SUPPORT_H
 #define GIT_SUPPORT_H
 
-char *please_git_help_me(int argc, char **argv);
-char *please_git_help_me2(char *command_line);
+char *please_git_help_me(const char **argv);
 //execute a git command and returns the results as a string.
 //You have to free the returned string when you don't need it
 //anymore

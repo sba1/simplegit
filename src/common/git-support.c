@@ -1,20 +1,47 @@
+#include <unistd.h>
 #include "git-support.h"
+#include "run-command.h"
 #include "utils.h"
 #include "errors.h"
-#include <unistd.h>
 
-char *please_git_help_me(int argc, char **argv){
-	//TO-DO !
-	
-	(void)argc;
+char *please_git_help_me(const char **argv){
+	struct child_process process;
+	memset(&process, 0, sizeof(process));
+	process.argv = argv;
+	process.out = -1;
 
-	return argv[0];
-}
+	run_command(&process);
+	char *buffer = (char*)xmalloc(sizeof(char) * (1024 + 1));
+	char *buf = buffer;
 
-char *please_git_help_me2(char *command_line){
-	//TO-DO !
-	
-	return command_line;
+	int count = 0;
+	int loaded;
+
+	while (1) {
+		loaded = xread(process.out, buffer, 1024);
+
+		if (loaded < 0) {
+			die_errno("xread from child_process");
+		}
+
+		if (loaded == 0) {
+			buffer[count] = '\0';
+
+			if (count > 0 && buffer[count - 1] == '\n') {
+				buffer [ count -1 ] = '\0';
+			}
+			break;
+		}
+
+		count += loaded;
+		buf += loaded;
+
+		if (loaded == 1024) {
+			buffer = (char*)xrealloc(buffer, sizeof(char) * (count + 1024 + 1));
+		}
+	}
+
+	return buffer;
 }
 
 static char **git_argv;

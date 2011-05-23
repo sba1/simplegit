@@ -10,7 +10,7 @@
 
 int cmd_checkout(int argc, const char **argv) 
 {
-	if(argc != 1)
+	if(argc != 2)
 		please_git_do_it_for_me();
 	
 	int e,i;
