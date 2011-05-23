@@ -8,6 +8,7 @@
 #include "git-log.h"
 #include "git-ls-files.h"
 #include "git-checkout.h"
+#include "git-ls-tree.h"
 
 int cmd_init(int argc, const char **argv);
 
@@ -15,7 +16,8 @@ cmd_struct commands[] = {
 	{"init", cmd_init},
 	{"log", cmd_log},
 	{"ls-files", cmd_ls_files},
-	{"checkout", cmd_checkout}
+	{"checkout", cmd_checkout},
+	{"ls-tree", cmd_ls_tree}
 };
 
 #endif /* BUILTIN_H */

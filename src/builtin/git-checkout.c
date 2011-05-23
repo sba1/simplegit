@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 #include <git2.h>
 #include "errors.h"
 #include "git-checkout.h"
