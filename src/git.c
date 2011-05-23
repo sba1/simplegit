@@ -33,5 +33,5 @@ int main(int argc, char **argv){
 		please_git_do_it_for_me();
 	}
 
-	return handler(argc-2, (const char**)(argv+2));
+	return handler(argc-1, (const char**)(argv+1));
 }

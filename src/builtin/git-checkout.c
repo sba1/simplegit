@@ -9,7 +9,10 @@
 
 int cmd_checkout(int argc, const char **argv) 
 {
-	if(argc != 1)
+	/* Delete the following line once gits tests pass */
+	please_git_do_it_for_me();
+
+	if(argc != 2)
 		please_git_do_it_for_me();
 	
 	int e,i;
