@@ -10,7 +10,7 @@
 
 int cmd_checkout(int argc, const char **argv) 
 {
-	if(argc != 1)
+	if(argc != 2)
 		please_git_do_it_for_me();
 	
 	int e,i;
@@ -35,6 +35,7 @@ int cmd_checkout(int argc, const char **argv)
 		index_entry = git_index_get(index, i);
 		if(index_entry == NULL) printf("Out of bound");
 		else id = index_entry->oid;
+		(void)id;
 	}
 	
 	git_reference *symbolic_ref;

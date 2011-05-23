@@ -5,6 +5,7 @@
 #include "errors.h"
 #include "git-support.h"
 #include "repository.h"
+#include "utils.h"
 
 /*
  * => see http://www.kernel.org/pub/software/scm/git/docs/git-ls-files.html
@@ -34,10 +35,10 @@ int cmd_ls_files(int argc, const char **argv)
 	int e;
 
 	/* options parsing */
-	if (argc != 1)
+	if (argc != 2)
 		please_git_do_it_for_me();
 	
-	if (strcmp(argv[0], "--stage") != 0)
+	if (strcmp(argv[1], "--stage") != 0)
 		please_git_do_it_for_me();
 	
 	
@@ -51,7 +52,7 @@ int cmd_ls_files(int argc, const char **argv)
 		libgit_error(e);
 	}
 	
-	char *buf = malloc(GIT_OID_HEXSZ+1);
+	char *buf = (char*)xmalloc(GIT_OID_HEXSZ+1);
 	
 	int stage = 0;
 	int we_are_in_stage = 0;
@@ -103,6 +104,7 @@ int cmd_ls_files(int argc, const char **argv)
 
 	}
 
+	free(buf);
 	git_index_free(index_cur);
 	
 	return 0;

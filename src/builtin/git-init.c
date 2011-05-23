@@ -8,21 +8,24 @@
 #define INIT_DB_QUIET 0x0001
 
 static const char *const init_usage[] = {
-	"git init [-q | --quiet] [--bare] [--template=<template-directory>] [--shared[=<permissions>]] [directory]",
+	"git init' [-q | --quiet] [--bare] [--template=<template_directory>] \
+	  [--separate-git-dir|-L <git dir>] \
+	  [--shared[=<permissions>]] [directory]",
 	NULL
 };
 
+int shared_callback(const struct option *opt, const char *arg, int unset) {
+  (void)opt;
+  (void)arg;
+  (void)unset;
+
+  return 0;
+}
+
 int cmd_init(int argc, const char **argv){
-	// WORK IN PROGRESS
-	// TODO : delete this line when finished
-	please_git_do_it_for_me();
-
-
-
-
 	const char *real_git_dir = NULL;
 	const char *template_dir = NULL;
-	unsigned int flags = 0;
+	unsigned int quiet_flag = 0;
 	int is_bare_repository_cfg = 0;
 	int init_shared_repository = -1;
 
@@ -34,14 +37,19 @@ int cmd_init(int argc, const char **argv){
 		{ OPTION_CALLBACK, 0, "shared", &init_shared_repository,
 			"permissions",
 			"specify that the git repository is to be shared amongst several users",
-			PARSE_OPT_OPTARG | PARSE_OPT_NONEG, NULL/*shared_callback*/, 0},
-		OPT_BIT('q', "quiet", &flags, "be quiet", INIT_DB_QUIET),
+			PARSE_OPT_OPTARG | PARSE_OPT_NONEG, shared_callback, 0},
+		OPT_BIT('q', "quiet", &quiet_flag, "be quiet", INIT_DB_QUIET),
 		OPT_STRING('L', "separate-git-dir", &real_git_dir, "gitdir",
 			   "separate git dir from working tree"),
 		OPT_END()
 	};
 
 	char prefix[1] = {0};
+
+  if (argc == 0) {
+    please_git_do_it_for_me();
+  }
+
 	argc = parse_options(argc, argv, prefix, init_db_options, init_usage, 0);
 
 	if (argc == 0) {
@@ -68,6 +76,11 @@ int cmd_init(int argc, const char **argv){
 			please_git_do_it_for_me();
 		} else if (e) {
 			libgit_error(e);
+		}
+
+    if (!quiet_flag) {
+			/* For now git2 can only initialize a repository (no reinitialization) */
+			printf("Initialized existing Git repository in %s\n", git_repository_path(repo));
 		}
 	}
 
