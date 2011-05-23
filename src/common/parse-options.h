@@ -3,6 +3,9 @@
 #ifndef PARSE_OPTIONS_H
 #define PARSE_OPTIONS_H
 
+#include <stdint.h>
+#include "git-compat-util.h"
+
 #define MINIMUM_ABBREV minimum_abbrev
 #define DEFAULT_ABBREV default_abbrev
 
@@ -121,34 +124,39 @@ struct option {
 	intptr_t defval;
 };
 
-#define OPT_END()                   { OPTION_END }
+#define OPT_END()                   { OPTION_END, 0, NULL, NULL, NULL, NULL, \
+				      0, NULL, 0 }
 #define OPT_ARGUMENT(l, h)          { OPTION_ARGUMENT, 0, (l), NULL, NULL, \
-				      (h), PARSE_OPT_NOARG}
-#define OPT_GROUP(h)                { OPTION_GROUP, 0, NULL, NULL, NULL, (h) }
+				      (h), PARSE_OPT_NOARG, NULL, NULL }
+#define OPT_GROUP(h)                { OPTION_GROUP, 0, NULL, NULL, NULL, (h), \
+				      0, NULL, 0 }
 #define OPT_BIT(s, l, v, h, b)      { OPTION_BIT, (s), (l), (v), NULL, (h), \
 				      PARSE_OPT_NOARG, NULL, (b) }
 #define OPT_NEGBIT(s, l, v, h, b)   { OPTION_NEGBIT, (s), (l), (v), NULL, \
 				      (h), PARSE_OPT_NOARG, NULL, (b) }
 #define OPT_BOOLEAN(s, l, v, h)     { OPTION_BOOLEAN, (s), (l), (v), NULL, \
-				      (h), PARSE_OPT_NOARG }
+				      (h), PARSE_OPT_NOARG, NULL, 0 }
 #define OPT_SET_INT(s, l, v, h, i)  { OPTION_SET_INT, (s), (l), (v), NULL, \
 				      (h), PARSE_OPT_NOARG, NULL, (i) }
 #define OPT_SET_PTR(s, l, v, h, p)  { OPTION_SET_PTR, (s), (l), (v), NULL, \
 				      (h), PARSE_OPT_NOARG, NULL, (p) }
-#define OPT_INTEGER(s, l, v, h)     { OPTION_INTEGER, (s), (l), (v), "n", (h) }
-#define OPT_STRING(s, l, v, a, h)   { OPTION_STRING,  (s), (l), (v), (a), (h) }
+#define OPT_INTEGER(s, l, v, h)     { OPTION_INTEGER, (s), (l), (v), "n", (h), \
+				      0, NULL, 0 }
+#define OPT_STRING(s, l, v, a, h)   { OPTION_STRING,  (s), (l), (v), (a), (h), \
+				      0, NULL, 0 }
 #define OPT_UYN(s, l, v, h)         { OPTION_CALLBACK, (s), (l), (v), NULL, \
-				      (h), PARSE_OPT_NOARG, &parse_opt_tertiary }
+				      (h), PARSE_OPT_NOARG, &parse_opt_tertiary, \
+				      0}
 #define OPT_DATE(s, l, v, h) \
 	{ OPTION_CALLBACK, (s), (l), (v), "time",(h), 0, \
-	  parse_opt_approxidate_cb }
+	  parse_opt_approxidate_cb, 0 }
 #define OPT_CALLBACK(s, l, v, a, h, f) \
-	{ OPTION_CALLBACK, (s), (l), (v), (a), (h), 0, (f) }
+	{ OPTION_CALLBACK, (s), (l), (v), (a), (h), 0, (f), 0 }
 #define OPT_NUMBER_CALLBACK(v, h, f) \
 	{ OPTION_NUMBER, 0, NULL, (v), NULL, (h), \
-	  PARSE_OPT_NOARG | PARSE_OPT_NONEG, (f) }
+	  PARSE_OPT_NOARG | PARSE_OPT_NONEG, (f), 0 }
 #define OPT_FILENAME(s, l, v, h)    { OPTION_FILENAME, (s), (l), (v), \
-				       "file", (h) }
+				       "file", (h), 0, NULL, 0 }
 #define OPT_COLOR_FLAG(s, l, v, h) \
 	{ OPTION_CALLBACK, (s), (l), (v), "when", (h), PARSE_OPT_OPTARG, \
 		parse_opt_color_flag_cb, (intptr_t)"always" }
