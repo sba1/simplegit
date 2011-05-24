@@ -27,15 +27,15 @@ static void warn_builtin(const char *warn, va_list params)
 	vreportf("warning: ", warn, params);
 }
 
-static void libgit_error_builtin(int error_code)
+static void libgit_error_builtin()
 {
-	fprintf(stderr, "libgit error: %s\n", git_strerror(error_code));
+	fprintf(stderr, "libgit error: %s\n", git_lasterror()/*git_strerror(error_code)*/);
 }
 
 static void (*die_routine)(const char *err, va_list params) = die_builtin;
 static void (*error_routine)(const char *err, va_list params) = error_builtin;
 static void (*warn_routine)(const char *err, va_list params) = warn_builtin;
-static void (*libgit_error_routine)(int error_code) = libgit_error_builtin;
+static void (*libgit_error_routine)() = libgit_error_builtin;
 
 void set_die_routine(NORETURN_PTR void (*routine)(const char *err, va_list params))
 {
@@ -100,8 +100,8 @@ void warning(const char *warn, ...)
 	va_end(params);
 }
 
-void libgit_error(int error_code)
+void libgit_error()
 {
-	libgit_error_routine(error_code);
+	libgit_error_routine();
 	exit(128);
 }

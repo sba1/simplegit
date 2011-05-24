@@ -75,7 +75,7 @@ int cmd_init(int argc, const char **argv){
 		if (e == GIT_ENOTIMPLEMENTED) {
 			please_git_do_it_for_me();
 		} else if (e) {
-			libgit_error(e);
+			libgit_error();
 		}
 
     if (!quiet_flag) {

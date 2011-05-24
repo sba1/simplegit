@@ -7,11 +7,14 @@
 #include "repository.h"
 #include "utils.h"
 #include "git-parse-mode.h"
+#include "strbuf.h"
+#include "index-entry.h"
 
 /*
  * => see http://www.kernel.org/pub/software/scm/git/docs/git-ls-files.html
  * 
  * Works :
+ * nothing, there's an inner bug in libgit2
  * git ls-files --stage
  * 
  */
@@ -20,8 +23,6 @@ int cmd_ls_files(int argc, const char **argv)
 {
 	/* Delete the following line once git tests pass */
 	please_git_do_it_for_me();
-
-	int e;
 
 	/* options parsing */
 	if (argc != 2)
@@ -33,20 +34,23 @@ int cmd_ls_files(int argc, const char **argv)
 	git_repository *repo = get_git_repository();
 	
 	git_index *index_cur;
-	e = git_index_open_inrepo(&index_cur, repo);
+	int e = git_index_open_inrepo(&index_cur, repo);
 	if (e == GIT_ENOTIMPLEMENTED) {
 		please_git_do_it_for_me();
 	} else if (e) {
-		libgit_error(e);
+		libgit_error();
 	}
 	
 	char *buf = (char*)xmalloc(GIT_OID_HEXSZ+1);
 	
-	int stage = 0;
-	int we_are_in_stage = 0;
+	const char *prefix = get_git_prefix();
 	
-	for (unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
+	for( unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
 		git_index_entry *gie = git_index_get(index_cur, i);
+
+		if (prefixcmp(gie->path, prefix)) {
+			continue;
+		}
 		
 		git_tag * tag;
 		e = git_tag_lookup(&tag,repo,&gie->oid);
@@ -64,32 +68,7 @@ int cmd_ls_files(int argc, const char **argv)
 			printf("%s ", git_tag_name(tag));
 		}
 		
-		/* computing the current stage */
-		if (i + 1 < git_index_entrycount(index_cur)) {
-			git_index_entry *gie_p1 = git_index_get(index_cur, i + 1);
-			if (strcmp(gie_p1->path, gie->path) == 0) {
-				we_are_in_stage = 1;
-				stage++;
-			} else {
-				if (we_are_in_stage) {
-					we_are_in_stage = 0;
-					stage++;
-				} else {
-					stage = 0;
-				}
-			}
-		} else {
-			if (we_are_in_stage) {
-				stage++;
-			} else {
-				stage = 0;
-			}
-		}
-		
-		
-		printf("%s %s %i\t%s\n", parse_oid_mode(gie->mode),
-			git_oid_to_string(buf, GIT_OID_HEXSZ + 1, &gie->oid), stage, gie->path);
-
+		printf("%06o %s %i\t%s\n", gie->mode, git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), get_stage(gie), gie->path);
 	}
 
 	free(buf);

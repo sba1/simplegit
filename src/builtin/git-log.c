@@ -8,13 +8,12 @@
 
 int cmd_log(int argc, const char **argv)
 {
-	(void)argc; /* Compile hack */
+	(void)argc;
 	(void)argv;
 
 	/* Delete the following line once git tests pass */
 	please_git_do_it_for_me();
 
-	int e;
 	git_repository *repository = get_git_repository();
 	
 	git_revwalk *walk;
@@ -22,12 +21,14 @@ int cmd_log(int argc, const char **argv)
 	const git_oid *oid;
 	
 	git_reference *symbolic_ref;
-	e = git_reference_lookup(&symbolic_ref, repository, "HEAD");
-	if (e) libgit_error(e);
+	if (git_reference_lookup(&symbolic_ref, repository, "HEAD")) {
+		libgit_error();
+	}
 
 	git_reference *direct_ref;
-	e = git_reference_resolve(&direct_ref, symbolic_ref);
-	if (e) libgit_error(e);
+	if (git_reference_resolve(&direct_ref, symbolic_ref)) {
+		libgit_error();
+	}
 
 	oid = git_reference_oid(direct_ref);
 	if (oid == NULL) {
@@ -35,13 +36,15 @@ int cmd_log(int argc, const char **argv)
 	}
 
 	
-	e = git_revwalk_new(&walk, repository);
-	if (e) libgit_error(e);
+	if (git_revwalk_new(&walk, repository)) {
+		libgit_error();
+	}
 
 	git_revwalk_sorting(walk, GIT_SORT_TOPOLOGICAL);
 
-	e = git_revwalk_push(walk, oid);
-	if (e) libgit_error(e);
+	if (git_revwalk_push(walk, oid)) {
+		libgit_error();
+	}
 
 	const git_signature *cauth, *ccommiter;
 	const char *cmsg,*msg;
@@ -53,8 +56,9 @@ int cmd_log(int argc, const char **argv)
 		oid_string[GIT_OID_HEXSZ] = 0;
 		char *time_string;
 		while(1) {
-			e = git_commit_lookup(&wcommit, repository, oid);
-			if (e) libgit_error(e);
+			if (git_commit_lookup(&wcommit, repository, oid)) {
+				libgit_error();
+			}
 
 			cmsg  = git_commit_message_short(wcommit);
 			msg  = git_commit_message(wcommit);
