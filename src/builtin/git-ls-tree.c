@@ -22,8 +22,9 @@ int cmd_ls_tree(int argc, const char **argv)
 	git_tree *tree;
 	git_oid oid_tree;
 	
-	e = git_oid_mkstr(&oid_tree, (const char *)argv[argc-1]);
-	if(e) libgit_error(e);
+	if (git_oid_mkstr(&oid_tree, (const char *)argv[argc-1])) {
+		libgit_error();
+	}
 	
 	e = git_tree_lookup(&tree, repo, &oid_tree);
 	if (e) {
@@ -31,7 +32,7 @@ int cmd_ls_tree(int argc, const char **argv)
 			printf("fatal: not a tree object\n");
 			return EXIT_FAILURE;
 		} else {
-			libgit_error(e);
+			libgit_error();
 		}
 	}
 
@@ -49,8 +50,9 @@ int cmd_ls_tree(int argc, const char **argv)
     
 		/* Convert a tree entry to the git_object it points to */
 		git_object *object_entry_tree;
-		e = git_tree_entry_2object (&object_entry_tree, repo, tree_entry);
-		if(e) libgit_error(e);
+		if (git_tree_entry_2object (&object_entry_tree, repo, tree_entry)) {
+			libgit_error();
+		}
 		
 		/* Get the tree entry type */
 		git_otype type_entry_tree;
