@@ -12,8 +12,6 @@ git_repository* get_git_repository() {
 		const char *argv[]= {"git", "rev-parse", "--git-dir", NULL};
 		char *repository_path = please_git_help_me(argv);
 
-		fprintf(stderr,"%s\n",repository_path);
-		
 		if (git_repository_open(&repository, repository_path)) {
 			libgit_error();
 		}
