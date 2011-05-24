@@ -10,6 +10,7 @@
 
 int cmd_ls_tree(int argc, const char **argv)
 {
+	please_git_do_it_for_me();
 	if(argc != 2)
 		please_git_do_it_for_me();
 
