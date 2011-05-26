@@ -11,7 +11,10 @@ void please_git_do_it_for_me() __attribute__((noreturn));
 //and execute the command call (registered by main
 //at the program call with git_support_register_arguments)
 
-void git_support_register_arguments(int argc, char **argv);
+void git_support_register_arguments(int argc, const char **argv);
 //register the command call
+
+void git_support_free_arguments();
+//free registered arguments
 
 #endif

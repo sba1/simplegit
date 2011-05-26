@@ -7,7 +7,7 @@
 #define EXEC_PATH_ENVIRONMENT "GIT_EXEC_PATH"
 
 static const char *argv_exec_path;
-static const char *argv0_path;
+static char *argv0_path = NULL;
 
 /*const char *system_path(const char *path)
 {
@@ -58,6 +58,11 @@ const char *git_extract_argv0_path(const char *argv0)
 	}
 
 	return argv0;
+}
+
+void git_exec_cmd_free_resources()
+{
+	free(argv0_path);
 }
 
 void git_set_argv_exec_path(const char *exec_path)
