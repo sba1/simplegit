@@ -166,16 +166,16 @@ struct option {
  * non-option arguments in argv[].
  * Returns the number of arguments left in argv[].
  */
-extern int parse_options(int argc, const char **argv, const char *prefix,
+int parse_options(int argc, const char **argv, const char *prefix,
                          const struct option *options,
                          const char * const usagestr[], int flags);
 
-extern NORETURN void usage_with_options(const char * const *usagestr,
+NORETURN void usage_with_options(const char * const *usagestr,
                                         const struct option *options);
 
-extern NORETURN void usage_msg_opt(const char *msg,
-				   const char * const *usagestr,
-				   const struct option *options);
+NORETURN void usage_msg_opt(const char *msg,
+					const char * const *usagestr,
+					const struct option *options);
 
 /*----- incremental advanced APIs -----*/
 
@@ -200,25 +200,25 @@ struct parse_opt_ctx_t {
 	const char *prefix;
 };
 
-extern void parse_options_start(struct parse_opt_ctx_t *ctx,
+void parse_options_start(struct parse_opt_ctx_t *ctx,
 				int argc, const char **argv, const char *prefix,
 				const struct option *options, int flags);
 
-extern int parse_options_step(struct parse_opt_ctx_t *ctx,
-			      const struct option *options,
-			      const char * const usagestr[]);
+int parse_options_step(struct parse_opt_ctx_t *ctx,
+				const struct option *options,
+				const char * const usagestr[]);
 
-extern int parse_options_end(struct parse_opt_ctx_t *ctx);
+int parse_options_end(struct parse_opt_ctx_t *ctx);
 
-extern int parse_options_concat(struct option *dst, size_t, struct option *src);
+int parse_options_concat(struct option *dst, size_t, struct option *src);
 
 /*----- some often used options -----*/
-extern int parse_opt_abbrev_cb(const struct option *, const char *, int);
-extern int parse_opt_approxidate_cb(const struct option *, const char *, int);
-//extern int parse_opt_color_flag_cb(const struct option *, const char *, int);
-extern int parse_opt_verbosity_cb(const struct option *, const char *, int);
-//extern int parse_opt_with_commit(const struct option *, const char *, int);
-extern int parse_opt_tertiary(const struct option *, const char *, int);
+int parse_opt_abbrev_cb(const struct option *, const char *, int);
+int parse_opt_approxidate_cb(const struct option *, const char *, int);
+//int parse_opt_color_flag_cb(const struct option *, const char *, int);
+int parse_opt_verbosity_cb(const struct option *, const char *, int);
+//int parse_opt_with_commit(const struct option *, const char *, int);
+int parse_opt_tertiary(const struct option *, const char *, int);
 
 #define OPT__VERBOSE(var, h)  OPT_BOOLEAN('v', "verbose", (var), (h))
 #define OPT__QUIET(var, h)    OPT_BOOLEAN('q', "quiet",   (var), (h))

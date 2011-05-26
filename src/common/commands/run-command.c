@@ -88,7 +88,7 @@ static NORETURN void die_child(const char *err, va_list params)
 	write_in_full(child_err, "fatal: ", 7);
 	write_in_full(child_err, msg, len);
 	write_in_full(child_err, "\n", 1);
-	exit(128);
+	do_exit(128);
 }
 #endif
 
@@ -291,7 +291,7 @@ fail_pipe:
 		 * process will check it when it sees this exit code.
 		 */
 		if (errno == ENOENT)
-			exit(127);
+			do_exit(127);
 		else
 			die_errno("cannot exec '%s'", cmd->argv[0]);
 	}
@@ -483,7 +483,7 @@ int run_command_v_opt_cd_env(const char **argv, int opt, const char *dir, const 
 //		pthread_exit((void *)128);
 //	}
 //
-//	exit(128);
+//	do_exit(128);
 //}
 //#endif
 //
