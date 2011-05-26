@@ -36,3 +36,4 @@ int cmd_mktag(int argc, const char **argv)
 // 	printf("%s", oid_tag_string);
 	return 0;
 }
+

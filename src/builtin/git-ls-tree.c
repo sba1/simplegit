@@ -27,7 +27,7 @@ int cmd_ls_tree(int argc, const char **argv)
 	
 	e = git_tree_lookup(&tree, repo, &oid_tree);
 	if (e) {
-		if (e == GIT_EINVALIDTYPE || GIT_ENOTFOUND) {
+		if (e == GIT_EINVALIDTYPE || e == GIT_ENOTFOUND) {
 			printf("fatal: not a tree object\n");
 			return EXIT_FAILURE;
 		} else {

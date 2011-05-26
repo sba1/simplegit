@@ -89,3 +89,4 @@ int cmd_update_index(int argc, const char **argv)
 	
 	return exit_status;
 }
+
