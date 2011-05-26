@@ -20,7 +20,7 @@ int timezone_;
 
 
 
-int parse_stdin() {
+int parse_stdin(struct strbuf * buf) {
 	
 	char *buffer;
 	int typelen;
@@ -28,21 +28,20 @@ int parse_stdin() {
 	char *object, *type_line, *tag_line, *tagger_line, *lb, *rb;
 	size_t len;
 	
-	struct strbuf buf = STRBUF_INIT;
 	
-	if (strbuf_read(&buf, 0, 4096) < 0) {
+	if (strbuf_read(buf, 0, 4096) < 0) {
 		die_errno("could not read from stdin");
 	}
 	
-	buffer = buf.buf;
+	buffer = buf->buf;
 	
 	
 	
 	/* 84 is the minimum size of a tag file */
-	if (buf.len < 84)
+	if (buf->len < 84)
 		return error("wanna fool me ? you obviously got the size wrong !");
 	
-	buffer[buf.len] = '\0';
+	buffer[buf->len] = '\0';
 	
 	/* Verify object line */
 	object = buffer;
@@ -211,7 +210,22 @@ int cmd_mktag(int argc, const char **argv)
 		return 1;
 	}
 
-	int e = parse_stdin();
+
+	struct strbuf buf = STRBUF_INIT;
+	if (strbuf_read(&buf, 0, 4096) < 0) {
+		die_errno("could not read from stdin");
+	}
+	git_oid oid_tag;
+	git_repository *repo = get_git_repository();
+	
+	git_tag_create_frombuffer(&oid_tag,repo,buf.buf);
+	
+	char *oid_tag_string = malloc(sizeof(char)*41);
+	git_oid_fmt(oid_tag_string, &oid_tag);
+	oid_tag_string[40] = '\0';
+	printf("%s\n", oid_tag_string);
+	
+	/*int e = parse_stdin(&buf);
 	if( e != 0 )
 		return e;
 	
@@ -225,31 +239,11 @@ int cmd_mktag(int argc, const char **argv)
 	printf("message : %s\n", message);
 	
 	
-	
-	
-	/*int e;
-	git_oid oid_tag;
-	git_repository *repo = get_git_repository();
-	const char *tag_name = malloc(20); *//* ça reste juste une estimation */
-	/*git_otype target_type;
-	const git_oid *target;
-	const git_signature *tagger;
-	
-	const char *message;
-	
-	const char *type = malloc(10);
-	
-	
-	scanf("object %s\ntype %s\ntag %s\ntagger %s <%s> %lld %u",
-	      target->id, type, tag_name, tagger->name, tagger->email, tagger->when->time, tag_name->when->offset);
-
-	target_type = git_object_string2type(type);
-
 	e = git_tag_create(&oid_tag, repo, tag_name, target, target_type, tagger, message);
-	if(e) libgit_error();
-
-	char *oid_tag_string;
-	git_oid_fmt(oid_tag_string, &oid_tag);
-	printf("%s", oid_tag_string);*/
+	
+	if(e)
+		libgit_error();
+	*/
+	
 	return 0;
 }
