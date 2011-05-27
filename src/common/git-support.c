@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "errors.h"
 
-char *please_git_help_me(const char **argv){
+char *please_git_help_me(const char **argv) {
 	struct child_process process;
 	memset(&process, 0, sizeof(process));
 	process.argv = argv;
@@ -44,14 +44,14 @@ char *please_git_help_me(const char **argv){
 	return buffer;
 }
 
-static char **git_argv;
+static char **git_argv = NULL;
 
-void please_git_do_it_for_me(){
+void please_git_do_it_for_me() {
 	execvp(git_argv[0], git_argv);
 	die_errno("Failed to fallback to git.");
 }
 
-void git_support_register_arguments(int argc, char **argv){
+void git_support_register_arguments(int argc, const char **argv) {
 	git_argv = (char**)xmalloc(sizeof(char*) * (argc + 1));
 
 	git_argv[0] = (char*)xstrdup("git");
@@ -61,4 +61,14 @@ void git_support_register_arguments(int argc, char **argv){
 	}
 
 	git_argv[argc] = NULL;
+}
+
+void git_support_free_arguments() {
+	if (git_argv) {
+		for (int i = 0; git_argv[i]; ++i) {
+			free(git_argv[i]);
+		}
+
+		free(git_argv);
+	}
 }

@@ -294,7 +294,7 @@ static void check_typos(const char *arg, const struct option *options)
 
 	if (!prefixcmp(arg, "no-")) {
 		error ("did you mean `--%s` (with two dashes ?)", arg);
-		exit(129);
+		do_exit(129);
 	}
 
 	for (; options->type != OPTION_END; options++) {
@@ -302,7 +302,7 @@ static void check_typos(const char *arg, const struct option *options)
 			continue;
 		if (!prefixcmp(options->long_name, arg)) {
 			error ("did you mean `--%s` (with two dashes ?)", arg);
-			exit(129);
+			do_exit(129);
 		}
 	}
 }
@@ -338,7 +338,7 @@ static void parse_options_check(const struct option *opts)
 		}
 	}
 	if (err)
-		exit(128);
+		do_exit(128);
 }
 
 void parse_options_start(struct parse_opt_ctx_t *ctx,
@@ -459,7 +459,7 @@ int parse_options(int argc, const char **argv, const char *prefix,
 	parse_options_start(&ctx, argc, argv, prefix, options, flags);
 	switch (parse_options_step(&ctx, options, usagestr)) {
 	case PARSE_OPT_HELP:
-		exit(129);
+		do_exit(129);
 	case PARSE_OPT_NON_OPTION:
 	case PARSE_OPT_DONE:
 		break;
@@ -570,7 +570,7 @@ void NORETURN usage_with_options(const char * const *usagestr,
 			const struct option *opts)
 {
 	usage_with_options_internal(NULL, usagestr, opts, 0, 1);
-	exit(129);
+	do_exit(129);
 }
 
 void NORETURN usage_msg_opt(const char *msg,

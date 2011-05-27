@@ -8,7 +8,6 @@
 #include "utils.h"
 #include "git-parse-mode.h"
 #include "strbuf.h"
-#include "index-entry.h"
 
 /*
  * => see http://www.kernel.org/pub/software/scm/git/docs/git-ls-files.html
@@ -35,9 +34,7 @@ int cmd_ls_files(int argc, const char **argv)
 	
 	git_index *index_cur;
 	int e = git_index_open_inrepo(&index_cur, repo);
-	if (e == GIT_ENOTIMPLEMENTED) {
-		please_git_do_it_for_me();
-	} else if (e) {
+	if (e) {
 		libgit_error();
 	}
 	
@@ -52,23 +49,8 @@ int cmd_ls_files(int argc, const char **argv)
 			continue;
 		}
 		
-		git_tag * tag;
-		e = git_tag_lookup(&tag,repo,&gie->oid);
-		if (e == GIT_ENOTIMPLEMENTED) {
-			please_git_do_it_for_me();
-		} else if (e) {
-			/* no problem if tag was not found */
-			if (e == GIT_EINVALIDTYPE) {
-				/* Shouldn't libgit2 return NOTIMPLEMENTED for submodules ? */
-				please_git_do_it_for_me();
-			} else if (e != GIT_ENOTFOUND) {
-				libgit_error(e);
-			}
-		} else {
-			printf("%s ", git_tag_name(tag));
-		}
-		
-		printf("%06o %s %i\t%s\n", gie->mode, git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), get_stage(gie), gie->path);
+		//TO-DO ! use git_index_entry_get_stage (pull request sent)
+		printf("%06o %s %i\t%s\n", gie->mode, git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), 0/*git_index_entry_get_stage(gie)*/, gie->path);
 	}
 
 	free(buf);

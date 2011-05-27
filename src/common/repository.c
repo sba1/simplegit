@@ -38,3 +38,10 @@ const char *get_git_prefix() {
 
 	return prefix;
 }
+
+void free_repository() {
+	if (repository == NULL)
+		return;
+
+	git_repository_free(repository);
+}
