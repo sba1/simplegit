@@ -156,7 +156,6 @@ int main(int argc, const char **argv){
 		}
 	}
 
-	
 	int info_output = NO_INFO;
 	unsigned int pager_flag = 1;
 	unsigned int no_replace_object_flag = 0;

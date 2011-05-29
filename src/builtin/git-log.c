@@ -55,7 +55,8 @@ int cmd_log(int argc, const char **argv)
 		char oid_string[GIT_OID_HEXSZ+1];
 		oid_string[GIT_OID_HEXSZ] = 0;
 		char *time_string;
-		while(1) {
+
+		while (1) {
 			if (git_commit_lookup(&wcommit, repository, oid)) {
 				libgit_error();
 			}
@@ -82,7 +83,6 @@ int cmd_log(int argc, const char **argv)
 		}
 	}
 	
-
 	git_revwalk_free(walk);
 	
 	return EXIT_SUCCESS;

@@ -12,7 +12,7 @@ int cmd_checkout(int argc, const char **argv)
 	/* Delete the following line once gits tests pass */
 	please_git_do_it_for_me();
 
-	if(argc != 1)
+	if (argc != 1)
 		please_git_do_it_for_me();
 	
 	git_index *index;
@@ -39,15 +39,19 @@ int cmd_checkout(int argc, const char **argv)
 
 	/* get a pointer to one of the entries in the index */
 	index_entry = git_index_get(index, i);
-	if(index_entry == NULL) printf("Out of bound");
-	else id = index_entry->oid;
+	if (index_entry == NULL)
+		printf("Out of bound");
+	else
+		id = index_entry->oid;
 	(void)id;
 	
 	git_reference *symbolic_ref;
-	if(git_reference_lookup(&symbolic_ref, repo, "HEAD")) libgit_error();
+	if (git_reference_lookup(&symbolic_ref, repo, "HEAD"))
+		libgit_error();
 
 	git_reference *direct_ref;
-	if(git_reference_resolve(&direct_ref, symbolic_ref)) libgit_error();
+	if (git_reference_resolve(&direct_ref, symbolic_ref))
+		libgit_error();
 
 	const git_oid *oid;
 	oid = git_reference_oid(direct_ref);
@@ -58,17 +62,15 @@ int cmd_checkout(int argc, const char **argv)
 	
 	git_tree *tree;
 	/* Lookup a tree object from the repository */
-	if (git_tree_lookup(&tree, repo, oid)) {
+	if (git_tree_lookup(&tree, repo, oid))
 		libgit_error();
-	}
 	
 	/* Update the index ?? */
-	if (git_index_read(index)) {
+	if (git_index_read(index))
 		libgit_error();
-	}
 	
 	git_index_free(index);
 	git_tree_close(tree);
 	
-	return 0;
+	return EXIT_SUCCESS;
 }
