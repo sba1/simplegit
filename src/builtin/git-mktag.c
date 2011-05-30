@@ -18,24 +18,17 @@ char *message;
 int timestamp;
 int timezone_;
 
-
-
 int parse_stdin(struct strbuf * buf) {
-	
 	char *buffer;
 	int typelen;
 	char *timestamp_s;
 	char *object, *type_line, *tag_line, *tagger_line, *lb, *rb;
 	size_t len;
 	
-	
 	if (strbuf_read(buf, 0, 4096) < 0) {
 		die_errno("could not read from stdin");
 	}
-	
 	buffer = buf->buf;
-	
-	
 	
 	/* 84 is the minimum size of a tag file */
 	if (buf->len < 84)
@@ -250,6 +243,6 @@ int cmd_mktag(int argc, const char **argv)
 		libgit_error();
 	*/
 	
-	return 0;
+	return EXIT_SUCCESS;
 }
 

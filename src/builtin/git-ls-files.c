@@ -27,27 +27,24 @@ int cmd_ls_files(int argc, const char **argv)
 	if (argc != 2)
 		please_git_do_it_for_me();
 	
-	if( strcmp(argv[1], "--stage") != 0 && strcmp(argv[1], "-s") != 0)
+	if (strcmp(argv[1], "--stage") != 0 && strcmp(argv[1], "-s") != 0)
 		please_git_do_it_for_me();
 	
 	git_repository *repo = get_git_repository();
 	
 	git_index *index_cur;
 	int e = git_index_open_inrepo(&index_cur, repo);
-	if (e) {
-		libgit_error();
-	}
+	if (e) libgit_error();
 	
 	char *buf = (char*)xmalloc(GIT_OID_HEXSZ+1);
 	
 	const char *prefix = get_git_prefix();
 	
-	for( unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
+	for (unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
 		git_index_entry *gie = git_index_get(index_cur, i);
 
-		if (prefixcmp(gie->path, prefix)) {
+		if (prefixcmp(gie->path, prefix))
 			continue;
-		}
 		
 		//TO-DO ! use git_index_entry_get_stage (pull request sent)
 		printf("%06o %s %i\t%s\n", gie->mode, git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), 0/*git_index_entry_get_stage(gie)*/, gie->path);
@@ -56,5 +53,5 @@ int cmd_ls_files(int argc, const char **argv)
 	free(buf);
 	git_index_free(index_cur);
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

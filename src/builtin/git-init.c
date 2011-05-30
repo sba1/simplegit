@@ -16,11 +16,13 @@ static const char *const init_usage[] = {
 };
 
 int shared_callback(const struct option *opt, const char *arg, int unset) {
-  (void)opt;
-  (void)arg;
-  (void)unset;
+	(void)opt;
+	(void)arg;
+	(void)unset;
 
-  return 0;
+	*((int *) opt->value) = 1;
+
+	return 0;
 }
 
 int cmd_init(int argc, const char **argv){
@@ -47,7 +49,7 @@ int cmd_init(int argc, const char **argv){
 		OPT_END()
 	};
 
-	char prefix[1] = {0};
+	char prefix[] = "";
 
 	if (argc != 0) {
 		argc = parse_options(argc, argv, prefix, init_db_options, init_usage, 0);
