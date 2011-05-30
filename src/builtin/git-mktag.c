@@ -204,6 +204,7 @@ int cmd_mktag(int argc, const char **argv)
 	
 	(void)argc;
 	(void)argv;
+	int e;
 	
 	if (argc != 1) {
 		printf("git mktag < signaturefile\n");
@@ -218,7 +219,11 @@ int cmd_mktag(int argc, const char **argv)
 	git_oid oid_tag;
 	git_repository *repo = get_git_repository();
 	
-	git_tag_create_frombuffer(&oid_tag,repo,buf.buf);
+	e = git_tag_create_frombuffer(&oid_tag,repo,buf.buf);
+	if( e != GIT_EEXISTS && e != 0 ) {
+		
+		libgit_error();
+	}
 	
 	char *oid_tag_string = malloc(sizeof(char)*41);
 	git_oid_fmt(oid_tag_string, &oid_tag);
