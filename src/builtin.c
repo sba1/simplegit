@@ -8,7 +8,8 @@ cmd_struct commands[] = {
 	{"checkout", cmd_checkout},
 	{"ls-tree", cmd_ls_tree},
 	{"update-index", cmd_update_index},
-	{"mktag",cmd_mktag}
+	{"mktag",cmd_mktag},
+	{"commit-tree",cmd_commit_tree}
 };
 
 cmd_handler lookup_handler(const char *cmd) {
