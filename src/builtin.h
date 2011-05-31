@@ -11,6 +11,7 @@
 #include "git-ls-tree.h"
 #include "git-update-index.h"
 #include "git-mktag.h"
+#include "git-commit-tree.h"
 
 int cmd_init(int argc, const char **argv);
 
@@ -21,7 +22,8 @@ cmd_struct commands[] = {
 	{"checkout", cmd_checkout},
 	{"ls-tree", cmd_ls_tree},
 	{"update-index", cmd_update_index},
-	{"mktag",cmd_mktag}
+	{"mktag",cmd_mktag},
+	{"commit-tree",cmd_commit_tree}
 };
 
 #endif /* BUILTIN_H */
