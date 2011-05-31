@@ -86,7 +86,7 @@ static int handle_options(const char ***argv, int *argc) {
 		} else if (!prefixcmp(cmd, "--work-tree=")) {
 			setenv(GIT_WORK_TREE_ENVIRONMENT, cmd + 12, 1);
 		} else if (!strcmp(cmd, "--bare")) {
-			//ignored with libgit2
+			please_git_do_it_for_me();
 		} else if (!strcmp(cmd, "-c")) {
 			please_git_do_it_for_me();
 		} else {
@@ -107,13 +107,15 @@ int main(int argc, const char **argv){
 	//register argument so that we can fallback to git
 	//if we can't achieve the job
 
+	argc--;
+	argv++;
 	handle_options(&argv, &argc);
 
-	if (argc == 1) {
+	if (argc == 0) {
 		usage(git_usage_string);
 	}
 
-	cmd_handler handler = lookup_handler(argv[1]);
+	cmd_handler handler = lookup_handler(argv[0]);
 	if (handler == NULL) {
 		please_git_do_it_for_me();
 	}
