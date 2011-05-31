@@ -5,7 +5,6 @@
 #include "git-ls-tree.h"
 #include "git-support.h"
 #include "repository.h"
-#include "git-parse-mode.h"
 
 int cmd_ls_tree(int argc, const char **argv)
 {
@@ -63,7 +62,7 @@ int cmd_ls_tree(int argc, const char **argv)
 		/* Get the oid of a tree entry */
 		const git_oid *entry_oid = git_tree_entry_id (tree_entry);
 		
-		printf("%s %s %s %s \n",parse_oid_mode(git_tree_entry_attributes(tree_entry)),git_object_type2string(type_entry_tree),
+		printf("%06o %s %s\t%s\n",git_tree_entry_attributes(tree_entry),git_object_type2string(type_entry_tree),
 		       git_oid_to_string(buf, GIT_OID_HEXSZ+1, entry_oid), name_entry);
 	
 		git_object_close(object_entry_tree);
