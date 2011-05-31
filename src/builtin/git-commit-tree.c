@@ -9,7 +9,7 @@
 
 int cmd_commit_tree(int argc, const char **argv)
 {
-	//please_git_do_it_for_me();
+	please_git_do_it_for_me();
 	if (argc != 2)
 		please_git_do_it_for_me();
 	char *author_name = getenv("GIT_AUTHOR_NAME");
