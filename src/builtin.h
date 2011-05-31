@@ -25,5 +25,8 @@ cmd_struct commands[] = {
 	{"mktag",cmd_mktag},
 	{"commit-tree",cmd_commit_tree}
 };
+extern cmd_struct commands[];
+
+cmd_handler lookup_handler(const char *cmd);
 
 #endif /* BUILTIN_H */
