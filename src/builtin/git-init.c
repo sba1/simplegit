@@ -57,6 +57,8 @@ int cmd_init(int argc, const char **argv){
 
 	switch (argc) {
 	case 0:
+		/* Unimplemented : a git directory must be specified */
+		please_git_do_it_for_me();
 		directory = getcwd(cwd, PATH_MAX);
 		break;
 	case 1:
