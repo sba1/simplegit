@@ -29,9 +29,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 set(EXECUTABLE_OUTPUT_PATH ${BINARIES_DIRECTORY})
 file(GLOB_RECURSE C_SOURCE_FILES ${SRC_DIRECTORY}/*.c)
 
-set(CMAKE_C_FLAGS "-std=gnu99 -Werror -Wall -Wextra -pedantic")
-set(CMAKE_C_FLAGS_DEBUG "-g -O0 ${CMAKE_C_FLAGS}")
-set(CMAKE_C_FLAGS_RELEASE "-O2 ${CMAKE_C_FLAGS}")
+add_definitions(-std=gnu99 -Wall -Wextra -pedantic)
+
+set(CMAKE_C_FLAGS_DEBUG "-g -O0")
+set(CMAKE_C_FLAGS_RELEASE "-O2")
 
 #include libssl
 find_package(OpenSSL)
@@ -52,18 +53,10 @@ add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} 
 add_custom_target(
 	build_libgit2
 	COMMAND
-		cmake -D BUILD_SHARED_LIBS:OPTION=OFF -D BUILD_TESTS:OPTION=OFF . &&
-		cmake --build .
-	DEPENDS "${LIBGIT2_BUILD_DIRECTORY}/Makefile"
-	WORKING_DIRECTORY ${LIBGIT2_BUILD_DIRECTORY}
-)
-
-add_custom_command(
-	OUTPUT "${LIBGIT2_BUILD_DIRECTORY}/Makefile"
-	COMMAND
-		mkdir -p ${LIBGIT2_BUILD_DIRECTORY} &&
-		cd ${LIBGIT2_BUILD_DIRECTORY} &&
-		cmake ${LIBGIT2_DIRECTORY}
+		mkdir -p "${LIBGIT2_BUILD_DIRECTORY}" &&
+		cd "${LIBGIT2_BUILD_DIRECTORY}" &&
+		cmake -D BUILD_SHARED_LIBS:OPTION=OFF -D BUILD_TESTS:OPTION=OFF .. &&
+		make
 )
 
 add_executable(git2-bin ${C_SOURCE_FILES})

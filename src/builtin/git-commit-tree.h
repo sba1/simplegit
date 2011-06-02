@@ -4,3 +4,4 @@
 int cmd_commit_tree(int argc, const char **argv);
 
 #endif
+
