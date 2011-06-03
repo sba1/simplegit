@@ -42,7 +42,7 @@ int cmd_ls_files(int argc, const char **argv)
 	git_repository *repo = get_git_repository();
 	
 	git_index *index_cur;
-	int e = git_index_open_inrepo(&index_cur, repo);
+	int e = git_repository_index(&index_cur, repo);
 	if (e) libgit_error();
 	
 	char *buf = (char*)xmalloc(GIT_OID_HEXSZ+1);
