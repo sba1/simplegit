@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "git2.h"
+#include "git.h"
 #include "git-init.h"
 #include "git-support.h"
 #include "parse-options.h"
+#include "fileops.h"
 #include "errors.h"
 
 #define INIT_DB_QUIET 0x0001
@@ -26,13 +28,23 @@ int shared_callback(const struct option *opt, const char *arg, int unset) {
 }
 
 int cmd_init(int argc, const char **argv){
+	/* Some tests won't pass because of template dirs
+	 * config files or shared repository.
+	 * Other than that, it works fine.
+	 */
+	please_git_do_it_for_me();
+
 	char cwd[PATH_MAX];
-	const char *directory = NULL;
 	const char *real_git_dir = NULL;
 	const char *template_dir = NULL;
+	char default_git_dir[] = ".";
+	char *git_dir = NULL;
 	unsigned int quiet_flag = 0;
 	int is_bare_repository_cfg = 0;
 	int init_shared_repository = -1;
+	int e;
+
+	assert(argc != 0);
 	
 	const struct option init_db_options[] = {
 		OPT_STRING(0, "template", &template_dir, "template-directory",
@@ -51,23 +63,11 @@ int cmd_init(int argc, const char **argv){
 
 	char prefix[] = "";
 
-	if (argc != 0) {
-		argc = parse_options(argc, argv, prefix, init_db_options, init_usage, 0);
-	}
+	argc = parse_options(argc, argv, prefix, init_db_options, init_usage, 0);
 
-	switch (argc) {
-	case 0:
-		/* Unimplemented : a git directory must be specified */
+	if (argc > 1) {
+		/* invalid use : show usage */
 		please_git_do_it_for_me();
-		directory = getcwd(cwd, PATH_MAX);
-		break;
-	case 1:
-		directory = argv[0];
-		break;
-	default:
-		/* show usage */
-		please_git_do_it_for_me();
-		break;
 	}
 
 	if (template_dir) {
@@ -79,14 +79,55 @@ int cmd_init(int argc, const char **argv){
 	} else if (real_git_dir) {
 		/* Unimplemented : cannot create separate git dir yet */
 		please_git_do_it_for_me();
-	} else if (is_bare_repository_cfg) {
-		/* Unimplemented : cannot create bare repository yet */
+	}
+
+	if (getenv(GIT_OBJECT_DIR_ENVIRONMENT)) {
+		please_git_do_it_for_me();
+	} else if (getenv(GIT_TEMPLATE_DIR_ENVIRONMENT)) {
+		please_git_do_it_for_me();
+	}
+
+	git_config *cfg;
+	e = git_config_open_global(&cfg);
+	if (e == GIT_SUCCESS) {
+		const char *init_template_dir;
+		/* libgit2 does not handle template dirs for now */
+		e = git_config_get_string(cfg, "init.templatedir", &init_template_dir);
+		if (e == GIT_SUCCESS && init_template_dir != NULL) {
+			please_git_do_it_for_me();
+		}
+
+		git_config_free(cfg);
+	}
+
+	if (argc == 1) {
+		e = git2_prettify_dir_path(cwd, PATH_MAX, argv[0]);
+		if (e) error("Given directory path is invalid\n");
+
+		if (git2_exists(cwd)) {
+			git2_mkdir_recurs(cwd, 0755);
+		} else if (git2_isdir(cwd)) {
+			error("Given path is not a directory !\n");
+		}
+
+		git2_chdir(cwd);
+	} else if (argc > 1) {
+		/* show usage */
 		please_git_do_it_for_me();
 	}
 
 	git_repository *repo;
-	int e = git_repository_init (&repo, directory, 0);
+
+	git_dir = getenv(GIT_DIR_ENVIRONMENT);
+	if (!git_dir)
+		git_dir = default_git_dir;
+	else
+		is_bare_repository_cfg = 1;
+
+	e = git_repository_init(&repo, git_dir, is_bare_repository_cfg);
+
 	if (e == GIT_ENOTIMPLEMENTED) {
+		/* Will happen when trying to reinitialize a repo */
 		please_git_do_it_for_me();
 	} else if (e) {
 		libgit_error();
@@ -94,9 +135,10 @@ int cmd_init(int argc, const char **argv){
 
 	if (!quiet_flag) {
 		/* For now git2 can only initialize a repository (no reinitialization) */
-		printf("Initialized empty Git repository in %s\n", git_repository_path(repo));
+		printf( "Initialized empty Git repository in %s\n", git_repository_path(repo));
 	}
 
+	git_repository_free(repo);
 	return EXIT_SUCCESS;
 }
 
