@@ -417,3 +417,41 @@ const char *prefix_filename(const char *pfx, int pfx_len, const char *arg)
 #endif
 	return path;
 }
+
+void git2__joinpath_n(char *buffer_out, int count, ...)
+{
+	va_list ap;
+	int i;
+	char *buffer_start = buffer_out;
+
+	va_start(ap, count);
+	for (i = 0; i < count; ++i) {
+		const char *path;
+		int len;
+
+		path = va_arg(ap, const char *);
+
+		assert((i == 0) || path != buffer_start);
+
+		if (i > 0 && *path == '/' && buffer_out > buffer_start && buffer_out[-1] == '/')
+			path++;
+
+		if (!*path)
+			continue;
+
+		len = strlen(path);
+		memmove(buffer_out, path, len);
+		buffer_out = buffer_out + len;
+
+		if (i < count - 1 && buffer_out[-1] != '/')
+			*buffer_out++ = '/';
+	}
+	va_end(ap);
+
+	*buffer_out = '\0';
+}
+
+void git2__joinpath(char *buffer_out, const char *path_a, const char *path_b)
+{
+	git2__joinpath_n(buffer_out, 2, path_a, path_b);
+}

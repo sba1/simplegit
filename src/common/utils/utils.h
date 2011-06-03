@@ -28,4 +28,15 @@ int xmkstemp_mode(char *template, int mode);
 
 const char *prefix_filename(const char *pfx, int pfx_len, const char *arg);
 
+/**
+ * Join two paths together. Takes care of properly fixing the
+ * middle slashes and everything
+ *
+ * The paths are joined together into buffer_out; this is expected
+ * to be an user allocated buffer of `GIT_PATH_MAX` size 
+ */
+void git2__joinpath_n(char *buffer_out, int npath, ...);
+
+void git2__joinpath(char *buffer_out, const char *path_a, const char *path_b);
+
 #endif
