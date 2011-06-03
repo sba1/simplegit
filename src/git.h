@@ -1,6 +1,22 @@
 #ifndef GIT_H
 #define GIT_H
 
+#ifndef GIT_DIR_ENVIRONMENT
+#define GIT_DIR_ENVIRONMENT "GIT_DIR"
+#endif
+
+#ifndef GIT_WORK_TREE_ENVIRONMENT
+#define GIT_WORK_TREE_ENVIRONMENT "GIT_WORK_TREE"
+#endif
+
+#ifndef GIT_OBJECT_DIR_ENVIRONMENT
+#define GIT_OBJECT_DIR_ENVIRONMENT "GIT_OBJECT_DIRECTORY"
+#endif
+
+#ifndef GIT_TEMPLATE_DIR_ENVIRONMENT
+#define GIT_TEMPLATE_DIR_ENVIRONMENT "GIT_TEMPLATE_DIR"
+#endif
+
 void free_global_resources();
 
 #endif

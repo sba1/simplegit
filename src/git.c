@@ -9,14 +9,6 @@
 #include "repository.h"
 #include "strbuf.h"
 
-#ifndef GIT_DIR_ENVIRONMENT
-#define GIT_DIR_ENVIRONMENT "GIT_DIR"
-#endif
-
-#ifndef GIT_WORK_TREE_ENVIRONMENT
-#define GIT_WORK_TREE_ENVIRONMENT "GIT_WORK_TREE"
-#endif
-
 static const char git_usage_string[] =
 	"git [--version] [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n"
 	"           [-p|--paginate|--no-pager] [--no-replace-objects]\n"
