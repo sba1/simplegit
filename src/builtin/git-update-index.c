@@ -60,7 +60,7 @@ int cmd_update_index(int argc, const char **argv)
 	
 	/* Open the index */
 	git_index *index_cur;
-	if (git_index_open_inrepo(&index_cur, repo) < 0)
+	if (git_repository_index(&index_cur, repo) < 0)
 		libgit_error();
 	
 	char complete_path[5000];
