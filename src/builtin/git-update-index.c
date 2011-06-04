@@ -29,7 +29,7 @@ const char * unsuported_options[UNSUPORTED_OPTIONS_NUM] =
 int cmd_update_index(int argc, const char **argv)
 {
 	
-	if (argc < 2)
+// 	if (argc < 2)
 		please_git_do_it_for_me();
 	
 	if (strcmp(argv[1], "--add") != 0)

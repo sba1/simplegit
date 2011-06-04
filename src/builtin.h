@@ -12,6 +12,7 @@
 #include "git-update-index.h"
 #include "git-mktag.h"
 #include "git-commit-tree.h"
+#include "git-write-tree.h"
 
 int cmd_init(int argc, const char **argv);
 
