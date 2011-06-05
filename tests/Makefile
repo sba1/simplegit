@@ -15,4 +15,5 @@ all:
 	${MAKE} -C "${GIT_REPOSITORY}"/t;
 
 .DEFAULT:
+	${MAKE} -C "${GIT_REPOSITORY}" all;
 	${MAKE} -C "${GIT_REPOSITORY}"/t $@;
