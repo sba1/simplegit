@@ -41,24 +41,24 @@ extern int remove_dir_recursively(struct strbuf *path);
 
 
 #ifdef GIT_WIN32
-//GIT_INLINE(int) link(const char *GIT_UNUSED(old), const char *GIT_UNUSED(new))
-//{
-//	GIT_UNUSED_ARG(old)
-//	GIT_UNUSED_ARG(new)
-//	errno = ENOSYS;
-//	return -1;
-//}
-//
+GIT_INLINE(int) link(const char *GIT_UNUSED(old), const char *GIT_UNUSED(new))
+{
+	GIT_UNUSED_ARG(old)
+	GIT_UNUSED_ARG(new)
+	errno = ENOSYS;
+	return -1;
+}
+
 //GIT_INLINE(int) git__mkdir(const char *path, int GIT_UNUSED(mode))
 //{
 //	GIT_UNUSED_ARG(mode)
 //	return mkdir(path);
 //}
-//
+
 //extern int git__unlink(const char *path);
 //extern int git__mkstemp(char *template);
 //extern int git__fsync(int fd);
-//
+
 //# ifndef GIT__WIN32_NO_HIDE_FILEOPS
 //#  define unlink(p) git__unlink(p)
 //#  define mkstemp(t) git__mkstemp(t)
@@ -110,7 +110,7 @@ extern int git2_mkdir_2file(const char *path);
 //extern int git2_mv_force(const char *from, const char *to);
 //
 #define git2_stat(p,b) stat(p, b)
-//#define git2_fstat(f,b) fstat(f, b)
+#define git2_fstat(f,b) fstat(f, b)
 //extern dev_t git2_retrieve_device(const char *path, dev_t *device);
 #define git2_lstat(p,b) lstat(p,b)
 //
@@ -118,7 +118,7 @@ extern int git2_mkdir_2file(const char *path);
 #define git2_rmdir(p) rmdir(p)
 #define git2_chdir(p) chdir(p)
 #define git2_mkdir(p,m) mkdir(p, m)
-//
+
 //#define git2_mkstemp(t) mkstemp(t)
 //#define git2_fsync(fd) fsync(fd)
 //#define git2_chmod(p,m) chmod(p, m)
