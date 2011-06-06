@@ -14,6 +14,7 @@
 #include "git-commit-tree.h"
 #include "git-write-tree.h"
 #include "git-read-tree.h"
+#include "git-checkout-index.h"
 
 int cmd_init(int argc, const char **argv);
 

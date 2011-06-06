@@ -2,29 +2,128 @@
 #include "git2.h"
 #include <ctype.h>
 
-//int git2_mkdir_2file(const char *file_path)
-//{
-//	const int mode = 0755; /* or 0777 ? */
-//	int error = GIT_SUCCESS;
-//	char target_folder_path[GIT_PATH_MAX];
-//
-//	error = git__dirname_r(target_folder_path, sizeof(target_folder_path), file_path);
-//	if (error < GIT_SUCCESS)
-//		return git__throw(GIT_EINVALIDPATH, "Failed to recursively build `%s` tree structure. Unable to parse parent folder name", file_path);
-//
-//	/* Does the containing folder exist? */
-//	if (git2_isdir(target_folder_path)) {
-//		git__joinpath(target_folder_path, target_folder_path, ""); /* Ensure there's a trailing slash */
-//
-//		/* Let's create the tree structure */
-//		error = git2_mkdir_recurs(target_folder_path, mode);
-//		if (error < GIT_SUCCESS)
-//			return error;	/* The callee already takes care of setting the correct error message. */
-//	}
-//
-//	return GIT_SUCCESS;
-//}
-//
+
+/*
+ * Based on the Android implementation, BSD licensed.
+ * Check http://android.git.kernel.org/
+ */
+int dirname_r(char *buffer, size_t bufflen, const char *path)
+{
+	const char *endp;
+	int result, len;
+	
+	/* Empty or NULL string gets treated as "." */
+	if (path == NULL || *path == '\0') {
+		path = ".";
+		len  = 1;
+		goto Exit;
+	}
+
+	/* Strip trailing slashes */
+	endp = path + strlen(path) - 1;
+	while (endp > path && *endp == '/')
+		endp--;
+
+	/* Find the start of the dir */
+	while (endp > path && *endp != '/')
+		endp--;
+
+	/* Either the dir is "/" or there are no slashes */
+	if (endp == path) {
+		path = (*endp == '/') ? "/" : ".";
+		len  = 1;
+		goto Exit;
+	}
+
+	do {
+		endp--;
+	} while (endp > path && *endp == '/');
+
+	len = endp - path +1;
+
+	Exit:
+	result = len;
+	if (len+1 > GIT_PATH_MAX) {
+		return GIT_ENOMEM;
+	}
+	if (buffer == NULL)
+		return result;
+
+	if (len > (int)bufflen-1) {
+		len    = (int)bufflen-1;
+		result = GIT_ENOMEM;
+	}
+
+	if (len >= 0) {
+		memmove(buffer, path, len);
+		buffer[len] = 0;
+	}
+	return result;
+}
+
+void joinpath_n(char *buffer_out, int count, ...)
+{
+	va_list ap;
+	int i;
+	char *buffer_start = buffer_out;
+	
+	va_start(ap, count);
+	for (i = 0; i < count; ++i) {
+		const char *path;
+		int len;
+		
+		path = va_arg(ap, const char *);
+		
+		assert((i == 0) || path != buffer_start);
+		
+		if (i > 0 && *path == '/' && buffer_out > buffer_start && buffer_out[-1] == '/')
+			path++;
+		
+		if (!*path)
+			continue;
+		
+		len = strlen(path);
+		memmove(buffer_out, path, len);
+		buffer_out = buffer_out + len;
+		
+		if (i < count - 1 && buffer_out[-1] != '/')
+			*buffer_out++ = '/';
+	}
+	va_end(ap);
+	
+	*buffer_out = '\0';
+}
+
+void joinpath(char *buffer_out, const char *path_a, const char *path_b)
+{
+	joinpath_n(buffer_out, 2, path_a, path_b);
+}
+
+
+int git2_mkdir_2file(const char *file_path)
+{
+	const int mode = 0755; /* or 0777 ? */
+	int error = GIT_SUCCESS;
+	char target_folder_path[GIT_PATH_MAX];
+	
+	error = dirname_r(target_folder_path, sizeof(target_folder_path), file_path);
+	
+	if (error < GIT_SUCCESS)
+		return GIT_EINVALIDPATH;
+	
+	/* Does the containing folder exist? */
+	if (git2_isdir(target_folder_path)) {
+		joinpath(target_folder_path, target_folder_path, ""); /* Ensure there's a trailing slash */
+		
+		/* Let's create the tree structure */
+		error = git2_mkdir_recurs(target_folder_path, mode);
+		if (error < GIT_SUCCESS)
+			return error;	/* The callee already takes care of setting the correct error message. */
+	}
+	
+	return GIT_SUCCESS;
+}
+
 //int git2_mktemp(char *path_out, const char *filename)
 //{
 //	int fd;
@@ -52,20 +151,72 @@
 //	return fd >= 0 ? fd : git__throw(GIT_EOSERR, "Failed to open %s", path);
 //}
 //
-//int git2_creat(const char *path, int mode)
-//{
-//	int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, mode);
-//	return fd >= 0 ? fd : git__throw(GIT_EOSERR, "Failed to create file. Could not open %s", path);
-//}
-//
-//int git2_creat_force(const char *path, int mode)
-//{
-//	if (git2_mkdir_2file(path) < GIT_SUCCESS)
-//		return git__throw(GIT_EOSERR, "Failed to create file %s", path);
-//
-//	return git2_creat(path, mode);
-//}
-//
+int git2_creat(const char *path, int mode)
+{
+	int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, mode);
+	return fd;
+}
+
+
+int remove_dir_recursively(struct strbuf *path)
+{
+	DIR *dir;
+	struct dirent *e;
+	int ret = 0, original_len = path->len, len;
+	
+	dir = opendir(path->buf);
+	if (!dir)
+		return rmdir(path->buf);
+	if (path->buf[original_len - 1] != '/')
+		strbuf_addch(path, '/');
+	
+	len = path->len;
+	while ((e = readdir(dir)) != NULL) {
+		struct stat st;
+		if (strcmp(e->d_name, "..") == 0 || strcmp(e->d_name, ".")==0)
+			continue;
+		
+		strbuf_setlen(path, len);
+		strbuf_addstr(path, e->d_name);
+		if (lstat(path->buf, &st))
+			; /* fall thru */
+			else if (S_ISDIR(st.st_mode)) {
+				if (!remove_dir_recursively(path))
+					continue; /* happy */
+			} else if (!unlink(path->buf))
+				continue; /* happy, too */
+				
+				/* path too long, stat fails, or non-directory still exists */
+				ret = -1;
+			break;
+	}
+	closedir(dir);
+	
+	strbuf_setlen(path, original_len);
+	if (!ret)
+		ret = rmdir(path->buf);
+	return ret;
+}
+
+
+int git2_creat_force(const char *path, int mode)
+{
+	if (git2_mkdir_2file(path) < GIT_SUCCESS)
+		return GIT_EOSERR;
+	
+
+	if (!git2_isdir(path)) {
+		struct strbuf pathbuf = STRBUF_INIT;
+		char * buf_path = xmalloc(strlen(path)*sizeof(char));
+		memcpy(buf_path, path, strlen(path)*sizeof(char));
+		strbuf_attach(&pathbuf, (void *)buf_path, strlen(path)*sizeof(char), strlen(path)*sizeof(char));
+		if (remove_dir_recursively(&pathbuf) != 0)
+			return GIT_EOSERR;
+	}
+	
+	return git2_creat(path, mode);
+}
+
 //int git2_read(git_file fd, void *buf, size_t cnt)
 //{
 //	char *b = buf;
@@ -414,9 +565,12 @@ int git2_mkdir_recurs(const char *path, int mode)
 			*sp = 0;
 			error = git2_mkdir(path_copy, mode);
 
-			/* Do not choke while trying to recreate an existing directory */
-			if (errno == EEXIST)
-				error = GIT_SUCCESS;
+			/* it's a not a directory */
+			if (errno == EEXIST) {
+				if (unlink(path_copy) != 0)
+					return GIT_EOSERR;
+				error = git2_mkdir(path_copy, mode);
+			}
 
 			*sp = '/';
 		}
