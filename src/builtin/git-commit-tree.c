@@ -36,6 +36,7 @@ void cleanup() {
 
 int cmd_commit_tree(int argc, const char **argv)
 {
+	please_git_do_it_for_me();
 	char *author_name = NULL;
 	char *author_email = NULL;
 	char *author_date = NULL;
