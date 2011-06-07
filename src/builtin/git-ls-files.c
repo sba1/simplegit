@@ -45,7 +45,7 @@ int cmd_ls_files(int argc, const char **argv)
 	int e = git_repository_index(&index_cur, repo);
 	if (e) libgit_error();
 	
-	char *buf = (char*)xmalloc(GIT_OID_HEXSZ+1);
+	char buf[GIT_OID_HEXSZ+1];
 	
 	const char *prefix = get_git_prefix();
 	size_t prefix_len = strlen(prefix);
@@ -56,14 +56,12 @@ int cmd_ls_files(int argc, const char **argv)
 		if (prefixcmp(gie->path, prefix))
 			continue;
 		
-		if( show_cached )
+		if (show_cached)
 			printf("%s\n", gie->path + prefix_len);
 		else
-			//TO-DO ! use git_index_entry_get_stage (pull request sent)
-			printf("%06o %s %i\t%s\n", gie->mode, git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), 0/*git_index_entry_get_stage(gie)*/, gie->path + prefix_len);
+			printf("%06o %s %i\t%s\n", gie->mode, git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), git_index_entry_stage(gie), gie->path + prefix_len);
 	}
 
-	free(buf);
 	git_index_free(index_cur);
 	
 	return EXIT_SUCCESS;
