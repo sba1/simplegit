@@ -39,6 +39,7 @@ extern void joinpath_n(char *buffer_out, int npath, ...);
 extern void joinpath(char *buffer_out, const char *path_a, const char *path_b);
 extern int remove_dir_recursively(struct strbuf *path);
 
+int dirname_r(char *buffer, size_t bufflen, const char *path);
 
 #ifdef GIT_WIN32
 GIT_INLINE(int) link(const char *GIT_UNUSED(old), const char *GIT_UNUSED(new))
