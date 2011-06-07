@@ -14,11 +14,7 @@
 #include "git-commit-tree.h"
 #include "git-write-tree.h"
 #include "git-read-tree.h"
-<<<<<<< HEAD
-#include "git-cat-file.h"
-=======
 #include "git-checkout-index.h"
->>>>>>> 0fe75bbb3d4d0e0f7df2a37f3ba010a5a2043ede
 
 int cmd_init(int argc, const char **argv);
 
