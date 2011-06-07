@@ -8,15 +8,12 @@ cmd_struct commands[] = {
 	{"checkout", cmd_checkout},
 	{"ls-tree", cmd_ls_tree},
 	{"update-index", cmd_update_index},
-	{"mktag",cmd_mktag},
-	{"commit-tree",cmd_commit_tree},
-	{"write-tree",cmd_write_tree},
-	{"read-tree",cmd_read_tree},
-<<<<<<< HEAD
-	{"cat-file",cmd_cat_file}
-=======
-	{"checkout-index",cmd_checkout_index}
->>>>>>> 0fe75bbb3d4d0e0f7df2a37f3ba010a5a2043ede
+	{"mktag", cmd_mktag},
+	{"commit-tree", cmd_commit_tree},
+	{"write-tree", cmd_write_tree},
+	{"read-tree", cmd_read_tree},
+	{"checkout-index", cmd_checkout_index},
+	{"cat_file", cmd_cat_file}
 };
 
 cmd_handler lookup_handler(const char *cmd) {
