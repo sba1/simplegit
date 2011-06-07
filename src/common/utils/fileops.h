@@ -14,6 +14,10 @@
 //#include <fcntl.h>
 //#include <time.h>
 //
+#include "strbuf.h"
+
+#define GIT_PATH_MAX 4096
+
 #define GIT_PATH_LIST_SEPARATOR ':'
 
 #ifdef GIT__WIN32
@@ -21,39 +25,53 @@
 #else
 #define GIT_PLATFORM_PATH_SEP '\\'
 #endif
-//
-//#ifdef GIT_WIN32
-//GIT_INLINE(int) link(const char *GIT_UNUSED(old), const char *GIT_UNUSED(new))
-//{
-//	GIT_UNUSED_ARG(old)
-//	GIT_UNUSED_ARG(new)
-//	errno = ENOSYS;
-//	return -1;
-//}
-//
+
+
+/**
+ * Join two paths together. Takes care of properly fixing the
+ * middle slashes and everything
+ *
+ * The paths are joined together into buffer_out; this is expected
+ * to be an user allocated buffer of `GIT_PATH_MAX` size
+ */
+extern void joinpath_n(char *buffer_out, int npath, ...);
+
+extern void joinpath(char *buffer_out, const char *path_a, const char *path_b);
+extern int remove_dir_recursively(struct strbuf *path);
+
+
+#ifdef GIT_WIN32
+GIT_INLINE(int) link(const char *GIT_UNUSED(old), const char *GIT_UNUSED(new))
+{
+	GIT_UNUSED_ARG(old)
+	GIT_UNUSED_ARG(new)
+	errno = ENOSYS;
+	return -1;
+}
+
 //GIT_INLINE(int) git__mkdir(const char *path, int GIT_UNUSED(mode))
 //{
 //	GIT_UNUSED_ARG(mode)
 //	return mkdir(path);
 //}
-//
+
 //extern int git__unlink(const char *path);
 //extern int git__mkstemp(char *template);
 //extern int git__fsync(int fd);
-//
+
 //# ifndef GIT__WIN32_NO_HIDE_FILEOPS
 //#  define unlink(p) git__unlink(p)
 //#  define mkstemp(t) git__mkstemp(t)
 //#  define mkdir(p,m) git__mkdir(p, m)
 //#  define fsync(fd) git__fsync(fd)
 //# endif
-//#endif  /* GIT_WIN32 */
-//
-//
-//#if !defined(O_BINARY)
-//#define O_BINARY 0
-//#endif
-//
+#endif  /* GIT_WIN32 */
+
+
+#if !defined(O_BINARY)
+#define O_BINARY 0
+#endif
+
 //#define GITFO_BUF_INIT {NULL, 0}
 //
 //typedef int git_file;
@@ -65,12 +83,12 @@
 //
 extern int git2_exists(const char *path);
 //extern int git2_open(const char *path, int flags);
-//extern int git2_creat(const char *path, int mode);
-//extern int git2_creat_force(const char *path, int mode);
+extern int git2_creat(const char *path, int mode);
+extern int git2_creat_force(const char *path, int mode);
 //extern int git2_mktemp(char *path_out, const char *filename);
 extern int git2_isdir(const char *path);
 extern int git2_mkdir_recurs(const char *path, int mode);
-//extern int git2_mkdir_2file(const char *path);
+extern int git2_mkdir_2file(const char *path);
 //#define git2_close(fd) close(fd)
 //extern int git2_lock_exclusive(int fd);
 //extern int git2_lock_shared(int fd);
@@ -92,15 +110,15 @@ extern int git2_mkdir_recurs(const char *path, int mode);
 //extern int git2_mv_force(const char *from, const char *to);
 //
 #define git2_stat(p,b) stat(p, b)
-//#define git2_fstat(f,b) fstat(f, b)
+#define git2_fstat(f,b) fstat(f, b)
 //extern dev_t git2_retrieve_device(const char *path, dev_t *device);
 #define git2_lstat(p,b) lstat(p,b)
 //
-//#define git2_unlink(p) unlink(p)
-//#define git2_rmdir(p) rmdir(p)
+#define git2_unlink(p) unlink(p)
+#define git2_rmdir(p) rmdir(p)
 #define git2_chdir(p) chdir(p)
 #define git2_mkdir(p,m) mkdir(p, m)
-//
+
 //#define git2_mkstemp(t) mkstemp(t)
 //#define git2_fsync(fd) fsync(fd)
 //#define git2_chmod(p,m) chmod(p, m)

@@ -135,7 +135,7 @@ int cmd_init(int argc, const char **argv){
 
 	if (!quiet_flag) {
 		/* For now git2 can only initialize a repository (no reinitialization) */
-		printf( "Initialized empty Git repository in %s\n", git_repository_path(repo));
+		printf( "Initialized empty Git repository in %s\n", git_repository_path(repo, GIT_REPO_PATH));
 	}
 
 	git_repository_free(repo);

@@ -15,7 +15,11 @@
 int cmd_write_tree(int argc, const char **argv)
 {
 
+<<<<<<< HEAD
  	please_git_do_it_for_me();
+=======
+	please_git_do_it_for_me();
+>>>>>>> 0fe75bbb3d4d0e0f7df2a37f3ba010a5a2043ede
 
 	int verify_index = 1;
 	if (argc == 1)
