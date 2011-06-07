@@ -11,7 +11,8 @@ cmd_struct commands[] = {
 	{"mktag",cmd_mktag},
 	{"commit-tree",cmd_commit_tree},
 	{"write-tree",cmd_write_tree},
-	{"read-tree",cmd_read_tree}
+	{"read-tree",cmd_read_tree},
+	{"cat-file",cmd_cat_file}
 };
 
 cmd_handler lookup_handler(const char *cmd) {
