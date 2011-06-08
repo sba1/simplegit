@@ -17,7 +17,7 @@ struct strbuf buffer = STRBUF_INIT;
 int parent_count = 0;
 git_commit **parents = NULL;
 
-void cleanup() {
+static void cleanup() {
 	int i;
 	git_tree_close(tree);
 	strbuf_release(&buffer);
