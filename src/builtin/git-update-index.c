@@ -30,7 +30,7 @@ int cmd_update_index(int argc, const char **argv)
 {
 	please_git_do_it_for_me();
 	
-	if (argc < 2)
+// 	if (argc < 2)
 		please_git_do_it_for_me();
 	
 	if (strcmp(argv[1], "--add") != 0)
