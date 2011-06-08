@@ -9,6 +9,7 @@
 #include "repository.h"
 #include "date.h"
 #include "strbuf.h"
+#include "environment.h"
 
 git_signature *author_signature = NULL;
 git_signature *committer_signature = NULL;

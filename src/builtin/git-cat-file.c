@@ -26,7 +26,7 @@ int cmd_cat_file(int argc, const char **argv)
 			opt = argv[1][1];
 	else if (argc == 2 && strcmp(argv[1], "--batch"))
 		opt = 'b';
-	
+
 	printf("%c\n",opt);
 	git_repository *repo = get_git_repository();
 	
