@@ -6,6 +6,7 @@
 #include "exec-cmd.h"
 #include "git-init.h"
 #include "git-log.h"
+#include "git-rev-list.h"
 #include "git-ls-files.h"
 #include "git-checkout.h"
 #include "git-ls-tree.h"

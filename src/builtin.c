@@ -4,6 +4,7 @@
 cmd_struct commands[] = {
 	{"init", cmd_init},
 	{"log", cmd_log},
+	{"rev-list", cmd_rev_list},
 	{"ls-files", cmd_ls_files},
 	{"checkout", cmd_checkout},
 	{"ls-tree", cmd_ls_tree},
