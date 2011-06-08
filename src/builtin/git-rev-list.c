@@ -119,7 +119,7 @@ int cmd_rev_list(int argc, const char **argv)
 	if ((git_revwalk_next(current_oid, walk)) == GIT_SUCCESS) {
 		char oid_string[GIT_OID_HEXSZ+1];
 		oid_string[GIT_OID_HEXSZ] = '\0';
-		const char *cmsg, *msg;
+		const char *cmsg;
 
 		while (1) {
 			git_oid_fmt(oid_string, current_oid);
@@ -128,10 +128,9 @@ int cmd_rev_list(int argc, const char **argv)
 			}
 
 			cmsg  = git_commit_message_short(commit);
-			msg  = git_commit_message(commit);
 			
 			git_oid_fmt(oid_string, git_commit_id(commit));
-			printf("%s %s\n%s\n", oid_string, cmsg, msg);
+			printf("%s %s\n", oid_string, cmsg);
 
 			if ((git_revwalk_next(current_oid, walk)) != GIT_SUCCESS)
 				break;
