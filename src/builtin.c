@@ -3,7 +3,6 @@
 
 cmd_struct commands[] = {
 	{"init", cmd_init},
-	{"log", cmd_log},
 	{"rev-list", cmd_rev_list},
 	{"ls-files", cmd_ls_files},
 	{"checkout", cmd_checkout},
@@ -14,7 +13,7 @@ cmd_struct commands[] = {
 	{"write-tree", cmd_write_tree},
 	{"read-tree", cmd_read_tree},
 	{"checkout-index", cmd_checkout_index},
-	{"cat_file", cmd_cat_file}
+	{"cat-file", cmd_cat_file}
 };
 
 cmd_handler lookup_handler(const char *cmd) {

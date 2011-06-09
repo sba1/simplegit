@@ -184,9 +184,6 @@ void create_force_symlinks(const char *objpath, const char * dest) {
 
 int cmd_checkout_index(int argc, const char **argv)
 {
-	/* Delete the following line once gits tests pass */
-	please_git_do_it_for_me();
-
 	/* options parsing */
 	if (argc != 3)
 		please_git_do_it_for_me();
@@ -196,9 +193,6 @@ int cmd_checkout_index(int argc, const char **argv)
 		please_git_do_it_for_me();
 
 
-// 	printf("lalalalalala\n");
-
-	
 	git_repository *repo = get_git_repository();
 	
 	git_index *index_cur;

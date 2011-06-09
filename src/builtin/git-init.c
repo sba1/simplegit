@@ -7,6 +7,7 @@
 #include "parse-options.h"
 #include "fileops.h"
 #include "errors.h"
+#include "environment.h"
 
 #define INIT_DB_QUIET 0x0001
 

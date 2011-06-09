@@ -2,6 +2,7 @@
 #include "repository.h"
 #include "errors.h"
 #include "git-support.h"
+#include "environment.h"
 
 static git_repository *repository = NULL;
 static char prefix[PATH_MAX];
@@ -9,14 +10,20 @@ static int prefix_loaded = 0;
 
 git_repository* get_git_repository() {
 	if (repository == NULL) {
-		const char *argv[]= {"git", "rev-parse", "--git-dir", NULL};
-		char *repository_path = please_git_help_me(argv);
+		char discovered_path[PATH_MAX];
+		char *repository_path = getenv(GIT_DIR_ENVIRONMENT);
 
-		if (git_repository_open(&repository, repository_path)) {
-			libgit_error();
+		if (repository_path == NULL) {
+			if (git_repository_discover(discovered_path, sizeof(discovered_path), ".", 0, getenv(GIT_CEILING_DIRECTORIES_ENVIRONMENT)) < GIT_SUCCESS) {
+				libgit_error();
+			}
+
+			repository_path = discovered_path;
 		}
 
-		free(repository_path);
+		if (git_repository_open(&repository, repository_path) < GIT_SUCCESS) {
+			libgit_error();
+		}
 	}
 
 	return repository;

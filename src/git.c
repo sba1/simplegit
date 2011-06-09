@@ -8,6 +8,7 @@
 #include "parse-options.h"
 #include "repository.h"
 #include "strbuf.h"
+#include "environment.h"
 
 static const char git_usage_string[] =
 	"git [--version] [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n"
