@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "git-parse-mode.h"
 #include "strbuf.h"
+#include "quote.h"
 
 /*
  * => see http://www.kernel.org/pub/software/scm/git/docs/git-ls-files.html
@@ -22,14 +23,14 @@ int cmd_ls_files(int argc, const char **argv)
 {
 	/* Delete the following line once git tests pass */
 	please_git_do_it_for_me();
-	
+
 	int show_cached = 1;
 
 	/* options parsing */
 	if (argc > 1) {
 		if (argc > 2)
 			please_git_do_it_for_me();
-		
+
 		if (strcmp(argv[1], "--stage") == 0 || strcmp(argv[1], "-s") == 0)
 			show_cached = 0;
 		else if (strcmp(argv[1], "--cached") == 0 || strcmp(argv[1], "-c") == 0)
@@ -37,32 +38,32 @@ int cmd_ls_files(int argc, const char **argv)
 		else
 			please_git_do_it_for_me();
 	}
-	
-	
+
+
 	git_repository *repo = get_git_repository();
-	
+
 	git_index *index_cur;
 	int e = git_repository_index(&index_cur, repo);
 	if (e) libgit_error();
-	
+
 	char buf[GIT_OID_HEXSZ+1];
-	
+
 	const char *prefix = get_git_prefix();
 	size_t prefix_len = strlen(prefix);
-	
+
 	for (unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
 		git_index_entry *gie = git_index_get(index_cur, i);
 
 		if (prefixcmp(gie->path, prefix))
 			continue;
-		
-		if (show_cached)
-			printf("%s\n", gie->path + prefix_len);
-		else
-			printf("%06o %s %i\t%s\n", gie->mode, git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), git_index_entry_stage(gie), gie->path + prefix_len);
+
+		if (!show_cached)
+			printf("%06o %s %i\t", gie->mode, git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), git_index_entry_stage(gie));
+
+		write_name_quoted(gie->path + prefix_len, stdout, '\n');
 	}
 
 	git_index_free(index_cur);
-	
+
 	return EXIT_SUCCESS;
 }

@@ -14,7 +14,6 @@
 
 int cmd_write_tree(int argc, const char **argv)
 {
-
 	please_git_do_it_for_me();
 
 	int verify_index = 1;
@@ -26,7 +25,7 @@ int cmd_write_tree(int argc, const char **argv)
 		please_git_do_it_for_me();
 	
 
-	char *sha1buf = (char*)xmalloc(GIT_OID_HEXSZ+1);
+	char sha1buf[GIT_OID_HEXSZ + 1];
 
 	git_repository *repo = get_git_repository();
 	git_index *index_cur;
@@ -56,8 +55,6 @@ int cmd_write_tree(int argc, const char **argv)
 
 	printf("%s\n", git_oid_to_string(sha1buf, GIT_OID_HEXSZ+1, &oid));
 
-	free(sha1buf);
-
-	return 0;
+	return EXIT_SUCCESS;
 }
 

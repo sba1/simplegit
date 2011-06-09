@@ -6,9 +6,12 @@
 #include "git-ls-tree.h"
 #include "git-support.h"
 #include "repository.h"
+#include "quote.h"
 
 int cmd_ls_tree(int argc, const char **argv)
 {
+	please_git_do_it_for_me();
+
 	if (argc != 2)
 		please_git_do_it_for_me();
 
@@ -63,8 +66,10 @@ int cmd_ls_tree(int argc, const char **argv)
 		/* Get the oid of a tree entry */
 		const git_oid *entry_oid = git_tree_entry_id (tree_entry);
 
-		printf("%06o %s %s\t%s\n",git_tree_entry_attributes(tree_entry), git_object_type2string(type_entry_tree),
-			git_oid_to_string(buf, GIT_OID_HEXSZ + 1, entry_oid), name_entry);
+		printf("%06o %s %s\t",git_tree_entry_attributes(tree_entry), git_object_type2string(type_entry_tree),
+			git_oid_to_string(buf, GIT_OID_HEXSZ + 1, entry_oid));
+
+		write_name_quoted(name_entry, stdout, '\n');
 	}
 
 	git_tree_close(tree);

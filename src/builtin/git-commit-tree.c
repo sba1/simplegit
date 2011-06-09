@@ -9,6 +9,7 @@
 #include "repository.h"
 #include "date.h"
 #include "strbuf.h"
+#include "environment.h"
 
 git_signature *author_signature = NULL;
 git_signature *committer_signature = NULL;
@@ -17,7 +18,7 @@ struct strbuf buffer = STRBUF_INIT;
 int parent_count = 0;
 git_commit **parents = NULL;
 
-void cleanup() {
+static void cleanup() {
 	int i;
 	git_tree_close(tree);
 	strbuf_release(&buffer);

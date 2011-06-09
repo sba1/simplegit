@@ -1,4 +1,5 @@
 A VERY minimal git client that relies on libgit2.
+======================
 
 The original source comes from https://github.com/vfr-nl/git2/
 (thanks to Vincent van Ravesteijn and Motiejus Jakštys)
@@ -7,3 +8,30 @@ For every commands (including tricky options and switchs) that
 we do not support (yet), the call is forwarded to the usual "git"
 (found in PATH) and thus git2 is completely transparent for
 users and works exactly as git do.
+
+
+Building git2
+======================
+
+CMake is required to compile.
+
+After git-cloned you need to initialise the submodules :
+    $ git submodule init
+    $ git submodule update
+This can take a lot of time (it clones libgit2 and git repository).
+
+Then you can compile with :
+    $ make
+
+
+Testing
+======================
+
+If you want to test our git client with the tests of git, run :
+    $ make test
+This can take a lot of time (it compiles git and then launch thousands of tests).
+As we are using the git test framework, nearly all what can be done with git test
+can be done with our test base (ie set GIT_SKIP_TESTS or GIT_TEST_OPTS).
+
+You can run a particular test by giving its name :
+   $ make t0000-basic.sh

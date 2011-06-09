@@ -1,9 +1,40 @@
-Write please_git_help_me so that we can fallback to git when we
-can't achieve the job.
 
-Import some git functionnalities to libgit2 (on a new branch) :
-	- find current git directory (currently hold through a call
-	  to please_git_help_me)
-	- find an oid from one of its prefix
+git checkout-index -a -f
+	do other options
+	see the github entry
 
-Feel free to add any ideas here !
+git init (--bare | dir)
+	Some bugs still, see libgit2
+
+git rev-list --pretty=oneline | Sha1
+	do other options
+
+git commit-tree <tree> (-p <commit>)
+	do other options
+
+git ls-tree <tree-ish>
+	do other options
+
+git mktag < signature\_file
+	Done ! But it not pass all tests because git tests check the output...
+
+git ls-files (--stage | --cached)
+	Do other options
+
+git write-tree (--missing-ok)
+	Do other options
+
+git read-tree Sha1
+	Do other options
+
+git update-index (--add) <file>
+	Do other options ("--remove" first !)
+
+git cat-file (-t | -s | -e | -p | <type>) <object>
+	Do other options
+
+
+
+
+and everything else... and feel free to add any ideas here !
+
