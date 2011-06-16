@@ -101,7 +101,7 @@ int cmd_commit_tree(int argc, const char **argv)
 	memcpy(tree_oid_string, argv[1], len * sizeof(char));
 	memset(tree_oid_string + len, '0', (GIT_OID_HEXSZ - len) * sizeof(char));
 	tree_oid_string[GIT_OID_HEXSZ] = '\0';
-	e = git_oid_mkstr(&tree_oid, tree_oid_string);
+	e = git_oid_fromstr(&tree_oid, tree_oid_string);
 	if (e) {
 		/* Not an OID. The object can be specified in a lot
 		 * of different ways (not supported by libgit2 yet).
@@ -160,7 +160,7 @@ int cmd_commit_tree(int argc, const char **argv)
 		memcpy(parent_oid_string, argv[i+1], len * sizeof(char));
 		memset(parent_oid_string + len, '0', (GIT_OID_HEXSZ - len) * sizeof(char));
 		parent_oid_string[GIT_OID_HEXSZ] = '\0';
-		e = git_oid_mkstr(&parent_oid, parent_oid_string);
+		e = git_oid_fromstr(&parent_oid, parent_oid_string);
 		if (e) {
 			/* Not an oid. Maybe parent is specified in another way */
 			please_git_do_it_for_me();

@@ -31,7 +31,7 @@ int cmd_cat_file(int argc, const char **argv)
 	git_repository *repo = get_git_repository();
 
 	git_oid oid;
-	if (git_oid_mkstr(&oid, (const char *)argv[argc-1]))
+	if (git_oid_fromstr(&oid, (const char *)argv[argc-1]))
 		please_git_do_it_for_me();
 
 	git_odb *odb = git_repository_database(repo);

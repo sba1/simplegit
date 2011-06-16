@@ -23,7 +23,7 @@ int cmd_ls_tree(int argc, const char **argv)
 	git_tree *tree;
 	git_oid oid_tree;
 	
-	e = git_oid_mkstr(&oid_tree, (const char *)argv[1]);
+	e = git_oid_fromstr(&oid_tree, (const char *)argv[1]);
 
 	if (e == GIT_ENOTOID) {
 		//libgit do not handle extended sha1 expressions for now

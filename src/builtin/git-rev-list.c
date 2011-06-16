@@ -69,7 +69,7 @@ int cmd_rev_list(int argc, const char **argv)
 	memcpy(commit_oid_string, commit_string, len * sizeof(char));
 	memset(commit_oid_string + len, '0', (GIT_OID_HEXSZ - len) * sizeof(char));
 	commit_oid_string[GIT_OID_HEXSZ] = '\0';
-	e = git_oid_mkstr(&commit_oid, commit_oid_string);
+	e = git_oid_fromstr(&commit_oid, commit_oid_string);
 	if (e) {
 		/* Not an OID. The object can be specified in a lot
 		 * of different ways (not supported by libgit2 yet).

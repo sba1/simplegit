@@ -72,7 +72,7 @@ int cmd_read_tree(int argc, const char **argv)
 	git_tree *tree;
 	git_oid oid_tree;
 
-	switch (git_oid_mkstr(&oid_tree, (const char *)argv[argc-1])) {
+	switch (git_oid_fromstr(&oid_tree, (const char *)argv[argc-1])) {
 		case GIT_ENOTOID:
 			please_git_do_it_for_me();
 			break;
