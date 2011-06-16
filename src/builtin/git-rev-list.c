@@ -26,7 +26,7 @@ int cmd_rev_list(int argc, const char **argv)
 	int i = 0;
 	git_repository *repository=NULL;
 	git_oid commit_oid;
-	git_oid *current_oid;
+	git_oid current_oid;
 	char commit_oid_string[GIT_OID_HEXSZ+1];
 	size_t len;
 	int e;
@@ -109,21 +109,20 @@ int cmd_rev_list(int argc, const char **argv)
 
 	git_revwalk_sorting(walk, GIT_SORT_TIME);
 
-	current_oid = (git_oid *)git_commit_id(commit);
-	if (git_revwalk_push(walk, current_oid)) {
+	if (git_revwalk_push(walk, &commit_oid)) {
 		cleanup();
 		libgit_error();
 	}
 
 	git_commit_close(commit);
-	if ((git_revwalk_next(current_oid, walk)) == GIT_SUCCESS) {
+	if ((git_revwalk_next(&current_oid, walk)) == GIT_SUCCESS) {
 		char oid_string[GIT_OID_HEXSZ+1];
 		oid_string[GIT_OID_HEXSZ] = '\0';
 		const char *cmsg;
 
 		while (1) {
-			git_oid_fmt(oid_string, current_oid);
-			if (git_commit_lookup(&commit, repository, current_oid)) {
+			git_oid_fmt(oid_string, &current_oid);
+			if (git_commit_lookup(&commit, repository, &current_oid)) {
 				libgit_error();
 			}
 
@@ -132,7 +131,7 @@ int cmd_rev_list(int argc, const char **argv)
 			git_oid_fmt(oid_string, git_commit_id(commit));
 			printf("%s %s\n", oid_string, cmsg);
 
-			if ((git_revwalk_next(current_oid, walk)) != GIT_SUCCESS)
+			if ((git_revwalk_next(&current_oid, walk)) != GIT_SUCCESS)
 				break;
 			git_commit_close(commit);
 		}
