@@ -8,6 +8,8 @@
 # Install:
 # > cmake --build . --target install
 
+SET(CMAKE_SYSTEM_NAME "Generic")
+
 project (Git2 C)
 cmake_minimum_required (VERSION 2.6)
 
@@ -37,27 +39,27 @@ set(CMAKE_C_FLAGS_RELEASE "-O2")
 #include libssl
 find_package(OpenSSL)
 add_definitions(-DOPENSSL_SHA1)
-include_directories(${OPENSSL_INCLUDE_DIR})
-set(LIB_SHA1 ${OPENSSL_CRYPTO_LIBRARIES})
+include_directories("/SDK/local/common/include/openssl")
+set(LIB_SHA1 "/SDK/local/newlib/lib/libssl.a")
 
 
 set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 
 include_directories(${INCLUDE_DIRECTORIES})
-include_directories(${LIBGIT2_DIRECTORY}/include)
+#include_directories(${LIBGIT2_DIRECTORY}/include)
 set(LIBS ${LIBS} git2.a ${LIB_SHA1})
 link_directories(${LIBGIT2_BUILD_DIRECTORY})
 
 add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS git2-bin)
-add_custom_target(
-	build_libgit2
-	COMMAND
-		mkdir -p "${LIBGIT2_BUILD_DIRECTORY}" &&
-		cd "${LIBGIT2_BUILD_DIRECTORY}" &&
-		cmake -D BUILD_SHARED_LIBS:OPTION=OFF -D BUILD_TESTS:OPTION=ON -D CMAKE_BUILD_TYPE:STRING="${CMAKE_BUILD_TYPE}" .. &&
-		make
-)
+#add_custom_target(
+#	build_libgit2
+#	COMMAND
+#		mkdir -p "${LIBGIT2_BUILD_DIRECTORY}" &&
+#		cd "${LIBGIT2_BUILD_DIRECTORY}" &&
+#		cmake -D BUILD_SHARED_LIBS:OPTION=OFF -D BUILD_TESTS:OPTION=ON -D CMAKE_BUILD_TYPE:STRING="${CMAKE_BUILD_TYPE}" .. &&
+#		make
+#)
 
 add_executable(git2-bin ${C_SOURCE_FILES})
 set_target_properties(git2-bin PROPERTIES OUTPUT_NAME git2)
