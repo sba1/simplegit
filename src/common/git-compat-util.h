@@ -84,6 +84,10 @@
 #define _NETBSD_SOURCE 1
 #define _SGI_SOURCE 1
 
+#ifdef __amigaos4__
+#define NO_MMAP 1
+#endif
+
 #ifdef WIN32 /* Both MinGW and MSVC */
 #define WIN32_LEAN_AND_MEAN  /* stops windows.h including winsock.h */
 #include <winsock2.h>
@@ -106,7 +110,9 @@
 #include <sys/time.h>
 #include <time.h>
 #include <signal.h>
+#ifndef __amigaos4__
 #include <fnmatch.h>
+#endif
 #include <assert.h>
 #include <regex.h>
 #include <utime.h>
@@ -121,7 +127,9 @@
 #include <sys/resource.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#ifndef __amigaos4__
 #include <termios.h>
+#endif
 #ifndef NO_SYS_SELECT_H
 #include <sys/select.h>
 #endif
