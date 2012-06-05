@@ -51,12 +51,12 @@ enum parse_opt_option_flags {
 	PARSE_OPT_SHELL_EVAL = 256
 };
 
-struct option;
-typedef int parse_opt_cb(const struct option *, const char *arg, int unset);
+struct optiong;
+typedef int parse_opt_cb(const struct optiong *, const char *arg, int unset);
 
 struct parse_opt_ctx_t;
 typedef int parse_opt_ll_cb(struct parse_opt_ctx_t *ctx,
-				const struct option *opt, int unset);
+				const struct optiong *opt, int unset);
 
 /*
  * `type`::
@@ -111,9 +111,8 @@ typedef int parse_opt_ll_cb(struct parse_opt_ctx_t *ctx,
  *   the value when met.
  *   CALLBACKS can use it like they want.
  */
- #if 0
- // defined elsewhere apparently
-struct option {
+
+struct optiong {
 	enum parse_opt_type type;
 	int short_name;
 	const char *long_name;
@@ -125,7 +124,7 @@ struct option {
 	parse_opt_cb *callback;
 	intptr_t defval;
 };
-#endif
+
 #define OPT_END()                   { OPTION_END, 0, NULL, NULL, NULL, NULL, \
 				      0, NULL, 0 }
 #define OPT_ARGUMENT(l, h)          { OPTION_ARGUMENT, 0, (l), NULL, NULL, \
@@ -169,15 +168,15 @@ struct option {
  * Returns the number of arguments left in argv[].
  */
 int parse_options(int argc, const char **argv, const char *prefix,
-                         const struct option *options,
+                         const struct optiong *options,
                          const char * const usagestr[], int flags);
 
 NORETURN void usage_with_options(const char * const *usagestr,
-                                        const struct option *options);
+                                        const struct optiong *options);
 
 NORETURN void usage_msg_opt(const char *msg,
 					const char * const *usagestr,
-					const struct option *options);
+					const struct optiong *options);
 
 /*----- incremental advanced APIs -----*/
 
@@ -204,23 +203,23 @@ struct parse_opt_ctx_t {
 
 void parse_options_start(struct parse_opt_ctx_t *ctx,
 				int argc, const char **argv, const char *prefix,
-				const struct option *options, int flags);
+				const struct optiong *options, int flags);
 
 int parse_options_step(struct parse_opt_ctx_t *ctx,
-				const struct option *options,
+				const struct optiong *options,
 				const char * const usagestr[]);
 
 int parse_options_end(struct parse_opt_ctx_t *ctx);
 
-int parse_options_concat(struct option *dst, size_t, struct option *src);
+int parse_options_concat(struct optiong *dst, size_t, struct optiong *src);
 
 /*----- some often used options -----*/
-int parse_opt_abbrev_cb(const struct option *, const char *, int);
-int parse_opt_approxidate_cb(const struct option *, const char *, int);
-//int parse_opt_color_flag_cb(const struct option *, const char *, int);
-int parse_opt_verbosity_cb(const struct option *, const char *, int);
-//int parse_opt_with_commit(const struct option *, const char *, int);
-int parse_opt_tertiary(const struct option *, const char *, int);
+int parse_opt_abbrev_cb(const struct optiong *, const char *, int);
+int parse_opt_approxidate_cb(const struct optiong *, const char *, int);
+//int parse_opt_color_flag_cb(const struct optiong *, const char *, int);
+int parse_opt_verbosity_cb(const struct optiong *, const char *, int);
+//int parse_opt_with_commit(const struct optiong *, const char *, int);
+int parse_opt_tertiary(const struct optiong *, const char *, int);
 
 #define OPT__VERBOSE(var, h)  OPT_BOOLEAN('v', "verbose", (var), (h))
 #define OPT__QUIET(var, h)    OPT_BOOLEAN('q', "quiet",   (var), (h))

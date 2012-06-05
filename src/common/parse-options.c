@@ -11,19 +11,19 @@ int minimum_abbrev = 4, default_abbrev = 7;
 
 static int parse_options_usage(struct parse_opt_ctx_t *ctx,
 			       const char * const *usagestr,
-			       const struct option *opts, int err);
+			       const struct optiong *opts, int err);
 
 #define OPT_SHORT 1
 #define OPT_UNSET 2
 
-static int optbug(const struct option *opt, const char *reason)
+static int optbug(const struct optiong *opt, const char *reason)
 {
 	if (opt->long_name)
 		return error("BUG: option '%s' %s", opt->long_name, reason);
 	return error("BUG: switch '%c' %s", opt->short_name, reason);
 }
 
-static int opterror(const struct option *opt, const char *reason, int flags)
+static int opterror(const struct optiong *opt, const char *reason, int flags)
 {
 	if (flags & OPT_SHORT)
 		return error("switch `%c' %s", opt->short_name, reason);
@@ -32,7 +32,7 @@ static int opterror(const struct option *opt, const char *reason, int flags)
 	return error("option `%s' %s", opt->long_name, reason);
 }
 
-static int get_arg(struct parse_opt_ctx_t *p, const struct option *opt,
+static int get_arg(struct parse_opt_ctx_t *p, const struct optiong *opt,
 		   int flags, const char **arg)
 {
 	if (p->opt) {
@@ -57,7 +57,7 @@ static void fix_filename(const char *prefix, const char **file)
 }
 
 static int get_value(struct parse_opt_ctx_t *p,
-		     const struct option *opt, int flags)
+		     const struct optiong *opt, int flags)
 {
 	const char *s, *arg;
 	const int unset = flags & OPT_UNSET;
@@ -154,9 +154,9 @@ static int get_value(struct parse_opt_ctx_t *p,
 	}
 }
 
-static int parse_short_opt(struct parse_opt_ctx_t *p, const struct option *options)
+static int parse_short_opt(struct parse_opt_ctx_t *p, const struct optiong *options)
 {
-	const struct option *numopt = NULL;
+	const struct optiong *numopt = NULL;
 
 	for (; options->type != OPTION_END; options++) {
 		if (options->short_name == *p->opt) {
@@ -188,10 +188,10 @@ static int parse_short_opt(struct parse_opt_ctx_t *p, const struct option *optio
 }
 
 static int parse_long_opt(struct parse_opt_ctx_t *p, const char *arg,
-                          const struct option *options)
+                          const struct optiong *options)
 {
 	const char *arg_end = strchr(arg, '=');
-	const struct option *abbrev_option = NULL, *ambiguous_option = NULL;
+	const struct optiong *abbrev_option = NULL, *ambiguous_option = NULL;
 	int abbrev_flags = 0, ambiguous_flags = 0;
 
 	if (!arg_end)
@@ -276,7 +276,7 @@ is_abbreviated:
 }
 
 static int parse_nodash_opt(struct parse_opt_ctx_t *p, const char *arg,
-			    const struct option *options)
+			    const struct optiong *options)
 {
 	for (; options->type != OPTION_END; options++) {
 		if (!(options->flags & PARSE_OPT_NODASH))
@@ -287,7 +287,7 @@ static int parse_nodash_opt(struct parse_opt_ctx_t *p, const char *arg,
 	return -2;
 }
 
-static void check_typos(const char *arg, const struct option *options)
+static void check_typos(const char *arg, const struct optiong *options)
 {
 	if (strlen(arg) < 3)
 		return;
@@ -307,7 +307,7 @@ static void check_typos(const char *arg, const struct option *options)
 	}
 }
 
-static void parse_options_check(const struct option *opts)
+static void parse_options_check(const struct optiong *opts)
 {
 	int err = 0;
 
@@ -343,7 +343,7 @@ static void parse_options_check(const struct option *opts)
 
 void parse_options_start(struct parse_opt_ctx_t *ctx,
 			 int argc, const char **argv, const char *prefix,
-			 const struct option *options, int flags)
+			 const struct optiong *options, int flags)
 {
 	memset(ctx, 0, sizeof(*ctx));
 	ctx->argc = argc - 1;
@@ -360,10 +360,10 @@ void parse_options_start(struct parse_opt_ctx_t *ctx,
 
 static int usage_with_options_internal(struct parse_opt_ctx_t *,
 				       const char * const *,
-				       const struct option *, int, int);
+				       const struct optiong *, int, int);
 
 int parse_options_step(struct parse_opt_ctx_t *ctx,
-		       const struct option *options,
+		       const struct optiong *options,
 		       const char * const usagestr[])
 {
 	int internal_help = !(ctx->flags & PARSE_OPT_NO_INTERNAL_HELP);
@@ -451,7 +451,7 @@ int parse_options_end(struct parse_opt_ctx_t *ctx)
 }
 
 int parse_options(int argc, const char **argv, const char *prefix,
-		  const struct option *options, const char * const usagestr[],
+		  const struct optiong *options, const char * const usagestr[],
 		  int flags)
 {
 	struct parse_opt_ctx_t ctx;
@@ -475,7 +475,7 @@ int parse_options(int argc, const char **argv, const char *prefix,
 	return parse_options_end(&ctx);
 }
 
-static int usage_argh(const struct option *opts, FILE *outfile)
+static int usage_argh(const struct optiong *opts, FILE *outfile)
 {
 	const char *s;
 	int literal = (opts->flags & PARSE_OPT_LITERAL_ARGHELP) || !opts->argh;
@@ -494,7 +494,7 @@ static int usage_argh(const struct option *opts, FILE *outfile)
 
 static int usage_with_options_internal(struct parse_opt_ctx_t *ctx,
 				       const char * const *usagestr,
-				       const struct option *opts, int full, int err)
+				       const struct optiong *opts, int full, int err)
 {
 	FILE *outfile = err ? stderr : stdout;
 
@@ -567,7 +567,7 @@ static int usage_with_options_internal(struct parse_opt_ctx_t *ctx,
 }
 
 void NORETURN usage_with_options(const char * const *usagestr,
-			const struct option *opts)
+			const struct optiong *opts)
 {
 	usage_with_options_internal(NULL, usagestr, opts, 0, 1);
 	do_exit(129);
@@ -575,7 +575,7 @@ void NORETURN usage_with_options(const char * const *usagestr,
 
 void NORETURN usage_msg_opt(const char *msg,
 		   const char * const *usagestr,
-		   const struct option *options)
+		   const struct optiong *options)
 {
 	fprintf(stderr, "%s\n\n", msg);
 	usage_with_options(usagestr, options);
@@ -583,7 +583,7 @@ void NORETURN usage_msg_opt(const char *msg,
 
 static int parse_options_usage(struct parse_opt_ctx_t *ctx,
 			       const char * const *usagestr,
-			       const struct option *opts, int err)
+			       const struct optiong *opts, int err)
 {
 	return usage_with_options_internal(ctx, usagestr, opts, 0, err);
 }
@@ -591,7 +591,7 @@ static int parse_options_usage(struct parse_opt_ctx_t *ctx,
 
 /*----- some often used options -----*/
 
-int parse_opt_abbrev_cb(const struct option *opt, const char *arg, int unset)
+int parse_opt_abbrev_cb(const struct optiong *opt, const char *arg, int unset)
 {
 	int v;
 
@@ -610,7 +610,7 @@ int parse_opt_abbrev_cb(const struct option *opt, const char *arg, int unset)
 	return 0;
 }
 
-int parse_opt_approxidate_cb(const struct option *opt, const char *arg,
+int parse_opt_approxidate_cb(const struct optiong *opt, const char *arg,
 			     int unset)
 {
 	(void)unset;
@@ -618,7 +618,7 @@ int parse_opt_approxidate_cb(const struct option *opt, const char *arg,
 	return 0;
 }
 
-//int parse_opt_color_flag_cb(const struct option *opt, const char *arg,
+//int parse_opt_color_flag_cb(const struct optiong *opt, const char *arg,
 //			    int unset)
 //{
 //	int value;
@@ -633,7 +633,7 @@ int parse_opt_approxidate_cb(const struct option *opt, const char *arg,
 //	return 0;
 //}
 
-int parse_opt_verbosity_cb(const struct option *opt, const char *arg,
+int parse_opt_verbosity_cb(const struct optiong *opt, const char *arg,
 			   int unset)
 {
 	(void)arg;
@@ -656,7 +656,7 @@ int parse_opt_verbosity_cb(const struct option *opt, const char *arg,
 	return 0;
 }
 
-//int parse_opt_with_commit(const struct option *opt, const char *arg, int unset)
+//int parse_opt_with_commit(const struct optiong *opt, const char *arg, int unset)
 //{
 //	unsigned char sha1[20];
 //	struct commit *commit;
@@ -672,7 +672,7 @@ int parse_opt_verbosity_cb(const struct option *opt, const char *arg,
 //	return 0;
 //}
 
-int parse_opt_tertiary(const struct option *opt, const char *arg, int unset)
+int parse_opt_tertiary(const struct optiong *opt, const char *arg, int unset)
 {
 	(void)arg;
 	int *target = opt->value;
@@ -680,7 +680,7 @@ int parse_opt_tertiary(const struct option *opt, const char *arg, int unset)
 	return 0;
 }
 
-int parse_options_concat(struct option *dst, size_t dst_size, struct option *src)
+int parse_options_concat(struct optiong *dst, size_t dst_size, struct optiong *src)
 {
 	unsigned int i, j;
 

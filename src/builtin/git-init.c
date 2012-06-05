@@ -18,7 +18,7 @@ static const char *const init_usage[] = {
 	NULL
 };
 
-int shared_callback(const struct option *opt, const char *arg, int unset) {
+int shared_callback(const struct optiong *opt, const char *arg, int unset) {
 	(void)opt;
 	(void)arg;
 	(void)unset;
@@ -47,7 +47,7 @@ int cmd_init(int argc, const char **argv){
 
 	assert(argc != 0);
 	
-	const struct option init_db_options[] = {
+	const struct optiong init_db_options[] = {
 		OPT_STRING(0, "template", &template_dir, "template-directory",
 				"directory from which templates will be used"),
 		OPT_SET_INT(0, "bare", &is_bare_repository_cfg,
