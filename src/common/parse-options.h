@@ -111,6 +111,8 @@ typedef int parse_opt_ll_cb(struct parse_opt_ctx_t *ctx,
  *   the value when met.
  *   CALLBACKS can use it like they want.
  */
+ #if 0
+ // defined elsewhere apparently
 struct option {
 	enum parse_opt_type type;
 	int short_name;
@@ -123,7 +125,7 @@ struct option {
 	parse_opt_cb *callback;
 	intptr_t defval;
 };
-
+#endif
 #define OPT_END()                   { OPTION_END, 0, NULL, NULL, NULL, NULL, \
 				      0, NULL, 0 }
 #define OPT_ARGUMENT(l, h)          { OPTION_ARGUMENT, 0, (l), NULL, NULL, \
