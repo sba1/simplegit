@@ -2,7 +2,13 @@
 #define __ERRORS_H__
 
 #include <stdarg.h>
+#define GIT_OLD_ERRORS
+#include <git2/errors.h>
+
 #include "git-compat-util.h"
+
+#define git_tree_close(x) git_object_free(x)
+#define git_commit_close(x) git_object_free(x)
 
 void vreportf(const char *prefix, const char *err, va_list params);
 NORETURN void usage(const char *err);

@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "errors.h"
 #include <git2.h>
 #include "git.h"
-#include "errors.h"
 #include "git-commit-tree.h"
 #include "git-support.h"
 #include "repository.h"
@@ -188,14 +188,12 @@ int cmd_commit_tree(int argc, const char **argv)
 		}
 	}
 
-	author_signature = git_signature_new(author_name, author_email, author_timestamp, author_offset);
-	if (author_signature == NULL) {
+	if (git_signature_new(&author_signature, author_name, author_email, author_timestamp, author_offset) != 0) {
 		cleanup();
 		libgit_error();
 	}
 
-	committer_signature = git_signature_new(committer_name, committer_email, committer_timestamp, committer_offset);
-	if (committer_signature == NULL) {
+	if (git_signature_new(&committer_signature, committer_name, committer_email, committer_timestamp, committer_offset) != 0) {
 		cleanup();
 		libgit_error();
 	}
@@ -205,8 +203,10 @@ int cmd_commit_tree(int argc, const char **argv)
 		error("Failed to read changelog");
 	}
 	
-	e = git_commit_create_o(&commit_oid, repo, NULL, author_signature, committer_signature,
-				buffer.buf, tree, parent_count, (const git_commit **)parents);
+	/* was _o  template slightly different, might need some fixing */
+	
+	e = git_commit_create(&commit_oid, repo, NULL, author_signature, committer_signature,
+				NULL, buffer.buf, tree, parent_count, (const git_commit **)parents);
 	if (e) {
 		cleanup();
 		libgit_error();
