@@ -42,13 +42,12 @@ add_definitions(-DOPENSSL_SHA1)
 include_directories("/SDK/local/common/include/openssl")
 set(LIB_SHA1 "/SDK/local/newlib/lib/libssl.a")
 
-
 set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 
 include_directories(${INCLUDE_DIRECTORIES})
 #include_directories(${LIBGIT2_DIRECTORY}/include)
-set(LIBS ${LIBS} git2.a ${LIB_SHA1})
+set(LIBS ${LIBS} git2.a regex.a ${LIB_SHA1})
 link_directories(${LIBGIT2_BUILD_DIRECTORY})
 
 add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS git2-bin)
