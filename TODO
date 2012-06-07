@@ -42,27 +42,25 @@ and everything else... and feel free to add any ideas here !
 
 
 Fix linker errors:
-Linking C executable bin/git2
-CMakeFiles/git2-bin.dir/src/builtin/git-commit-tree.c.obj: In function `cmd_comm
-it_tree':
-/home/Chris/git2/src/builtin/git-commit-tree.c:104: undefined reference to `git_
-oid_fromstr'
-/home/Chris/git2/src/builtin/git-commit-tree.c:163: undefined reference to `git_
-oid_fromstr'
-CMakeFiles/git2-bin.dir/src/common/commands/exec-cmd.c.obj: In function `execv_g
-it_cmd':
+Linking C executable /home/Chris/git2/bin/git2
+CMakeFiles/git2-bin.dir/home/Chris/git2/src/builtin/git-checkout-index.c.obj: In
+ function `cmd_checkout_index':
+/home/Chris/git2/src/builtin/git-checkout-index.c:212: undefined reference to `g
+it_repository_database'
+CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/commands/exec-cmd.c.obj: In f
+unction `execv_git_cmd':
 /home/Chris/git2/src/common/commands/exec-cmd.c:145: undefined reference to `exe
 cvp'
-CMakeFiles/git2-bin.dir/src/common/commands/run-command.c.obj: In function `exec
-v_shell_cmd':
+CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/commands/run-command.c.obj: I
+n function `execv_shell_cmd':
 /home/Chris/git2/src/common/commands/run-command.c:61: undefined reference to `e
 xecvp'
-CMakeFiles/git2-bin.dir/src/common/commands/run-command.c.obj: In function `wait
-_or_whine':
+CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/commands/run-command.c.obj: I
+n function `wait_or_whine':
 /home/Chris/git2/src/common/commands/run-command.c:108: undefined reference to `
 waitpid'
-CMakeFiles/git2-bin.dir/src/common/commands/run-command.c.obj: In function `star
-t_command':
+CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/commands/run-command.c.obj: I
+n function `start_command':
 /home/Chris/git2/src/common/commands/run-command.c:157: undefined reference to `
 pipe'
 /home/Chris/git2/src/common/commands/run-command.c:170: undefined reference to `
@@ -77,75 +75,52 @@ fork'
 unsetenv'
 /home/Chris/git2/src/common/commands/run-command.c:287: undefined reference to `
 execvp'
-CMakeFiles/git2-bin.dir/src/common/git-support.c.obj: In function `please_git_do
-_it_for_me':
+CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/errors.c.obj: In function `li
+bgit_error_builtin':
+/home/Chris/git2/src/common/errors.c:38: undefined reference to `git_lasterror'
+CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/git-support.c.obj: In functio
+n `please_git_do_it_for_me':
 /home/Chris/git2/src/common/git-support.c:50: undefined reference to `execvp'
-CMakeFiles/git2-bin.dir/src/common/repository.c.obj: In function `get_git_reposi
-tory':
-/home/Chris/git2/src/common/repository.c:17: undefined reference to `git_reposit
-ory_discover'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(index.c.obj): In fun
-ction `git_index_write':
-index.c:(.text+0x454): undefined reference to `htonl'
-index.c:(.text+0x46c): undefined reference to `htonl'
-index.c:(.text+0x47c): undefined reference to `htonl'
-index.c:(.text+0x51c): undefined reference to `htonl'
-index.c:(.text+0x530): undefined reference to `htonl'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(index.c.obj):index.c
-:(.text+0x544): more undefined references to `htonl' follow
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(index.c.obj): In fun
-ction `git_index_write':
-index.c:(.text+0x5f4): undefined reference to `htons'
-index.c:(.text+0x730): undefined reference to `htons'
-index.c:(.text+0x74c): undefined reference to `htonl'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(index.c.obj): In fun
-ction `git_index_read':
-index.c:(.text+0x1278): undefined reference to `ntohl'
-index.c:(.text+0x13a8): undefined reference to `ntohl'
-index.c:(.text+0x13cc): undefined reference to `ntohl'
-index.c:(.text+0x1444): undefined reference to `ntohl'
-index.c:(.text+0x145c): undefined reference to `ntohl'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(index.c.obj):index.c
-:(.text+0x146c): more undefined references to `ntohl' follow
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(index.c.obj): In fun
-ction `git_index_read':
-index.c:(.text+0x1508): undefined reference to `ntohs'
-index.c:(.text+0x1618): undefined reference to `ntohs'
-index.c:(.text+0x1710): undefined reference to `ntohl'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(odb_pack.c.obj): In
-function `pack_index_open':
-odb_pack.c:(.text+0x720): undefined reference to `htonl'
-odb_pack.c:(.text+0x738): undefined reference to `ntohl'
-odb_pack.c:(.text+0x758): undefined reference to `ntohl'
-odb_pack.c:(.text+0x82c): undefined reference to `ntohl'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(odb_pack.c.obj): In
-function `pack_entry_find_offset':
-odb_pack.c:(.text+0x948): undefined reference to `ntohl'
-odb_pack.c:(.text+0x9dc): undefined reference to `ntohl'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(odb_pack.c.obj):odb_
-pack.c:(.text+0xa44): more undefined references to `ntohl' follow
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(odb_pack.c.obj): In
-function `packfile_open':
-odb_pack.c:(.text+0xc80): undefined reference to `htonl'
-odb_pack.c:(.text+0xc98): undefined reference to `htonl'
-odb_pack.c:(.text+0xcb0): undefined reference to `htonl'
-odb_pack.c:(.text+0xcc8): undefined reference to `ntohl'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(sha1.c.obj): In func
-tion `blk_SHA1_Block':
-sha1.c:(.text+0xd4): undefined reference to `ntohl'
-sha1.c:(.text+0x100): undefined reference to `ntohl'
-sha1.c:(.text+0x13c): undefined reference to `ntohl'
-sha1.c:(.text+0x174): undefined reference to `ntohl'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(sha1.c.obj):sha1.c:(
-.text+0x1ac): more undefined references to `ntohl' follow
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(sha1.c.obj): In func
-tion `git__blk_SHA1_Final':
-sha1.c:(.text+0x145c): undefined reference to `htonl'
-sha1.c:(.text+0x1470): undefined reference to `htonl'
-sha1.c:(.text+0x153c): undefined reference to `htonl'
-sha1.c:(.text+0x154c): undefined reference to `htonl'
-sha1.c:(.text+0x155c): undefined reference to `htonl'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(sha1.c.obj):sha1.c:(
-.text+0x156c): more undefined references to `htonl' follow
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(errors.c.obj): In fu
+nction `giterr_set_regex':
+/home/Chris/libgit2/src/errors.c:106: undefined reference to `regerror'
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(path.c.obj): In func
+tion `git_path_direach':
+/home/Chris/libgit2/src/path.c:515: undefined reference to `readdir_r'
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(path.c.obj): In func
+tion `git_path_dirload':
+/home/Chris/libgit2/src/path.c:573: undefined reference to `readdir_r'
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(revwalk.c.obj): In f
+unction `push_glob_cb':
+/home/Chris/libgit2/src/revwalk.c:489: undefined reference to `p_fnmatch'
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(revwalk.c.obj): In f
+unction `push_glob':
+/home/Chris/libgit2/src/revwalk.c:512: undefined reference to `regcomp'
+/home/Chris/libgit2/src/revwalk.c:518: undefined reference to `regexec'
+/home/Chris/libgit2/src/revwalk.c:532: undefined reference to `regfree'
+/home/Chris/libgit2/src/revwalk.c:537: undefined reference to `regfree'
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(tag.c.obj): In funct
+ion `tag_list_cb':
+/home/Chris/libgit2/src/tag.c:417: undefined reference to `p_fnmatch'
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(attr_file.c.obj): In
+ function `git_attr_fnmatch__match':
+/home/Chris/libgit2/src/attr_file.c:219: undefined reference to `p_fnmatch'
+/home/Chris/libgit2/src/attr_file.c:221: undefined reference to `p_fnmatch'
+/home/Chris/libgit2/src/attr_file.c:223: undefined reference to `p_fnmatch'
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(config_file.c.obj):
+In function `config_get_multivar':
+/home/Chris/libgit2/src/config_file.c:327: undefined reference to `regcomp'
+/home/Chris/libgit2/src/config_file.c:336: undefined reference to `regexec'
+/home/Chris/libgit2/src/config_file.c:345: undefined reference to `regfree'
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(config_file.c.obj):
+In function `config_set_multivar':
+/home/Chris/libgit2/src/config_file.c:385: undefined reference to `regcomp'
+/home/Chris/libgit2/src/config_file.c:393: undefined reference to `regexec'
+/home/Chris/libgit2/src/config_file.c:427: undefined reference to `regfree'
+/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(config_file.c.obj):
+In function `config_write':
+/home/Chris/libgit2/src/config_file.c:1066: undefined reference to `regexec'
 collect2: ld returned 1 exit status
-
+CMakeFiles/git2-bin.dir/build.make:786: recipe for target `/home/Chris/git2/bin/
+git2' failed
+make[3]: *** [/home/Chris/git2/bin/git2] Error 1

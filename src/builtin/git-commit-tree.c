@@ -120,7 +120,7 @@ int cmd_commit_tree(int argc, const char **argv)
 			 * Fall back to git.
 			 */
 			 please_git_do_it_for_me();
-		} else if (e == GIT_EAMBIGUOUSOIDPREFIX) {
+		} else if (e == GIT_EAMBIGUOUS) {
 			error("%s is an ambiguous prefix", argv[1]);
 		} else {
 			libgit_error();
@@ -170,7 +170,7 @@ int cmd_commit_tree(int argc, const char **argv)
 		if (e != GIT_SUCCESS) {
 			if (e == GIT_ENOTFOUND) {
 				 please_git_do_it_for_me();
-			} else if (e == GIT_EAMBIGUOUSOIDPREFIX) {
+			} else if (e == GIT_EAMBIGUOUS) {
 				error("%s is an ambiguous prefix", argv[i+1]);
 			} else {
 				cleanup();

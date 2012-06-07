@@ -1,5 +1,6 @@
+#include "errors.h"
 #include "fileops.h"
-#include "git2.h"
+#include <git2.h>
 #include <ctype.h>
 
 

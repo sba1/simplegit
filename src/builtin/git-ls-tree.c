@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "errors.h"
 #include <git2.h>
 #include <assert.h>
-#include "errors.h"
 #include "git-ls-tree.h"
 #include "git-support.h"
 #include "repository.h"

@@ -3,9 +3,9 @@
 #include <string.h>
 #include <sys/types.h>
 
+#include "errors.h"
 #include <git2.h>
 
-#include "errors.h"
 #include "git-support.h"
 #include "repository.h"
 #include "strbuf.h"

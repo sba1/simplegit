@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
+#include "errors.h"
 #include <git2.h>
 #include "git-rev-list.h"
 #include "repository.h"
 #include "git-support.h"
-#include "errors.h"
 #include "parse-options.h"
 #include "strbuf.h"
 
@@ -89,7 +89,7 @@ int cmd_rev_list(int argc, const char **argv)
 			 * Fall back to git.
 			 */
 			 please_git_do_it_for_me();
-		} else if (e == GIT_EAMBIGUOUSOIDPREFIX) {
+		} else if (e == GIT_EAMBIGUOUS) {
 			error("%s is an ambiguous prefix", commit_string);
 		} else {
 			libgit_error();

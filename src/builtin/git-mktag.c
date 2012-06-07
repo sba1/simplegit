@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <git2.h>
 #include "errors.h"
+#include <git2.h>
 #include "git-mktag.h"
 #include "git-support.h"
 #include "repository.h"
@@ -29,7 +29,7 @@ int cmd_mktag(int argc, const char **argv)
 	git_oid oid_tag;
 	git_repository *repo = get_git_repository();
 	
-	e = git_tag_create_frombuffer(&oid_tag,repo,buf.buf);
+	e = git_tag_create_frombuffer(&oid_tag,repo,buf.buf,0);
 	if( e != GIT_EEXISTS && e != GIT_SUCCESS )
 		libgit_error();
 	

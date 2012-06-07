@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include "repository.h"
 #include "errors.h"
+#include "repository.h"
 #include "git-support.h"
 #include "environment.h"
 

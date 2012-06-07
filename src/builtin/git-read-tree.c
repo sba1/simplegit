@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <git2.h>
 #include "errors.h"
+#include <git2.h>
 #include "git-ls-tree.h"
 #include "git-support.h"
 #include "repository.h"
