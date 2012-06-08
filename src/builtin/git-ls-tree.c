@@ -67,7 +67,7 @@ int cmd_ls_tree(int argc, const char **argv)
 		const git_oid *entry_oid = git_tree_entry_id (tree_entry);
 
 		printf("%06o %s %s\t",git_tree_entry_attributes(tree_entry), git_object_type2string(type_entry_tree),
-			git_oid_to_string(buf, GIT_OID_HEXSZ + 1, entry_oid));
+			git_oid_tostr(buf, GIT_OID_HEXSZ + 1, entry_oid));
 
 		write_name_quoted(name_entry, stdout, '\n');
 	}

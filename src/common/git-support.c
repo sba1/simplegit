@@ -47,8 +47,10 @@ char *please_git_help_me(const char **argv) {
 static char **git_argv = NULL;
 
 void please_git_do_it_for_me() {
+#ifndef __amigaos4__
 	execvp(git_argv[0], git_argv);
 	die_errno("Failed to fallback to git.");
+#endif
 }
 
 void git_support_register_arguments(int argc, const char **argv) {

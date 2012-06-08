@@ -34,7 +34,8 @@ int cmd_cat_file(int argc, const char **argv)
 	if (git_oid_fromstr(&oid, (const char *)argv[argc-1]))
 		please_git_do_it_for_me();
 
-	git_odb *odb = git_repository_database(repo);
+	git_odb *odb;
+	git_repository_odb(&odb, repo);
 	git_odb_object *odb_object;
 	if(git_odb_read(&odb_object, odb, &oid) == GIT_ENOTFOUND)
 		libgit_error();

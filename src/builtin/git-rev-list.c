@@ -126,7 +126,7 @@ int cmd_rev_list(int argc, const char **argv)
 				libgit_error();
 			}
 
-			cmsg  = git_commit_message_short(commit);
+			cmsg  = git_commit_message(commit);
 			
 			git_oid_fmt(oid_string, git_commit_id(commit));
 			printf("%s %s\n", oid_string, cmsg);

@@ -58,7 +58,7 @@ int cmd_ls_files(int argc, const char **argv)
 			continue;
 
 		if (!show_cached)
-			printf("%06o %s %i\t", gie->mode, git_oid_to_string(buf, GIT_OID_HEXSZ+1, &gie->oid), git_index_entry_stage(gie));
+			printf("%06o %s %i\t", gie->mode, git_oid_tostr(buf, GIT_OID_HEXSZ+1, &gie->oid), git_index_entry_stage(gie));
 
 		write_name_quoted(gie->path + prefix_len, stdout, '\n');
 	}

@@ -6,7 +6,11 @@ char *please_git_help_me(const char **argv);
 //You have to free the returned string when you don't need it
 //anymore
 
+#ifndef __amigaos4__
 void please_git_do_it_for_me() __attribute__((noreturn));
+#else
+void please_git_do_it_for_me();
+#endif
 //substitute the current executable to git
 //and execute the command call (registered by main
 //at the program call with git_support_register_arguments)
