@@ -208,8 +208,13 @@ int cmd_checkout_index(int argc, const char **argv)
 	for (unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
 		git_index_entry *gie = git_index_get(index_cur, i);
 // 		printf("%06o\t%s\n", gie->mode, gie->path);
+		git_odb *odb;
 		git_odb_object * obj;
-		e = git_odb_read(&obj, git_repository_database(repo), &gie->oid);
+		
+		if (git_repository_odb(&obj, repo) != 0)
+			libgit_error();
+
+		e = git_odb_read(&obj, odb, &gie->oid);
 		if(e != GIT_SUCCESS)
 			libgit_error();
 		//TODO:tester le type et lancer le bon cretae_force_* en fonction...

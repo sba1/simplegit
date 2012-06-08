@@ -208,7 +208,9 @@ fail_pipe:
 	if (pipe(notify_pipe))
 		notify_pipe[0] = notify_pipe[1] = -1;
 
+#ifndef __amigaos4__
 	cmd->pid = fork();
+#endif
 	if (!cmd->pid) {
 		/*
 		 * Redirect the channel to write syscall error messages to
@@ -265,8 +267,10 @@ fail_pipe:
 			for (; *cmd->env; cmd->env++) {
 				if (strchr(*cmd->env, '='))
 					putenv((char *)*cmd->env);
+#ifndef __amigaos4__
 				else
 					unsetenv(*cmd->env);
+#endif
 			}
 		}
 		if (cmd->preexec_cb) {
