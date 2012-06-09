@@ -17,6 +17,8 @@
 #include "git-checkout-index.h"
 #include "git-cat-file.h"
 
+#include "common.h"
+
 int cmd_init(int argc, const char **argv);
 
 extern cmd_struct commands[];

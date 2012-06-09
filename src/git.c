@@ -95,6 +95,8 @@ static int handle_options(const char ***argv, int *argc) {
 }
 
 int main(int argc, const char **argv){
+	int code = 0;
+
 	git_extract_argv0_path(argv[0]);
 	git_support_register_arguments(argc, argv);
 	//register argument so that we can fallback to git
@@ -107,10 +109,20 @@ int main(int argc, const char **argv){
 	if (argc == 0) {
 		usage(git_usage_string);
 	}
+#if 0
+	// Before running the actual command, create an instance of the local
+	// repository and pass it to the function.
+	int error;
+	git_repository *repo;
 
+	error = git_repository_open(&repo, ".git");
+	if (error < 0)
+		repo = NULL;
+#endif		
+	
 	cmd_handler handler = lookup_handler(argv[0]);
 	if (handler != NULL) {
-		int code = handler(argc, argv);
+		code = handler(argc, argv);
 	} else {
 		please_git_do_it_for_me();
 	}

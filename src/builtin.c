@@ -13,7 +13,10 @@ cmd_struct commands[] = {
 	{"write-tree", cmd_write_tree},
 	{"read-tree", cmd_read_tree},
 	{"checkout-index", cmd_checkout_index},
-	{"cat-file", cmd_cat_file}
+	{"cat-file", cmd_cat_file},
+	{"ls-remote", ls_remote},
+	{"fetch", fetch},
+	{"index-pack", index_pack},
 };
 
 cmd_handler lookup_handler(const char *cmd) {
