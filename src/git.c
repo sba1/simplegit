@@ -109,11 +109,11 @@ int main(int argc, const char **argv){
 	}
 
 	cmd_handler handler = lookup_handler(argv[0]);
-	if (handler == NULL) {
+	if (handler != NULL) {
+		int code = handler(argc, argv);
+	} else {
 		please_git_do_it_for_me();
 	}
-
-	int code = handler(argc, argv);
 
 	free_global_resources();
 
