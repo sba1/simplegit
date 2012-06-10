@@ -33,6 +33,8 @@ file(GLOB_RECURSE C_SOURCE_FILES ${SRC_DIRECTORY}/*.c)
 
 add_definitions(-std=gnu99 -Wall -Wextra -pedantic)
 
+add_definitions(-DNO_PTHREADS)
+
 set(CMAKE_C_FLAGS_DEBUG "-g -O0")
 set(CMAKE_C_FLAGS_RELEASE "-O2")
 
@@ -47,7 +49,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(${INCLUDE_DIRECTORIES})
 #include_directories(${LIBGIT2_DIRECTORY}/include)
-set(LIBS ${LIBS} git2.a regex.a pthread.a ${LIB_SHA1})
+set(LIBS ${LIBS} git2.a pthread.a ${LIB_SHA1})
 link_directories(${LIBGIT2_BUILD_DIRECTORY})
 
 add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS git2-bin)
