@@ -40,87 +40,9 @@ and everything else... and feel free to add any ideas here !
 
 
 
+CY TODO for OS4 port:
 
-Fix linker errors:
-Linking C executable /home/Chris/git2/bin/git2
-CMakeFiles/git2-bin.dir/home/Chris/git2/src/builtin/git-checkout-index.c.obj: In
- function `cmd_checkout_index':
-/home/Chris/git2/src/builtin/git-checkout-index.c:212: undefined reference to `g
-it_repository_database'
-CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/commands/exec-cmd.c.obj: In f
-unction `execv_git_cmd':
-/home/Chris/git2/src/common/commands/exec-cmd.c:145: undefined reference to `exe
-cvp'
-CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/commands/run-command.c.obj: I
-n function `execv_shell_cmd':
-/home/Chris/git2/src/common/commands/run-command.c:61: undefined reference to `e
-xecvp'
-CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/commands/run-command.c.obj: I
-n function `wait_or_whine':
-/home/Chris/git2/src/common/commands/run-command.c:108: undefined reference to `
-waitpid'
-CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/commands/run-command.c.obj: I
-n function `start_command':
-/home/Chris/git2/src/common/commands/run-command.c:157: undefined reference to `
-pipe'
-/home/Chris/git2/src/common/commands/run-command.c:170: undefined reference to `
-pipe'
-/home/Chris/git2/src/common/commands/run-command.c:183: undefined reference to `
-pipe'
-/home/Chris/git2/src/common/commands/run-command.c:208: undefined reference to `
-pipe'
-/home/Chris/git2/src/common/commands/run-command.c:211: undefined reference to `
-fork'
-/home/Chris/git2/src/common/commands/run-command.c:269: undefined reference to `
-unsetenv'
-/home/Chris/git2/src/common/commands/run-command.c:287: undefined reference to `
-execvp'
-CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/errors.c.obj: In function `li
-bgit_error_builtin':
-/home/Chris/git2/src/common/errors.c:38: undefined reference to `git_lasterror'
-CMakeFiles/git2-bin.dir/home/Chris/git2/src/common/git-support.c.obj: In functio
-n `please_git_do_it_for_me':
-/home/Chris/git2/src/common/git-support.c:50: undefined reference to `execvp'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(errors.c.obj): In fu
-nction `giterr_set_regex':
-/home/Chris/libgit2/src/errors.c:106: undefined reference to `regerror'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(path.c.obj): In func
-tion `git_path_direach':
-/home/Chris/libgit2/src/path.c:515: undefined reference to `readdir_r'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(path.c.obj): In func
-tion `git_path_dirload':
-/home/Chris/libgit2/src/path.c:573: undefined reference to `readdir_r'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(revwalk.c.obj): In f
-unction `push_glob_cb':
-/home/Chris/libgit2/src/revwalk.c:489: undefined reference to `p_fnmatch'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(revwalk.c.obj): In f
-unction `push_glob':
-/home/Chris/libgit2/src/revwalk.c:512: undefined reference to `regcomp'
-/home/Chris/libgit2/src/revwalk.c:518: undefined reference to `regexec'
-/home/Chris/libgit2/src/revwalk.c:532: undefined reference to `regfree'
-/home/Chris/libgit2/src/revwalk.c:537: undefined reference to `regfree'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(tag.c.obj): In funct
-ion `tag_list_cb':
-/home/Chris/libgit2/src/tag.c:417: undefined reference to `p_fnmatch'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(attr_file.c.obj): In
- function `git_attr_fnmatch__match':
-/home/Chris/libgit2/src/attr_file.c:219: undefined reference to `p_fnmatch'
-/home/Chris/libgit2/src/attr_file.c:221: undefined reference to `p_fnmatch'
-/home/Chris/libgit2/src/attr_file.c:223: undefined reference to `p_fnmatch'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(config_file.c.obj):
-In function `config_get_multivar':
-/home/Chris/libgit2/src/config_file.c:327: undefined reference to `regcomp'
-/home/Chris/libgit2/src/config_file.c:336: undefined reference to `regexec'
-/home/Chris/libgit2/src/config_file.c:345: undefined reference to `regfree'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(config_file.c.obj):
-In function `config_set_multivar':
-/home/Chris/libgit2/src/config_file.c:385: undefined reference to `regcomp'
-/home/Chris/libgit2/src/config_file.c:393: undefined reference to `regexec'
-/home/Chris/libgit2/src/config_file.c:427: undefined reference to `regfree'
-/usr/local/amiga/ppc-amigaos/SDK/local/newlib/lib/libgit2.a(config_file.c.obj):
-In function `config_write':
-/home/Chris/libgit2/src/config_file.c:1066: undefined reference to `regexec'
-collect2: ld returned 1 exit status
-CMakeFiles/git2-bin.dir/build.make:786: recipe for target `/home/Chris/git2/bin/
-git2' failed
-make[3]: *** [/home/Chris/git2/bin/git2] Error 1
+Fix update-index (test write-tree and commit-tree)
+Add high level add and commit (should be a doddle)
+Figure out how to add merge (needed for clone and pull - might need to read more of the doc I started reading) << this is a priority
+Add push (think this should be easy although I'm not sure ssh is supported by libgit2 yet)
