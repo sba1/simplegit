@@ -14,7 +14,7 @@ git_repository* get_git_repository() {
 		char *repository_path = getenv(GIT_DIR_ENVIRONMENT);
 
 		if (repository_path == NULL) {
-			if (git_repository_discover(discovered_path, sizeof(discovered_path), ".", 0, getenv(GIT_CEILING_DIRECTORIES_ENVIRONMENT)) < GIT_SUCCESS) {
+			if (git_repository_discover(discovered_path, sizeof(discovered_path), "", 0, getenv(GIT_CEILING_DIRECTORIES_ENVIRONMENT)) < GIT_SUCCESS) {
 				libgit_error();
 			}
 

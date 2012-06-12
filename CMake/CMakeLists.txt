@@ -33,7 +33,7 @@ file(GLOB_RECURSE C_SOURCE_FILES ${SRC_DIRECTORY}/*.c)
 
 add_definitions(-std=gnu99 -Wall -Wextra -pedantic)
 
-add_definitions(-DNO_PTHREADS)
+#add_definitions(-DNO_PTHREADS)
 
 set(CMAKE_C_FLAGS_DEBUG "-g -O0")
 set(CMAKE_C_FLAGS_RELEASE "-O2")

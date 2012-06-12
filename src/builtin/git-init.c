@@ -38,7 +38,7 @@ int cmd_init(int argc, const char **argv){
 	char cwd[PATH_MAX];
 	const char *real_git_dir = NULL;
 	const char *template_dir = NULL;
-	char default_git_dir[] = ".";
+	char default_git_dir[] = "";
 	char *git_dir = NULL;
 	unsigned int quiet_flag = 0;
 	int is_bare_repository_cfg = 0;
