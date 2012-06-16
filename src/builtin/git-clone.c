@@ -1,13 +1,17 @@
+#include "errors.h"
+#include <git2.h>
+
+
 int clone(int argc, char **argv)
 {   
 // Let's suppose the URL looks like: https://github.com/libgit2/libgit2.git
 // Then we need to get a URL like this too: git://github.com/libgit2/libgit2.git
 // This may be a bit dodgy, but it will do for now.
-const char *gitURL = [remoteURL.absoluteString stringByReplacingOccurrencesOfString:@"https://github.com/" withString:@"git://github.com/"].UTF8String;
+//const char *gitURL = [remoteURL.absoluteString stringByReplacingOccurrencesOfString:@"https://github.com/" withString:@"git://github.com/"].UTF8String;
 
 //Setup
 int error;
-git_repository *repo
+git_repository *repo;
 git_config *cfg;
 git_remote *remote;
 
@@ -82,7 +86,7 @@ if (packname != NULL)
 
 //    NSString *hashStr = [NSString stringWithCString:hash encoding:NSUTF8StringEncoding];
 //    hashStr = [NSString stringWithFormat:@"pack-%@.idx",hashStr];
-    const char *indexPath = [hashStr UTF8String];
+    const char *indexPath = NULL; //[hashStr UTF8String];
 
     puts(hash);
     git_index *index;
@@ -92,7 +96,7 @@ if (packname != NULL)
 
 
     git_indexer_free(indexer);
-    git_remote_update_tips(remote, update_cb2); //No idea what it does, but it seems like it's important… It does make the branches appear in .git/refs/remotes/origin
+    // what is update_cb2???   git_remote_update_tips(remote, update_cb2); //No idea what it does, but it seems like it's important… It does make the branches appear in .git/refs/remotes/origin
 
 }
 
