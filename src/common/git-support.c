@@ -5,6 +5,10 @@
 #include "errors.h"
 
 char *please_git_help_me(const char **argv) {
+#ifdef __amigaos4__
+	char *buffer = '\0';
+	printf("please_git_help_me()\n");
+#else
 	struct child_process process;
 	memset(&process, 0, sizeof(process));
 	process.argv = argv;
@@ -40,7 +44,7 @@ char *please_git_help_me(const char **argv) {
 			buffer = (char*)xrealloc(buffer, sizeof(char) * (count + 1024 + 1));
 		}
 	}
-
+#endif
 	return buffer;
 }
 

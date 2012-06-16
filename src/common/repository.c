@@ -32,8 +32,9 @@ git_repository* get_git_repository() {
 const char *get_git_prefix() {
 	if (!prefix_loaded) {
 		const char *argv[]= {"git", "rev-parse", "--show-prefix", NULL};
-		char *new_prefix = please_git_help_me(argv);
-
+		char *new_prefix = malloc(1);
+		new_prefix[0] = '\0';
+		
 		if (sizeof(new_prefix) > sizeof(prefix)) {
 			die("The given prefix is too long.\n");
 		}

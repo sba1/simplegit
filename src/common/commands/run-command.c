@@ -210,6 +210,8 @@ fail_pipe:
 
 #ifndef __amigaos4__
 	cmd->pid = fork();
+#else
+	printf("Warning: fork()!\n");
 #endif
 	if (!cmd->pid) {
 		/*
