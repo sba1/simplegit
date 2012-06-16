@@ -1,6 +1,6 @@
 #include "errors.h"
 #include <git2.h>
-
+#include "common.h"
 
 int clone(int argc, char **argv)
 {   
@@ -66,8 +66,9 @@ int clone(int argc, char **argv)
 	{
 		if(strstr(de->d_name, ".pack") == NULL) continue;
 		
-		asprintf(&packname, "%s/%s", packFolderURL, de->d_name); /* should probably ensure it is .pack */
-
+		asprintf(&packname, "%s/%s", packFolderURL, de->d_name);
+		printf("packfile: %s\n", packname);
+		
 		// unpack pack file
 		if (packname != NULL)
 		{
@@ -93,12 +94,15 @@ int clone(int argc, char **argv)
 			git_repository_set_index(repo, index);
 
 			git_indexer_free(indexer);
-			// what is update_cb2??   git_remote_update_tips(remote, update_cb2); //No idea what it does, but it seems like it's important… It does make the branches appear in .git/refs/remotes/origin
+			git_remote_update_tips(remote, update_cb); //No idea what it does, but it seems like it's important… It does make the branches appear in .git/refs/remotes/origin
 
 			free(indexPath);
 			free(packname);
 		}
 	}
+	
+	if(dir) closedir(dir);
+	
 //Somehow do git checkout master here
 
 return 0;
