@@ -9,19 +9,19 @@
 
 int cmd_checkout(int argc, const char **argv) 
 {
-	/* Delete the following line once gits tests pass */
+	/* Delete the following line once gits tests pass
 	please_git_do_it_for_me();
 
 	if (argc != 1)
 		please_git_do_it_for_me();
-	
+	*/
 	git_index *index;
 	git_repository *repo;
 	git_index_entry *index_entry;
 	git_oid id;
 	
 	 /* Open the repository */
-	if (git_repository_open(&repo, argv[argc-1])) {
+	if (git_repository_open(&repo, ".git")) {
 		libgit_error();
 	}
 
@@ -31,11 +31,11 @@ int cmd_checkout(int argc, const char **argv)
 	}
 	
 	/* Find the first index of any entries which point to given path in the Git index */
-	if (git_index_find (index, argv[argc-1])) {
+	if (git_index_find (index, ".git")) {
 		libgit_error();
 	}
 
-	int i;
+	int i = 0;
 
 	/* get a pointer to one of the entries in the index */
 	index_entry = git_index_get(index, i);
