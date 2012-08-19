@@ -54,7 +54,7 @@ int clone(int argc, char **argv)
 
 	// Watch for progress information
 	do {
-		usleep(10000);
+		usleep(100000);
 		printf("Fetch %d/%d  –  Checkout %d/%d\n",
 				 data.fetch_stats.processed, data.fetch_stats.total,
 				 data.checkout_stats.processed, data.checkout_stats.total);
