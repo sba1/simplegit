@@ -89,12 +89,12 @@ int cmd_init(int argc, const char **argv){
 	}
 
 	git_config *cfg;
-	e = git_config_open_global(&cfg);
-	if (e == GIT_SUCCESS) {
+	e = git_config_open_default(&cfg);
+	if (e == GIT_OK) {
 		const char *init_template_dir;
 		/* libgit2 does not handle template dirs for now */
 		e = git_config_get_string(cfg, "init.templatedir", &init_template_dir);
-		if (e == GIT_SUCCESS && init_template_dir != NULL) {
+		if (e == GIT_OK && init_template_dir != NULL) {
 			please_git_do_it_for_me();
 		}
 
@@ -127,10 +127,7 @@ int cmd_init(int argc, const char **argv){
 
 	e = git_repository_init(&repo, git_dir, is_bare_repository_cfg);
 
-	if (e == GIT_ENOTIMPLEMENTED) {
-		/* Will happen when trying to reinitialize a repo */
-		please_git_do_it_for_me();
-	} else if (e) {
+	if (e != GIT_OK) {
 		libgit_error();
 	}
 

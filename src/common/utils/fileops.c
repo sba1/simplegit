@@ -45,14 +45,14 @@ int dirname_r(char *buffer, size_t bufflen, const char *path)
 	Exit:
 	result = len;
 	if (len+1 > GIT_PATH_MAX) {
-		return GIT_ENOMEM;
+		return GIT_ERROR;
 	}
 	if (buffer == NULL)
 		return result;
 
 	if (len > (int)bufflen-1) {
 		len    = (int)bufflen-1;
-		result = GIT_ENOMEM;
+		result = GIT_ERROR;
 	}
 
 	if (len >= 0) {
@@ -104,13 +104,13 @@ void joinpath(char *buffer_out, const char *path_a, const char *path_b)
 int git2_mkdir_2file(const char *file_path)
 {
 	const int mode = 0755; /* or 0777 ? */
-	int error = GIT_SUCCESS;
+	int error = GIT_OK;
 	char target_folder_path[GIT_PATH_MAX];
 	
 	error = dirname_r(target_folder_path, sizeof(target_folder_path), file_path);
 	
-	if (error < GIT_SUCCESS)
-		return GIT_EINVALIDPATH;
+	if (error < GIT_OK)
+		return GIT_ERROR;
 	
 	/* Does the containing folder exist? */
 	if (git2_isdir(target_folder_path)) {
@@ -118,11 +118,11 @@ int git2_mkdir_2file(const char *file_path)
 		
 		/* Let's create the tree structure */
 		error = git2_mkdir_recurs(target_folder_path, mode);
-		if (error < GIT_SUCCESS)
+		if (error < GIT_OK)
 			return error;	/* The callee already takes care of setting the correct error message. */
 	}
 	
-	return GIT_SUCCESS;
+	return GIT_OK;
 }
 
 //int git2_mktemp(char *path_out, const char *filename)
@@ -202,8 +202,8 @@ int remove_dir_recursively(struct strbuf *path)
 
 int git2_creat_force(const char *path, int mode)
 {
-	if (git2_mkdir_2file(path) < GIT_SUCCESS)
-		return GIT_EOSERR;
+	if (git2_mkdir_2file(path) < GIT_OK)
+		return GIT_ERROR;
 	
 
 	if (!git2_isdir(path)) {
@@ -212,7 +212,7 @@ int git2_creat_force(const char *path, int mode)
 		memcpy(buf_path, path, strlen(path)*sizeof(char));
 		strbuf_attach(&pathbuf, (void *)buf_path, strlen(path)*sizeof(char), strlen(path)*sizeof(char));
 		if (remove_dir_recursively(&pathbuf) != 0)
-			return GIT_EOSERR;
+			return GIT_ERROR;
 	}
 	
 	return git2_creat(path, mode);
@@ -235,7 +235,7 @@ int git2_creat_force(const char *path, int mode)
 //		cnt -= r;
 //		b += r;
 //	}
-//	return GIT_SUCCESS;
+//	return GIT_OK;
 //}
 //
 //int git2_write(git_file fd, void *buf, size_t cnt)
@@ -255,7 +255,7 @@ int git2_creat_force(const char *path, int mode)
 //		cnt -= r;
 //		b += r;
 //	}
-//	return GIT_SUCCESS;
+//	return GIT_OK;
 //}
 //
 int git2_isdir(const char *path)
@@ -273,7 +273,7 @@ int git2_isdir(const char *path)
 		char *path_fixed = NULL;
 		path_fixed = strdup(path);
 		if (path_fixed == NULL)
-			return GIT_ENOMEM;
+			return GIT_ERROR;
 		path_fixed[len - 1] = 0;
 		stat_error = git2_stat(path_fixed, &st);
 		free(path_fixed);
@@ -281,13 +281,13 @@ int git2_isdir(const char *path)
 		stat_error = git2_stat(path, &st);
 	}
 
-	if (stat_error < GIT_SUCCESS)
+	if (stat_error < GIT_OK)
 		return GIT_ENOTFOUND;
 
 	if (!S_ISDIR(st.st_mode))
 		return GIT_ENOTFOUND;
 
-	return GIT_SUCCESS;
+	return GIT_OK;
 }
 
 int git2_exists(const char *path)
@@ -341,7 +341,7 @@ int git2_exists(const char *path)
 //	obj->data = buff;
 //	obj->len  = len;
 //
-//	return GIT_SUCCESS;
+//	return GIT_OK;
 //}
 //
 //void git2_free_buf(git2_buf *obj)
@@ -361,29 +361,29 @@ int git2_exists(const char *path)
 //	 * file exists, the `rename` call fails. This is as
 //	 * close as it gets with the Win32 API.
 //	 */
-//	error = MoveFileEx(from, to, MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED) ? GIT_SUCCESS : GIT_EOSERR;
+//	error = MoveFileEx(from, to, MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED) ? GIT_OK : GIT_EOSERR;
 //#else
 //	/* Don't even try this on Win32 */
 //	if (!link(from, to)) {
 //		git2_unlink(from);
-//		return GIT_SUCCESS;
+//		return GIT_OK;
 //	}
 //
 //	if (!rename(from, to))
-//		return GIT_SUCCESS;
+//		return GIT_OK;
 //
 //	error = GIT_EOSERR;
 //#endif
 //
-//	if (error < GIT_SUCCESS)
+//	if (error < GIT_OK)
 //		return git__throw(error, "Failed to move file from `%s` to `%s`", from, to);
 //
-//	return GIT_SUCCESS;
+//	return GIT_OK;
 //}
 //
 //int git2_mv_force(const char *from, const char *to)
 //{
-//	if (git2_mkdir_2file(to) < GIT_SUCCESS)
+//	if (git2_mkdir_2file(to) < GIT_OK)
 //		return GIT_EOSERR;	/* The callee already takes care of setting the correct error message. */
 //
 //	return git2_mv(from, to);	/* The callee already takes care of setting the correct error message. */
@@ -391,9 +391,9 @@ int git2_exists(const char *path)
 //
 //int git2_map_ro(git_map *out, git_file fd, git_off_t begin, size_t len)
 //{
-//	if (git__mmap(out, len, GIT_PROT_READ, GIT_MAP_SHARED, fd, begin) < GIT_SUCCESS)
+//	if (git__mmap(out, len, GIT_PROT_READ, GIT_MAP_SHARED, fd, begin) < GIT_OK)
 //		return GIT_EOSERR;
-//	return GIT_SUCCESS;
+//	return GIT_OK;
 //}
 //
 //void git2_free_map(git_map *out)
@@ -443,7 +443,7 @@ int git2_exists(const char *path)
 //
 //		strcpy(path + wd_len, de->d_name);
 //		result = fn(arg, path);
-//		if (result < GIT_SUCCESS) {
+//		if (result < GIT_OK) {
 //			closedir(dir);
 //			return result;	/* The callee is reponsible for setting the correct error message */
 //		}
@@ -454,7 +454,7 @@ int git2_exists(const char *path)
 //	}
 //
 //	closedir(dir);
-//	return GIT_SUCCESS;
+//	return GIT_OK;
 //}
 //
 //int git2_lock_exclusive(int fd)
@@ -526,7 +526,7 @@ int git2_retrieve_path_root_offset(const char *path)
 //		buf[len + 1] = '\0';
 //
 //		posixify_path(buf);
-//		if (git2_prettify_dir_path(buf2, sizeof(buf2), buf) < GIT_SUCCESS)
+//		if (git2_prettify_dir_path(buf2, sizeof(buf2), buf) < GIT_OK)
 //			continue;
 //
 //		len = strlen(buf2);
@@ -552,24 +552,24 @@ int git2_mkdir_recurs(const char *path, int mode)
 	char *path_copy = strdup(path);
 
 	if (path_copy == NULL)
-		return GIT_ENOMEM;
+		return GIT_ERROR;
 
-	error = GIT_SUCCESS;
+	error = GIT_OK;
 	pp = path_copy;
 
 	root_path_offset = git2_retrieve_path_root_offset(pp);
 	if (root_path_offset > 0)
 		pp += root_path_offset; /* On Windows, will skip the drive name (eg. C: or D:) */
 
-	while (error == GIT_SUCCESS && (sp = strchr(pp, '/')) != 0) {
-		if (sp != pp && git2_isdir(path_copy) < GIT_SUCCESS) {
+	while (error == GIT_OK && (sp = strchr(pp, '/')) != 0) {
+		if (sp != pp && git2_isdir(path_copy) < GIT_OK) {
 			*sp = 0;
 			error = git2_mkdir(path_copy, mode);
 
 			/* it's a not a directory */
 			if (errno == EEXIST) {
 				if (unlink(path_copy) != 0)
-					return GIT_EOSERR;
+					return GIT_ERROR;
 				error = git2_mkdir(path_copy, mode);
 			}
 
@@ -579,15 +579,15 @@ int git2_mkdir_recurs(const char *path, int mode)
 		pp = sp + 1;
 	}
 
-	if (*(pp - 1) != '/' && error == GIT_SUCCESS)
+	if (*(pp - 1) != '/' && error == GIT_OK)
 		error = git2_mkdir(path, mode);
 
 	free(path_copy);
 
-	if (error < GIT_SUCCESS)
+	if (error < GIT_OK)
 		return error;
 
-	return GIT_SUCCESS;
+	return GIT_OK;
 }
 
 static int git2_retrieve_previous_path_component_start(const char *path)
@@ -621,7 +621,7 @@ static int git2_retrieve_previous_path_component_start(const char *path)
 
 int git2_prettify_dir_path(char *buffer_out, size_t size, const char *path)
 {
-	int len = 0, segment_len, only_dots, root_path_offset, error = GIT_SUCCESS;
+	int len = 0, segment_len, only_dots, root_path_offset, error = GIT_OK;
 	char *current;
 	const char *buffer_out_start, *buffer_end;
 
@@ -632,7 +632,7 @@ int git2_prettify_dir_path(char *buffer_out, size_t size, const char *path)
 	root_path_offset = git2_retrieve_path_root_offset(path);
 	if (root_path_offset < 0) {
 		error = git2_getcwd(buffer_out, size);
-		if (error < GIT_SUCCESS)
+		if (error < GIT_OK)
 			return error;	/* The callee already takes care of setting the correct error message. */
 
 		len = strlen(buffer_out);
@@ -678,7 +678,7 @@ int git2_prettify_dir_path(char *buffer_out, size_t size, const char *path)
 
 			/* Are we escaping out of the root dir? */
 			if (len < 0)
-				return GIT_EINVALIDPATH;
+				return GIT_ERROR;
 
 			buffer_out = (char *)buffer_out_start + len;
 			continue;
@@ -686,7 +686,7 @@ int git2_prettify_dir_path(char *buffer_out, size_t size, const char *path)
 
 		/* Guard against potential multiple dot path traversal (cf http://cwe.mitre.org/data/definitions/33.html) */
 		if (only_dots && segment_len > 0)
-			return GIT_EINVALIDPATH;
+			return GIT_ERROR;
 
 		*buffer_out++ = '/';
 		len++;
@@ -694,7 +694,7 @@ int git2_prettify_dir_path(char *buffer_out, size_t size, const char *path)
 
 	*buffer_out = '\0';
 
-	return GIT_SUCCESS;
+	return GIT_OK;
 }
 
 int git2_prettify_file_path(char *buffer_out, size_t size, const char *path)
@@ -706,27 +706,27 @@ int git2_prettify_file_path(char *buffer_out, size_t size, const char *path)
 
 	/* Let's make sure the filename isn't empty nor a dot */
 	if (path_len == 0 || (path_len == 1 && *path == '.'))
-		return GIT_EINVALIDPATH;
+		return GIT_ERROR;
 
 	/* Let's make sure the filename doesn't end with "/", "/." or "/.." */
 	for (i = 1; path_len > i && i < 4; i++) {
 		if (!strncmp(path + path_len - i, pattern, i))
-			return GIT_EINVALIDPATH;
+			return GIT_ERROR;
 	}
 
 	error =  git2_prettify_dir_path(buffer_out, size, path);
-	if (error < GIT_SUCCESS)
+	if (error < GIT_OK)
 		return error;	/* The callee already takes care of setting the correct error message. */
 
 	path_len = strlen(buffer_out);
 	int root_offset = git2_retrieve_path_root_offset(buffer_out);
 	if (root_offset >= 0 && path_len <= root_offset + 1)
-		return GIT_EINVALIDPATH;
+		return GIT_ERROR;
 
 	/* Remove the trailing slash */
 	buffer_out[path_len - 1] = '\0';
 
-	return GIT_SUCCESS;
+	return GIT_OK;
 }
 //
 //int git2_cmp_path(const char *name1, int len1, int isdir1,
@@ -761,13 +761,13 @@ int git2_getcwd(char *buffer_out, size_t size)
 #endif
 
 	if (cwd_buffer == NULL)
-		return GIT_EOSERR;
+		return GIT_ERROR;
 
 	posixify_path(buffer_out);
 
 	git2__joinpath(buffer_out, buffer_out, "");	//Ensure the path ends with a trailing slash
 
-	return GIT_SUCCESS;
+	return GIT_OK;
 }
 
 //int git2_realpath(const char *path, char *buffer_out)
@@ -779,7 +779,7 @@ int git2_getcwd(char *buffer_out, size_t size)
 //
 //	posixify_path(buffer_out);
 //
-//	return GIT_SUCCESS;
+//	return GIT_OK;
 //}
 //
 //dev_t git2_retrieve_device(const char *path, dev_t *device)
@@ -792,5 +792,5 @@ int git2_getcwd(char *buffer_out, size_t size)
 //
 //	*device = path_info.st_dev;
 //
-//	return GIT_SUCCESS;
+//	return GIT_OK;
 //}

@@ -43,7 +43,7 @@ void add_tree_to_index(git_tree * tree, const char * prefix) {
 			{0,0},//git_index_time 	mtime
 			0,//unsigned int 	dev
 			0,//unsigned int 	ino
-			git_tree_entry_attributes(tree_entry),//unsigned int 	mode
+			0, //git_tree_entry_attributes(tree_entry),//unsigned int 	mode
 			0,//unsigned int 	uid
 			0,//unsigned int 	gid
 			0,//git_off_t 	file_size
@@ -73,10 +73,7 @@ int cmd_read_tree(int argc, const char **argv)
 	git_oid oid_tree;
 
 	switch (git_oid_fromstr(&oid_tree, (const char *)argv[argc-1])) {
-		case GIT_ENOTOID:
-			please_git_do_it_for_me();
-			break;
-		case GIT_SUCCESS:
+		case GIT_OK:
 			break;
 		default:
 			libgit_error();
@@ -84,7 +81,7 @@ int cmd_read_tree(int argc, const char **argv)
 	
 	e = git_tree_lookup(&tree, repo, &oid_tree);
 	if (e) {
-		if (e == GIT_EINVALIDTYPE || e == GIT_ENOTFOUND) {
+		if (e == GIT_ENOTFOUND) {
 			error("Tree object not found");
 		} else {
 			libgit_error();

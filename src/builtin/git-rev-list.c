@@ -82,7 +82,7 @@ int cmd_rev_list(int argc, const char **argv)
 
 	/* Lookup the commit object */
 	e = git_object_lookup_prefix((git_object **)&commit, repository, &commit_oid, len, GIT_OBJ_ANY);
-	if (e != GIT_SUCCESS) {
+	if (e != GIT_OK) {
 		if (e == GIT_ENOTFOUND) {
 			/* Maybe the given argument is not a sha1
 			 * but a tag name (which looks like a sha1)
@@ -115,7 +115,7 @@ int cmd_rev_list(int argc, const char **argv)
 	}
 
 	git_commit_close(commit);
-	if ((git_revwalk_next(&current_oid, walk)) == GIT_SUCCESS) {
+	if ((git_revwalk_next(&current_oid, walk)) == GIT_OK) {
 		char oid_string[GIT_OID_HEXSZ+1];
 		oid_string[GIT_OID_HEXSZ] = '\0';
 		const char *cmsg;
@@ -131,7 +131,7 @@ int cmd_rev_list(int argc, const char **argv)
 			git_oid_fmt(oid_string, git_commit_id(commit));
 			printf("%s %s\n", oid_string, cmsg);
 
-			if ((git_revwalk_next(&current_oid, walk)) != GIT_SUCCESS)
+			if ((git_revwalk_next(&current_oid, walk)) != GIT_OK)
 				break;
 			git_commit_close(commit);
 		}

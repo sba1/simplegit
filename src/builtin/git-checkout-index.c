@@ -49,10 +49,10 @@ void create_force_dir(const char *objpath) {
 	switch (type_of_obj(objpath)) {
 		case CI_NON_EXIST: {
 			/* force the parent dir to exist */
-			int error = GIT_SUCCESS;
+			int error = GIT_OK;
 			char target_folder_path[GIT_PATH_MAX];
 			error = dirname_r(target_folder_path, sizeof(target_folder_path), objpath);
-			if (error < GIT_SUCCESS) {
+			if (error < GIT_OK) {
 				printf("Failed to determine parent path of %s\n", objpath);
 				return;
 			}
@@ -88,10 +88,10 @@ void create_force_file(const char *objpath, int mode, const void * data, size_t 
 	switch (type_of_obj(objpath)) {
 		case CI_NON_EXIST: {
 			/* force parent dir to exist */
-			int error = GIT_SUCCESS;
+			int error = GIT_OK;
 			char target_folder_path[GIT_PATH_MAX];
 			error = dirname_r(target_folder_path, sizeof(target_folder_path), objpath);
-			if (error < GIT_SUCCESS) {
+			if (error < GIT_OK) {
 				printf("Failed to determine parent directory of %s.\n", objpath);
 				return;
 			}
@@ -141,10 +141,10 @@ void create_force_symlinks(const char *objpath, const char * dest) {
 	/* prepare file */
 	switch (type_of_obj(objpath)) {
 		case CI_NON_EXIST: {
-			int error = GIT_SUCCESS;
+			int error = GIT_OK;
 			char target_folder_path[GIT_PATH_MAX];
 			error = dirname_r(target_folder_path, sizeof(target_folder_path), objpath);
-			if (error < GIT_SUCCESS) {
+			if (error < GIT_OK) {
 				printf("Failed to remove '%s'\n", objpath);
 				return;
 			}
@@ -215,7 +215,7 @@ int cmd_checkout_index(int argc, const char **argv)
 			libgit_error();
 
 		e = git_odb_read(&obj, odb, &gie->oid);
-		if(e != GIT_SUCCESS)
+		if(e != GIT_OK)
 			libgit_error();
 		//TODO:tester le type et lancer le bon cretae_force_* en fonction...
 		switch (gie->mode >>12 ) {

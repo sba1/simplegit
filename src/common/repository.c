@@ -14,14 +14,14 @@ git_repository* get_git_repository() {
 		char *repository_path = getenv(GIT_DIR_ENVIRONMENT);
 
 		if (repository_path == NULL) {
-			if (git_repository_discover(discovered_path, sizeof(discovered_path), "", 0, getenv(GIT_CEILING_DIRECTORIES_ENVIRONMENT)) < GIT_SUCCESS) {
+			if (git_repository_discover(discovered_path, sizeof(discovered_path), "", 0, getenv(GIT_CEILING_DIRECTORIES_ENVIRONMENT)) < GIT_OK) {
 				libgit_error();
 			}
 
 			repository_path = discovered_path;
 		}
 
-		if (git_repository_open(&repository, repository_path) < GIT_SUCCESS) {
+		if (git_repository_open(&repository, repository_path) < GIT_OK) {
 			libgit_error();
 		}
 	}

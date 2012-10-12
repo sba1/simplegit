@@ -30,7 +30,7 @@ int cmd_mktag(int argc, const char **argv)
 	git_repository *repo = get_git_repository();
 	
 	e = git_tag_create_frombuffer(&oid_tag,repo,buf.buf,0);
-	if( e != GIT_EEXISTS && e != GIT_SUCCESS )
+	if( e != GIT_EEXISTS && e != GIT_OK )
 		libgit_error();
 	
 	char *oid_tag_string = malloc(sizeof(char)*41);

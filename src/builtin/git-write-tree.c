@@ -30,7 +30,7 @@ int cmd_write_tree(int argc, const char **argv)
 	git_repository *repo = get_git_repository();
 	git_index *index_cur;
 	int e = git_repository_index(&index_cur, repo);
-	if(e != GIT_SUCCESS)
+	if(e != GIT_OK)
 		libgit_error();
 
 	/* check the index */
@@ -51,7 +51,7 @@ int cmd_write_tree(int argc, const char **argv)
 	/* create the tree */
 	git_oid oid;
 	e = git_tree_create_fromindex(&oid, index_cur);
-	if(e != GIT_SUCCESS)
+	if(e != GIT_OK)
 		libgit_error();
 
 	printf("%s\n", git_oid_tostr(sha1buf, GIT_OID_HEXSZ+1, &oid));

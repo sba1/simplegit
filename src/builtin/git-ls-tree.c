@@ -25,21 +25,17 @@ int cmd_ls_tree(int argc, const char **argv)
 	
 	e = git_oid_fromstr(&oid_tree, (const char *)argv[1]);
 
-	if (e == GIT_ENOTOID) {
-		//libgit do not handle extended sha1 expressions for now
-		//so we fallback to git if not found.
-		please_git_do_it_for_me();
-	} else if (e < GIT_SUCCESS) {
+	if (e != GIT_OK) {
 		libgit_error();
 	}
 	
 	e = git_tree_lookup(&tree, repo, &oid_tree);
 	switch (e) {
-		case GIT_EINVALIDTYPE:
-			die("not a tree object");
+//		case GIT_EINVALIDTYPE:
+//			die("not a tree object");
 		case GIT_ENOTFOUND:
 			die("Not a valid object name %s", argv[1]);
-		case GIT_SUCCESS:
+		case GIT_OK:
 			break;
 		default:
 			libgit_error();
@@ -66,8 +62,10 @@ int cmd_ls_tree(int argc, const char **argv)
 		/* Get the oid of a tree entry */
 		const git_oid *entry_oid = git_tree_entry_id (tree_entry);
 
+/*
 		printf("%06o %s %s\t",git_tree_entry_attributes(tree_entry), git_object_type2string(type_entry_tree),
 			git_oid_tostr(buf, GIT_OID_HEXSZ + 1, entry_oid));
+*/
 
 		write_name_quoted(name_entry, stdout, '\n');
 	}

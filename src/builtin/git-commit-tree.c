@@ -113,7 +113,7 @@ int cmd_commit_tree(int argc, const char **argv)
 	repo = get_git_repository();
 	/* Lookup the tree object */
 	e = git_object_lookup_prefix((git_object **)&tree, repo, &tree_oid, len, GIT_OBJ_ANY);
-	if (e != GIT_SUCCESS) {
+	if (e != GIT_OK) {
 		if (e == GIT_ENOTFOUND) {
 			/* Maybe the given argument is not a sha1
 			 * but a tag name (which looks like a sha1)
@@ -167,7 +167,7 @@ int cmd_commit_tree(int argc, const char **argv)
 		}
 		parent_commit = &parents[i/2 - 1];
 		e = git_object_lookup_prefix((git_object **)parent_commit, repo, &parent_oid, len, GIT_OBJ_ANY);
-		if (e != GIT_SUCCESS) {
+		if (e != GIT_OK) {
 			if (e == GIT_ENOTFOUND) {
 				 please_git_do_it_for_me();
 			} else if (e == GIT_EAMBIGUOUS) {
