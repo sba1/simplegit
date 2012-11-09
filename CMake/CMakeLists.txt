@@ -40,7 +40,7 @@ set(CMAKE_C_FLAGS_RELEASE "-O2")
 
 #include libssl
 find_package(OpenSSL)
-add_definitions(-DOPENSSL_SHA1)
+add_definitions(-DOPENSSL_SHA1 -DNO_OPENSSL)
 include_directories("/SDK/local/common/include/openssl")
 set(LIB_SHA1 "/SDK/local/newlib/lib/libssl.a")
 
@@ -48,7 +48,7 @@ set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 
 include_directories(${INCLUDE_DIRECTORIES})
-#include_directories(${LIBGIT2_DIRECTORY}/include)
+include_directories(${LIBGIT2_DIRECTORY}/include)
 set(LIBS ${LIBS} git2.a pthread.a ${LIB_SHA1})
 link_directories(${LIBGIT2_BUILD_DIRECTORY})
 
