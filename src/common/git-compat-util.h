@@ -117,10 +117,12 @@
 #include <regex.h>
 #include <utime.h>
 #include <syslog.h>
+#ifndef __amigaos4__
 #ifndef NO_SYS_POLL_H
 #include <sys/poll.h>
 #else
 #include <poll.h>
+#endif
 #endif
 #ifndef __MINGW32__
 #include <sys/wait.h>
