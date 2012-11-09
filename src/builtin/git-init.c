@@ -93,7 +93,7 @@ int cmd_init(int argc, const char **argv){
 	if (e == GIT_OK) {
 		const char *init_template_dir;
 		/* libgit2 does not handle template dirs for now */
-		e = git_config_get_string(cfg, "init.templatedir", &init_template_dir);
+		e = git_config_get_string(&init_template_dir, cfg, "init.templatedir");
 		if (e == GIT_OK && init_template_dir != NULL) {
 			please_git_do_it_for_me();
 		}

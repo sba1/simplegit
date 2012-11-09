@@ -8,8 +8,8 @@
 #include <unistd.h>
 
 struct dl_data {
-	git_indexer_stats fetch_stats;
-	git_indexer_stats checkout_stats;
+	git_transfer_progress fetch_stats;
+	git_transfer_progress checkout_stats;
 	git_checkout_opts opts;
 	int ret;
 	int finished;
@@ -34,8 +34,10 @@ static void *clone_thread(void *ptr)
 
 int clone(int argc, char **argv)
 {
-	struct dl_data data = {0};
+	struct dl_data data;
 	pthread_t worker;
+
+	memset(&data,0,sizeof(data));
 
 	// Validate args
 	if (argc < 3) {
@@ -55,13 +57,13 @@ int clone(int argc, char **argv)
 	// Watch for progress information
 	do {
 		usleep(100000);
-		printf("Fetch %d/%d  –  Checkout %d/%d\n",
-				 data.fetch_stats.processed, data.fetch_stats.total,
-				 data.checkout_stats.processed, data.checkout_stats.total);
+		printf("Fetch %d/%d  ï¿½  Checkout %d/%d\n",
+				 data.fetch_stats.indexed_objects, data.fetch_stats.total_objects,
+				 data.checkout_stats.indexed_objects, data.checkout_stats.total_objects);
 	} while (!data.finished);
-	printf("Fetch %d/%d  –  Checkout %d/%d\n",
-			 data.fetch_stats.processed, data.fetch_stats.total,
-			 data.checkout_stats.processed, data.checkout_stats.total);
+	printf("Fetch %d/%d  ï¿½  Checkout %d/%d\n",
+			 data.fetch_stats.indexed_objects, data.fetch_stats.total_objects,
+			 data.checkout_stats.indexed_objects, data.checkout_stats.total_objects);
 
 	return data.ret;
 }

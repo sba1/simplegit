@@ -54,7 +54,7 @@ void add_tree_to_index(git_tree * tree, const char * prefix) {
 		};
 		
 		
-		git_index_append2(index_cur, &source_entry);
+		git_index_add(index_cur, &source_entry);
 		
 	}
 }

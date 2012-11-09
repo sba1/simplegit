@@ -206,7 +206,7 @@ int cmd_checkout_index(int argc, const char **argv)
 // 	size_t prefix_len = strlen(prefix);
 	
 	for (unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
-		git_index_entry *gie = git_index_get(index_cur, i);
+		git_index_entry *gie = git_index_get_byindex(index_cur, i);
 // 		printf("%06o\t%s\n", gie->mode, gie->path);
 		git_odb *odb;
 		git_odb_object * obj;

@@ -38,7 +38,7 @@ int cmd_checkout(int argc, const char **argv)
 	int i = 0;
 
 	/* get a pointer to one of the entries in the index */
-	index_entry = git_index_get(index, i);
+	index_entry = git_index_get_byindex(index, i);
 	if (index_entry == NULL)
 		printf("Out of bound");
 	else

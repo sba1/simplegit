@@ -8,7 +8,7 @@
 struct dl_data {
 	git_remote *remote;
 	git_off_t *bytes;
-	git_indexer_stats *stats;
+	git_transfer_progress *stats;
 	int ret;
 	int finished;
 };
@@ -64,7 +64,7 @@ int fetch(int argc, char **argv)
 {
 	git_remote *remote = NULL;
 	git_off_t bytes = 0;
-	git_indexer_stats stats;
+	git_transfer_progress stats;
 	pthread_t worker;
 	struct dl_data data;
 	int error;
@@ -100,10 +100,10 @@ int fetch(int argc, char **argv)
 	// the download rate.
 	do {
 		usleep(10000);
-		printf("\rReceived %d/%d objects in %d bytes", stats.processed, stats.total, bytes);
+		printf("\rReceived %d/%d objects in %d bytes", stats.indexed_objects, stats.total_objects, bytes);
 	} while (!data.finished);
 #endif
-	printf("\rReceived %d/%d objects in %d bytes\n", stats.processed, stats.total, bytes);
+	printf("\rReceived %d/%d objects in %d bytes\n", stats.indexed_objects, stats.total_objects, bytes);
 
 	// Disconnect the underlying connection to prevent from idling.
 	git_remote_disconnect(remote);

@@ -73,7 +73,6 @@ int cmd_update_index(int argc, const char **argv)
 
 	char complete_path[5000];
 	for (int i = 0; i < filec; i++) {
-		int stage = 0;
 		strcpy(complete_path, get_git_prefix());
 		strcat(complete_path, filev[i]);
 		
@@ -86,7 +85,7 @@ int cmd_update_index(int argc, const char **argv)
 			}
 		}
 
-		int e = git_index_add(index_cur, complete_path, stage);
+		int e = git_index_add_from_workdir(index_cur, complete_path);
 		
 
 		if (e != 0)

@@ -6,15 +6,15 @@
 
 // This could be run in the main loop whilst the application waits for
 // the indexing to finish in a worker thread
-int index_cb(const git_indexer_stats *stats, void *data)
+int index_cb(const git_transfer_progress *progress, void *data)
 {
-	printf("\rProcessing %d of %d", stats->processed, stats->total);
+	printf("\rProcessing %d of %d", progress->indexed_objects, progress->total_objects);
 }
 
 int index_pack(int argc, char **argv)
 {
 	git_indexer_stream *idx;
-	git_indexer_stats stats = {0, 0};
+	git_transfer_progress stats = {0, 0, 0, 0};
 	int error, fd;
 	char hash[GIT_OID_HEXSZ + 1] = {0};
 	ssize_t read_bytes;
@@ -30,7 +30,7 @@ int index_pack(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	if (git_indexer_stream_new(&idx, ".git") < 0) {
+	if (git_indexer_stream_new(&idx, ".git", NULL, NULL) < 0) {
 		puts("bad idx");
 		return -1;
 	}
@@ -48,7 +48,7 @@ int index_pack(int argc, char **argv)
 		if ((error = git_indexer_stream_add(idx, buf, read_bytes, &stats)) < 0)
 			goto cleanup;
 
-		printf("\rIndexing %d of %d", stats.processed, stats.total);
+		printf("\rIndexing %d of %d", stats.indexed_objects, stats.total_objects);
 	} while (read_bytes > 0);
 
 	if (read_bytes < 0) {
@@ -60,7 +60,7 @@ int index_pack(int argc, char **argv)
 	if ((error = git_indexer_stream_finalize(idx, &stats)) < 0)
 		goto cleanup;
 
-	printf("\rIndexing %d of %d\n", stats.processed, stats.total);
+	printf("\rIndexing %d of %d\n", stats.indexed_objects, stats.total_objects);
 
 	git_oid_fmt(hash, git_indexer_stream_hash(idx));
 	puts(hash);
@@ -74,7 +74,7 @@ int index_pack(int argc, char **argv)
 int index_pack_old(git_repository *repo, int argc, char **argv)
 {
 	git_indexer *indexer;
-	git_indexer_stats stats;
+	git_transfer_progress stats;
 	int error;
 	char hash[GIT_OID_HEXSZ + 1] = {0};
 
