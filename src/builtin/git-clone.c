@@ -32,7 +32,7 @@ static void *clone_thread(void *ptr)
 	pthread_exit(&data->ret);
 }
 
-int clone(int argc, char **argv)
+int gclone(int argc, char **argv)
 {
 	struct dl_data data;
 	pthread_t worker;
