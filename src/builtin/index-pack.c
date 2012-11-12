@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 #include "common.h"
 
 // This could be run in the main loop whilst the application waits for
