@@ -31,7 +31,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 set(EXECUTABLE_OUTPUT_PATH ${BINARIES_DIRECTORY})
 file(GLOB_RECURSE C_SOURCE_FILES ${SRC_DIRECTORY}/*.c)
 
-add_definitions(-std=gnu99 -Wall -Wextra -pedantic)
+add_definitions(-std=gnu99 -Wall -Wextra)
 
 #add_definitions(-DNO_PTHREADS)
 
