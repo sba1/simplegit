@@ -17,7 +17,7 @@ cmd_struct commands[] = {
 	{"ls-remote", ls_remote},
 	{"fetch", fetch},
 	{"index-pack", index_pack},
-	{"clone", gclone},
+	{"clone", do_clone},
 };
 
 cmd_handler lookup_handler(const char *cmd) {

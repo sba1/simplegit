@@ -54,7 +54,7 @@ int cmd_checkout(int argc, const char **argv)
 		libgit_error();
 
 	const git_oid *oid;
-	oid = git_reference_oid(direct_ref);
+	oid = git_reference_target(direct_ref);
 	if (oid == NULL) {
 		printf("Internal error: reference is not direct\n");
 		return EXIT_FAILURE;

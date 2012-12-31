@@ -3,12 +3,22 @@
 
 #include <git2.h>
 
-int ls_remote(int argc, char **argv);
-int parse_pkt_line(int argc, char **argv);
-int show_remote(int argc, char **argv);
-int fetch(int argc, char **argv);
-int index_pack(int argc, char **argv);
-int gclone(int argc, char **argv);
+typedef int (*git_cb)(git_repository *, int , char **);
 
-int update_cb(const char *refname, const git_oid *a, const git_oid *b);
+int ls_remote(git_repository *repo, int argc, char **argv);
+int parse_pkt_line(git_repository *repo, int argc, char **argv);
+int show_remote(git_repository *repo, int argc, char **argv);
+int fetch(git_repository *repo, int argc, char **argv);
+int index_pack(git_repository *repo, int argc, char **argv);
+int do_clone(git_repository *repo, int argc, char **argv);
+
+#ifndef PRIuZ
+/* Define the printf format specifer to use for size_t output */
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#	define PRIuZ "Iu"
+#else
+#	define PRIuZ "zu"
+#endif
+#endif
+
 #endif /* __COMMON_H__ */

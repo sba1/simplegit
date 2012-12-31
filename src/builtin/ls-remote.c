@@ -7,12 +7,14 @@
 static int show_ref__cb(git_remote_head *head, void *payload)
 {
 	char oid[GIT_OID_HEXSZ + 1] = {0};
+
+	payload = payload;
 	git_oid_fmt(oid, &head->oid);
 	printf("%s\t%s\n", oid, head->name);
 	return 0;
 }
 
-int use_unnamed(git_repository *repo, const char *url)
+static int use_unnamed(git_repository *repo, const char *url)
 {
 	git_remote *remote = NULL;
 	int error;
@@ -25,7 +27,7 @@ int use_unnamed(git_repository *repo, const char *url)
 
 	// When connecting, the underlying code needs to know wether we
 	// want to push or fetch
-	error = git_remote_connect(remote, GIT_DIR_FETCH);
+	error = git_remote_connect(remote, GIT_DIRECTION_FETCH);
 	if (error < 0)
 		goto cleanup;
 
@@ -37,7 +39,7 @@ cleanup:
 	return error;
 }
 
-int use_remote(git_repository *repo, char *name)
+static int use_remote(git_repository *repo, char *name)
 {
 	git_remote *remote = NULL;
 	int error;
@@ -47,7 +49,7 @@ int use_remote(git_repository *repo, char *name)
 	if (error < 0)
 		goto cleanup;
 
-	error = git_remote_connect(remote, GIT_DIR_FETCH);
+	error = git_remote_connect(remote, GIT_DIRECTION_FETCH);
 	if (error < 0)
 		goto cleanup;
 
@@ -61,15 +63,11 @@ cleanup:
 // This gets called to do the work. The remote can be given either as
 // the name of a configured remote or an URL.
 
-int ls_remote(int argc, char **argv)
+int ls_remote(git_repository *repo, int argc, char **argv)
 {
-	int error, i;
-	git_repository *repo;
+	int error;
 
-	error = git_repository_open(&repo, ".git");
-	if (error < 0)
-		repo = NULL;
-		
+	argc = argc;
 	/* If there's a ':' in the name, assume it's an URL */
 	if (strchr(argv[1], ':') != NULL) {
 		error = use_unnamed(repo, argv[1]);
