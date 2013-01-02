@@ -182,7 +182,7 @@ void create_force_symlinks(const char *objpath, const char * dest) {
 
 
 
-int cmd_checkout_index(int argc, const char **argv)
+int cmd_checkout_index(git_repository *repo, int argc, const char **argv)
 {
 	/* options parsing */
 	if (argc != 3)
@@ -192,9 +192,6 @@ int cmd_checkout_index(int argc, const char **argv)
 	if (!(strcmp(argv[1], "-f") == 0 && strcmp(argv[2], "-a") == 0))
 		please_git_do_it_for_me();
 
-
-	git_repository *repo = get_git_repository();
-	
 	git_index *index_cur;
 	int e = git_repository_index(&index_cur, repo);
 	if (e) libgit_error();

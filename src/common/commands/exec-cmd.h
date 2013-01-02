@@ -1,13 +1,15 @@
 #ifndef GIT_EXEC_CMD_H
 #define GIT_EXEC_CMD_H
 
+#include "common.h"
+
 // original source : https://github.com/vfr-nl/git2
 
-typedef int (*cmd_handler)(int, const char**);
+//typedef int (*cmd_handler)(int, const char**);
 
 typedef struct cmd_struct{
 	char *cmd;
-	cmd_handler handler;
+	git_cb handler;
 } cmd_struct;
 
 //void git_set_argv_exec_path(const char *exec_path);

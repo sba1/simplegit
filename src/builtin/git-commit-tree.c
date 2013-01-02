@@ -35,7 +35,7 @@ static void cleanup() {
 	}
 }
 
-int cmd_commit_tree(int argc, const char **argv)
+int cmd_commit_tree(git_repository *repo, int argc, char **argv)
 {
 	char *author_name = NULL;
 	char *author_email = NULL;
@@ -48,7 +48,6 @@ int cmd_commit_tree(int argc, const char **argv)
 	unsigned long committer_timestamp;
 	int committer_offset;
 	int e;
-	git_repository *repo = NULL;
 	git_oid tree_oid;
 	char commit_oid_string[GIT_OID_HEXSZ+1];
 	char tree_oid_string[GIT_OID_HEXSZ+1];

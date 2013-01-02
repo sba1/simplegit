@@ -94,7 +94,7 @@ static int handle_options(const char ***argv, int *argc) {
 	return handled;
 }
 
-int main(int argc, const char **argv){
+int main(int argc, char **argv){
 	int code = 0;
 
 	git_extract_argv0_path(argv[0]);
@@ -109,7 +109,7 @@ int main(int argc, const char **argv){
 	if (argc == 0) {
 		usage(git_usage_string);
 	}
-#if 0
+
 	// Before running the actual command, create an instance of the local
 	// repository and pass it to the function.
 	int error;
@@ -118,11 +118,10 @@ int main(int argc, const char **argv){
 	error = git_repository_open(&repo, ".git");
 	if (error < 0)
 		repo = NULL;
-#endif		
 	
-	cmd_handler handler = lookup_handler(argv[0]);
+	git_cb handler = lookup_handler(argv[0]);
 	if (handler != NULL) {
-		code = handler(argc, argv);
+		code = handler(repo,argc, argv);
 	} else {
 		please_git_do_it_for_me();
 	}

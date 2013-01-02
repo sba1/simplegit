@@ -7,7 +7,7 @@
 #include "git-support.h"
 
 
-int cmd_checkout(int argc, const char **argv) 
+int cmd_checkout(git_repository *repo, int argc, char **argv)
 {
 	/* Delete the following line once gits tests pass
 	please_git_do_it_for_me();
@@ -16,15 +16,9 @@ int cmd_checkout(int argc, const char **argv)
 		please_git_do_it_for_me();
 	*/
 	git_index *index;
-	git_repository *repo;
-	git_index_entry *index_entry;
+	const git_index_entry *index_entry;
 	git_oid id;
 	
-	 /* Open the repository */
-	if (git_repository_open(&repo, ".git")) {
-		libgit_error();
-	}
-
 	/* Get the Index file of a Git repository */
 	if (git_repository_index(&index,repo)) {
 		libgit_error();

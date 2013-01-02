@@ -27,7 +27,7 @@ const char * unsuported_options[UNSUPORTED_OPTIONS_NUM] =
 	"--verbose"
 };
 
-int cmd_update_index(int argc, const char **argv)
+int cmd_update_index(git_repository *repo, int argc, char **argv)
 {
 	please_git_do_it_for_me();
 
@@ -61,9 +61,6 @@ int cmd_update_index(int argc, const char **argv)
 
 	
 	int exit_status = EXIT_SUCCESS;
-	
-	/* Open the repo */
-	git_repository *repo = get_git_repository();
 	
 	/* Open the index */
 	git_index *index_cur;

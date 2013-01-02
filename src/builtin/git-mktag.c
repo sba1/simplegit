@@ -9,7 +9,7 @@
 
 
 
-int cmd_mktag(int argc, const char **argv)
+int cmd_mktag(git_repository *repo, int argc,  char **argv)
 {
 	please_git_do_it_for_me();
 	
@@ -27,7 +27,6 @@ int cmd_mktag(int argc, const char **argv)
 		die_errno("could not read from stdin");
 	}
 	git_oid oid_tag;
-	git_repository *repo = get_git_repository();
 	
 	e = git_tag_create_frombuffer(&oid_tag,repo,buf.buf,0);
 	if( e != GIT_EEXISTS && e != GIT_OK )

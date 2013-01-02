@@ -19,10 +19,10 @@
 
 #include "common.h"
 
-int cmd_init(int argc, const char **argv);
+//int cmd_init(int argc, const char **argv);
 
 extern cmd_struct commands[];
 
-cmd_handler lookup_handler(const char *cmd);
+git_cb lookup_handler(const char *cmd);
 
 #endif /* BUILTIN_H */

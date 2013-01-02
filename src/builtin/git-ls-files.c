@@ -19,7 +19,7 @@
  * 
  */
 
-int cmd_ls_files(int argc, const char **argv)
+int cmd_ls_files(git_repository *repo, int argc, char **argv)
 {
 	/* Delete the following line once git tests pass */
 	please_git_do_it_for_me();
@@ -39,8 +39,6 @@ int cmd_ls_files(int argc, const char **argv)
 			please_git_do_it_for_me();
 	}
 
-
-	git_repository *repo = get_git_repository();
 
 	git_index *index_cur;
 	int e = git_repository_index(&index_cur, repo);

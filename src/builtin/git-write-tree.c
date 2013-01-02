@@ -12,7 +12,7 @@
 #include "utils.h"
 
 
-int cmd_write_tree(int argc, const char **argv)
+int cmd_write_tree(git_repository *repo, int argc, char **argv)
 {
 	please_git_do_it_for_me();
 
@@ -27,7 +27,6 @@ int cmd_write_tree(int argc, const char **argv)
 
 	char sha1buf[GIT_OID_HEXSZ + 1];
 
-	git_repository *repo = get_git_repository();
 	git_index *index_cur;
 	int e = git_repository_index(&index_cur, repo);
 	if(e != GIT_OK)

@@ -20,7 +20,7 @@ cmd_struct commands[] = {
 	{"clone", do_clone},
 };
 
-cmd_handler lookup_handler(const char *cmd) {
+git_cb lookup_handler(const char *cmd) {
 	unsigned int i;
 	unsigned int max = sizeof(commands) / sizeof(cmd_struct);
 

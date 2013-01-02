@@ -8,7 +8,7 @@
 #include "repository.h"
 #include "quote.h"
 
-int cmd_ls_tree(int argc, const char **argv)
+int cmd_ls_tree(git_repository *repo, int argc, char **argv)
 {
 	please_git_do_it_for_me();
 
@@ -16,8 +16,6 @@ int cmd_ls_tree(int argc, const char **argv)
 		please_git_do_it_for_me();
 
 	int e;
-	/* Find the current repository */
-	git_repository *repo = get_git_repository();
 	
 	/*Find the tree*/
 	git_tree *tree;

@@ -28,7 +28,7 @@ int shared_callback(const struct optiong *opt, const char *arg, int unset) {
 	return 0;
 }
 
-int cmd_init(int argc, const char **argv){
+int cmd_init(git_repository *dummy, int argc, char **argv){
 	/* Some tests won't pass because of template dirs
 	 * config files or shared repository.
 	 * Other than that, it works fine.

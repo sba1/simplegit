@@ -8,7 +8,7 @@
 #include "strbuf.h"
 #include "git-ls-tree.h"
 
-int cmd_cat_file(int argc, const char **argv)
+int cmd_cat_file(struct git_repository *repo, int argc, char **argv)
 {
 	/* Uncomment when it passes the tests */
 	please_git_do_it_for_me();
@@ -26,10 +26,6 @@ int cmd_cat_file(int argc, const char **argv)
 	else if (argc == 2 && (strcmp(argv[1], "--batch") == 0))
 		opt = 'a';
 	
-
-	
-	git_repository *repo = get_git_repository();
-
 	git_oid oid;
 	if (git_oid_fromstr(&oid, (const char *)argv[argc-1]))
 		please_git_do_it_for_me();
@@ -53,7 +49,7 @@ int cmd_cat_file(int argc, const char **argv)
  				char ** arg = malloc(2);
  				strcpy(arg[0], "ls-tree");
  				strcpy(arg[1], argv[2]);
- 				int e = cmd_ls_tree(2, (const char **)arg);
+ 				int e = cmd_ls_tree(repo, 2, arg);
  				if (e == 0 )
  					printf("succes\n");
  				else

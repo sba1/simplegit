@@ -59,14 +59,11 @@ void add_tree_to_index(git_tree * tree, const char * prefix) {
 	}
 }
 
-int cmd_read_tree(int argc, const char **argv)
+int cmd_read_tree(git_repository *repo, int argc, char **argv)
 {
 	please_git_do_it_for_me();
 	if (argc != 2)
 		please_git_do_it_for_me();
-
-	/* Find the current repository */
-	repo = get_git_repository();
 
 	/*Find the tree*/
 	git_tree *tree;
