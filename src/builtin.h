@@ -16,6 +16,7 @@
 #include "git-read-tree.h"
 #include "git-checkout-index.h"
 #include "git-cat-file.h"
+#include "git-branch.h"
 
 #include "common.h"
 
