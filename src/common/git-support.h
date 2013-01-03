@@ -1,6 +1,8 @@
 #ifndef GIT_SUPPORT_H
 #define GIT_SUPPORT_H
 
+#include <git2.h>
+
 char *please_git_help_me(const char **argv);
 //execute a git command and returns the results as a string.
 //You have to free the returned string when you don't need it
@@ -20,5 +22,7 @@ void git_support_register_arguments(int argc, const char **argv);
 
 void git_support_free_arguments();
 //free registered arguments
+
+int git2_create_branch_from_ref(git_reference **new_branch_ref, git_reference *branch_ref, git_repository* repo, const char *branch);
 
 #endif
