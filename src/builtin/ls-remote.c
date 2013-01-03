@@ -67,12 +67,17 @@ int ls_remote(git_repository *repo, int argc, char **argv)
 {
 	int error;
 
-	argc = argc;
-	/* If there's a ':' in the name, assume it's an URL */
-	if (strchr(argv[1], ':') != NULL) {
-		error = use_unnamed(repo, argv[1]);
-	} else {
-		error = use_remote(repo, argv[1]);
+	if (argc > 1)
+	{
+		/* If there's a ':' in the name, assume it's an URL */
+		if (strchr(argv[1], ':') != NULL) {
+			error = use_unnamed(repo, argv[1]);
+		} else {
+			error = use_remote(repo, argv[1]);
+		}
+	} else
+	{
+		error = -1;
 	}
 
 	return error;
