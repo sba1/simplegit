@@ -6,65 +6,59 @@
 #include "git-checkout.h"
 #include "git-support.h"
 
+static int conflict_cb(const char *conflicting_path, const git_oid *index_oid, unsigned int index_mode, unsigned int wd_mode, void *payload)
+{
+	fprintf(stderr,"Conflict in %s\n",conflicting_path);
+	return 0;
+}
 
 int cmd_checkout(git_repository *repo, int argc, char **argv)
 {
-	/* Delete the following line once gits tests pass
-	please_git_do_it_for_me();
+	int i, err, rc;
+	char *branch;
+	git_reference *branch_ref;
+	git_checkout_opts checkout_opts;
 
-	if (argc != 1)
-		please_git_do_it_for_me();
-	*/
-	git_index *index;
-	const git_index_entry *index_entry;
-	git_oid id;
-	
-	/* Get the Index file of a Git repository */
-	if (git_repository_index(&index,repo)) {
-		libgit_error();
-	}
-	
-	/* Find the first index of any entries which point to given path in the Git index */
-	if (git_index_find (index, ".git")) {
-		libgit_error();
+	branch = NULL;
+	rc = EXIT_SUCCESS;
+
+	for (i=1;i<argc;i++)
+	{
+		if (argv[i][0] != '-')
+		{
+			if (!branch) branch = argv[i];
+		} else
+		{
+		}
 	}
 
-	int i = 0;
+	if (git_branch_lookup(&branch_ref,repo,branch,GIT_BRANCH_LOCAL) != 0)
+		branch_ref = NULL;
 
-	/* get a pointer to one of the entries in the index */
-	index_entry = git_index_get_byindex(index, i);
-	if (index_entry == NULL)
-		printf("Out of bound");
-	else
-		id = index_entry->oid;
-	(void)id;
-	
-	git_reference *symbolic_ref;
-	if (git_reference_lookup(&symbolic_ref, repo, "HEAD"))
+	if ((err = git_repository_set_head(repo,branch_ref?git_reference_name(branch_ref):branch)) != 0)
+	{
+		fprintf(stderr,"Error code %d\n",err);
 		libgit_error();
-
-	git_reference *direct_ref;
-	if (git_reference_resolve(&direct_ref, symbolic_ref))
-		libgit_error();
-
-	const git_oid *oid;
-	oid = git_reference_target(direct_ref);
-	if (oid == NULL) {
-		printf("Internal error: reference is not direct\n");
-		return EXIT_FAILURE;
+		rc = EXIT_FAILURE;
+		goto out;
 	}
-	
-	git_tree *tree;
-	/* Lookup a tree object from the repository */
-	if (git_tree_lookup(&tree, repo, oid))
+
+	/* Default options. Note by default we perform a dry checkout */
+	memset(&checkout_opts,0,sizeof(checkout_opts));
+	checkout_opts.version = GIT_CHECKOUT_OPTS_VERSION;
+	checkout_opts.conflict_cb = conflict_cb;
+
+	checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE|GIT_CHECKOUT_UPDATE_UNTRACKED;
+	if (git_checkout_head(repo,&checkout_opts) != 0)
+	{
 		libgit_error();
-	
-	/* Update the index ?? */
-	if (git_index_read(index))
-		libgit_error();
-	
-	git_index_free(index);
-	git_tree_close(tree);
-	
-	return EXIT_SUCCESS;
+		rc = EXIT_FAILURE;
+		goto out;
+	}
+
+out:
+	if (branch_ref)
+		git_reference_free(branch_ref);
+
+	return rc;
 }
