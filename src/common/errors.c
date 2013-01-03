@@ -35,7 +35,13 @@ static void warn_builtin(const char *warn, va_list params)
 
 static void libgit_error_builtin()
 {
-	fprintf(stderr, "libgit error: %s\n", giterr_last()->message);
+	char *message;
+
+	if (!giterr_last())
+		message = "No detailed error message!";
+	else
+		message = giterr_last()->message;
+	fprintf(stderr, "libgit error: %s\n", message);
 }
 
 static void (*usage_routine)(const char *err, va_list params) = usage_builtin;
@@ -125,7 +131,6 @@ void warning(const char *warn, ...)
 void libgit_error()
 {
 	libgit_error_routine();
-	do_exit(128);
 }
 
 void do_exit(int exit_code)
