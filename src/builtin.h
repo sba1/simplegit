@@ -17,6 +17,7 @@
 #include "git-checkout-index.h"
 #include "git-cat-file.h"
 #include "git-branch.h"
+#include "git-log.h"
 
 #include "common.h"
 

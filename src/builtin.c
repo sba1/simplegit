@@ -18,7 +18,8 @@ cmd_struct commands[] = {
 	{"fetch", fetch},
 	{"index-pack", index_pack},
 	{"clone", do_clone},
-	{"branch", cmd_branch}
+	{"branch", cmd_branch},
+	{"log", cmd_log},
 };
 
 git_cb lookup_handler(const char *cmd) {
