@@ -27,6 +27,8 @@ int cmd_log(git_repository *repo, int argc, char **argv)
 	{
 		struct git_commit *wcommit;
 		const char *cmsg;
+		char c;
+		int nl;
 		const git_signature *cauth;
 		char oid_str[80];
 		char t[40];
@@ -48,7 +50,18 @@ int cmd_log(git_repository *repo, int argc, char **argv)
 		printf("Author: %s <%s>\n",cauth->name,cauth->email);
 		printf("Date:   %s\n",t);
 		printf("\n");
-		printf("%s\n", cmsg);
+
+		nl = 1;
+		while ((c = *cmsg++))
+		{
+			if (nl)
+			{
+				printf("    ");
+				nl = 0;
+			}
+			putc(c,stdout);
+			if (c == '\n') nl = 1;
+		}
 		printf("\n");
 		git_commit_free(wcommit);
 	}
