@@ -50,7 +50,7 @@ int cmd_ls_files(git_repository *repo, int argc, char **argv)
 	size_t prefix_len = strlen(prefix);
 
 	for (unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
-		git_index_entry *gie = git_index_get(index_cur, i);
+		const git_index_entry *gie = git_index_get_byindex(index_cur, i);
 
 		if (prefixcmp(gie->path, prefix))
 			continue;

@@ -36,8 +36,8 @@ int cmd_write_tree(git_repository *repo, int argc, char **argv)
 	if (verify_index) {
 		git_odb * odb;
 		git_repository_odb(&odb, repo);
-		for (unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
-			git_index_entry *gie = git_index_get(index_cur, i);
+		for (size_t i = 0; i < git_index_entrycount(index_cur); i++) {
+			const git_index_entry *gie = git_index_get_byindex(index_cur, i);
 
 			if (git_odb_exists(odb, &gie->oid) != 1) {
 				printf("error: invalid object %06o %s for '%s'\n", gie->mode, git_oid_tostr(sha1buf, GIT_OID_HEXSZ+1, &gie->oid), gie->path);
@@ -49,7 +49,7 @@ int cmd_write_tree(git_repository *repo, int argc, char **argv)
 	
 	/* create the tree */
 	git_oid oid;
-	e = git_tree_create_fromindex(&oid, index_cur);
+	e = git_index_write_tree(&oid, index_cur);
 	if(e != GIT_OK)
 		libgit_error();
 
