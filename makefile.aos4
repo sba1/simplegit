@@ -15,3 +15,8 @@ all:
 	mkdir -p CMake/build-amiga/
 	cd CMake/build-amiga/ && cmake .. -DCMAKE_C_COMPILER=ppc-amigaos-gcc -DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
 	cd CMake/build-amiga/ && $(MAKE)
+
+.PHONY: clean
+clean:
+	rm -Rf libgit2/build-amiga
+	rm -Rf CMake/build-amiga
