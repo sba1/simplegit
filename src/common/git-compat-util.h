@@ -114,7 +114,6 @@
 #include <fnmatch.h>
 #endif
 #include <assert.h>
-#include <regex.h>
 #include <utime.h>
 #include <syslog.h>
 #ifndef __amigaos4__
