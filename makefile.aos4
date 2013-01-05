@@ -9,7 +9,7 @@ all:
 	git submodule update
 	# libgit2
 	mkdir -p libgit2/build-amiga
-	cd libgit2/build-amiga && cmake .. -DAMIGA=1 -DCMAKE_C_COMPILER=ppc-amigaos-gcc -DCMAKE_ASM_COMPILER=ppc-amigaos-as -DBUILD_CLAR=OFF -DBUILD_SHARED_LIBS=OFF
+	cd libgit2/build-amiga && cmake .. -DAMIGA=1 -DCMAKE_C_COMPILER=ppc-amigaos-gcc -DCMAKE_ASM_COMPILER=ppc-amigaos-gcc -DBUILD_CLAR=OFF -DBUILD_SHARED_LIBS=OFF
 	cd libgit2/build-amiga && $(MAKE)
 	# git2
 	mkdir -p CMake/build-amiga/
