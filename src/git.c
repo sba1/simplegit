@@ -95,20 +95,38 @@ static int handle_options(const char ***argv, int *argc) {
 	return handled;
 }
 
-int main(int argc, char **argv){
+/**
+ * Main entry.
+ *
+ * @param argc
+ * @param argv
+ * @return
+ */
+int main(int argc, char **argv)
+{
+	const char *cmd;
+	int i;
 	int code = 0;
 
-	git_extract_argv0_path(argv[0]);
-	git_support_register_arguments(argc, argv);
-	//register argument so that we can fallback to git
-	//if we can't achieve the job
+	cmd = git_extract_argv0_path(argv[0]);
 
-	argc--;
-	argv++;
-	handle_options(&argv, &argc);
+	if (!prefixcmp(cmd,"git-"))
+	{
+		cmd += 4;
+		argv[0] = cmd;
+	} else
+	{
+		git_support_register_arguments(argc, argv);
+		//register argument so that we can fallback to git
+		//if we can't achieve the job
 
-	if (argc == 0) {
-		usage(git_usage_string);
+		argc--;
+		argv++;
+		handle_options(&argv, &argc);
+
+		if (argc == 0) {
+			usage(git_usage_string);
+		}
 	}
 
 	// Before running the actual command, create an instance of the local
@@ -119,12 +137,14 @@ int main(int argc, char **argv){
 	error = git_repository_open(&repo, ".git");
 	if (error < 0)
 		repo = NULL;
-	
+
 	git_cb handler = lookup_handler(argv[0]);
-	if (handler != NULL) {
-		code = handler(repo,argc, argv);
-	} else {
-		please_git_do_it_for_me();
+	if (handler != NULL)
+	{
+		code = handler(repo, argc, argv);
+	} else
+	{
+		code = EXIT_FAILURE;
 	}
 
 	free_global_resources();
