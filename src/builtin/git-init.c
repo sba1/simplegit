@@ -29,12 +29,6 @@ int shared_callback(const struct optiong *opt, const char *arg, int unset) {
 }
 
 int cmd_init(git_repository *dummy, int argc, char **argv){
-	/* Some tests won't pass because of template dirs
-	 * config files or shared repository.
-	 * Other than that, it works fine.
-	 */
-	please_git_do_it_for_me();
-
 	char cwd[PATH_MAX];
 	const char *real_git_dir = NULL;
 	const char *template_dir = NULL;
