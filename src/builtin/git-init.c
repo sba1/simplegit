@@ -28,7 +28,8 @@ int shared_callback(const struct optiong *opt, const char *arg, int unset) {
 	return 0;
 }
 
-int cmd_init(git_repository *dummy, int argc, char **argv){
+int cmd_init(git_repository *dummy, int argc, char **argv)
+{
 	char cwd[PATH_MAX];
 	const char *real_git_dir = NULL;
 	const char *template_dir = NULL;
@@ -42,17 +43,14 @@ int cmd_init(git_repository *dummy, int argc, char **argv){
 	assert(argc != 0);
 	
 	const struct optiong init_db_options[] = {
-		OPT_STRING(0, "template", &template_dir, "template-directory",
-				"directory from which templates will be used"),
-		OPT_SET_INT(0, "bare", &is_bare_repository_cfg,
-				"create a bare repository", 1),
-		{ OPTION_CALLBACK, 0, "shared", &init_shared_repository,
+		OPT_STRING(0, "template", &template_dir, "template-directory",  "directory from which templates will be used"),
+		OPT_SET_INT(0, "bare", &is_bare_repository_cfg, "create a bare repository", 1), {
+			OPTION_CALLBACK, 0, "shared", &init_shared_repository,
 			"permissions",
 			"specify that the git repository is to be shared amongst several users",
 			PARSE_OPT_OPTARG | PARSE_OPT_NONEG, shared_callback, 0},
 		OPT_BIT('q', "quiet", &quiet_flag, "be quiet", INIT_DB_QUIET),
-		OPT_STRING(0, "separate-git-dir", &real_git_dir, "gitdir",
-			   "separate git dir from working tree"),
+		OPT_STRING(0, "separate-git-dir", &real_git_dir, "gitdir", "separate git dir from working tree"),
 		OPT_END()
 	};
 
@@ -65,10 +63,7 @@ int cmd_init(git_repository *dummy, int argc, char **argv){
 		please_git_do_it_for_me();
 	}
 
-	if (template_dir) {
-		/* Unimplemented : cannot specify a template directory yet */
-		please_git_do_it_for_me();
-	} else if (init_shared_repository != -1) {
+	if (init_shared_repository != -1) {
 		/* Unimplemented : cannot create a shared repository yet */
 		please_git_do_it_for_me();
 	} else if (real_git_dir) {
@@ -79,18 +74,19 @@ int cmd_init(git_repository *dummy, int argc, char **argv){
 	if (getenv(GIT_OBJECT_DIR_ENVIRONMENT)) {
 		please_git_do_it_for_me();
 	} else if (getenv(GIT_TEMPLATE_DIR_ENVIRONMENT)) {
-		please_git_do_it_for_me();
+		template_dir = getenv(GIT_TEMPLATE_DIR_ENVIRONMENT);
 	}
 
 	git_config *cfg;
 	e = git_config_open_default(&cfg);
-	if (e == GIT_OK) {
+	if (e == GIT_OK)
+	{
 		const char *init_template_dir;
+
 		/* libgit2 does not handle template dirs for now */
 		e = git_config_get_string(&init_template_dir, cfg, "init.templatedir");
-		if (e == GIT_OK && init_template_dir != NULL) {
+		if (e == GIT_OK && init_template_dir != NULL)
 			please_git_do_it_for_me();
-		}
 
 		git_config_free(cfg);
 	}
@@ -119,7 +115,11 @@ int cmd_init(git_repository *dummy, int argc, char **argv){
 	else
 		is_bare_repository_cfg = 1;
 
-	e = git_repository_init(&repo, git_dir, is_bare_repository_cfg);
+	git_repository_init_options init_opts = GIT_REPOSITORY_INIT_OPTIONS_INIT;
+	init_opts.template_path = template_dir;
+	init_opts.flags = is_bare_repository_cfg?GIT_REPOSITORY_INIT_BARE:0;
+
+	e = git_repository_init_ext(&repo, git_dir, &init_opts);
 
 	if (e != GIT_OK) {
 		libgit_error();
