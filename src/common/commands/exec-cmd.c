@@ -60,6 +60,11 @@ const char *git_extract_argv0_path(const char *argv0)
 	return argv0;
 }
 
+const char *git_get_argv0_path(void)
+{
+	return argv0_path;
+}
+
 void git_exec_cmd_free_resources()
 {
 	free(argv0_path);

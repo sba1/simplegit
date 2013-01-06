@@ -15,6 +15,7 @@ typedef struct cmd_struct{
 //void git_set_argv_exec_path(const char *exec_path);
 const char *git_extract_argv0_path(const char *path);
 void git_exec_cmd_free_resources();
+const char *git_get_argv0_path(void);
 //const char *git_exec_path(void);
 void setup_path(void);
 const char **prepare_git_cmd(const char **argv);

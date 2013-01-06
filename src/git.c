@@ -44,7 +44,8 @@ static int handle_options(const char ***argv, int *argc) {
 		 * Check remaining flags.
 		 */
 		if (!prefixcmp(cmd, "--exec-path")) {
-			please_git_do_it_for_me();
+			printf(git_get_argv0_path());
+			exit(0);
 		} else if (!strcmp(cmd, "--html-path")) {
 			please_git_do_it_for_me();
 		} else if (!strcmp(cmd, "--man-path")) {
