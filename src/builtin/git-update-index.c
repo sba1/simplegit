@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -22,11 +23,13 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 
 	int add_given = 0;
 	int remove_given = 0;
+	int index_info_given = 0;
 
 	for (i=1;i<argc;i++)
 	{
 		if (!strcmp(argv[i], "--add")) add_given = 1;
 		else if (!strcmp(argv[i], "--remove")) remove_given = 1;
+		else if (!strcmp(argv[i], "--index-info")) index_info_given = 1;
 		else if (!strcmp(argv[i], "--")) { i++; break; }
 		else if (argv[i][0] != '-') break;
 		else
@@ -80,6 +83,48 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 				goto out;
 		}
 	}
+
+	if (index_info_given)
+	{
+		char line[1024];
+
+		/* Read the index information from stdin */
+
+		while (fgets(line,sizeof(line),stdin))
+		{
+			git_index_entry e;
+			int pos;
+			char c;
+			int line_len = strlen(line);
+
+			if (line_len<=52)
+				continue;
+
+			memset(&e,0,sizeof(e));
+
+			e.mode = strtol(line,NULL,8);
+			if (git_oid_fromstrn(&e.oid,&line[12],40) == -1)
+				continue;
+
+			pos = 52;
+			while ((c = line[pos]))
+			{
+				if (!isspace((unsigned char)c))
+					break;
+				pos++;
+			}
+			if (!line[pos])
+				continue;
+
+			if (line[line_len-1] == '\n') line[line_len-1] = 0;
+
+			e.path = &line[pos];
+
+			if ((err = git_index_add(idx,&e)) != GIT_OK)
+				goto out;
+		}
+	}
+
 	if ((err = git_index_write(idx)) != GIT_OK)
 		goto out;
 	rc = EXIT_SUCCESS;
