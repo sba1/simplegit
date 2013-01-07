@@ -6,95 +6,85 @@
 #include <git2.h>
 
 #include "errors.h"
-#include "git-support.h"
 #include "repository.h"
 
-#define UNSUPORTED_OPTIONS_NUM 25
-
-const char * unsuported_options[UNSUPORTED_OPTIONS_NUM] = 
-{
-	"--nonsense", "-h",
-	"--remove", "--force-remove", "--replace",
-	"--refresh", "-q", "--unmerged", "--ignore-missing",
-	"--cacheinfo",
-	"--chmod",
-	"--assume-unchanged", "--no-assume-unchanged",
-	"--skip-worktree", "--no-skip-worktree",
-	"--ignore-submodules",
-	"--really-refresh", "--unresolve", "--again", "-g",
-	"--info-only", "--index-info",
-	"-z", "--stdin",
-	"--verbose"
-};
+#include "git-support.h"
 
 int cmd_update_index(git_repository *repo, int argc, char **argv)
 {
-	please_git_do_it_for_me();
+	git_index *idx;
+	int filec;
+	char **filev;
+	int rc = EXIT_FAILURE;
+	int err = 0;
+	int i;
+	char complete_path[5000];
 
-	if (argc < 2)
-		please_git_do_it_for_me();
-	
-	int filec = argc - 1;
-	const char **filev = argv + 1;
-	
-	int only_update_entry = 1;
-	
-	if (strcmp(argv[1], "--add") == 0) {
-		only_update_entry = 0;
-		filec--;
-		filev++;
-	}
+	int add_given = 0;
+	int remove_given = 0;
 
-	
-	if (strcmp(filev[0], "--") == 0) {
-		filec--;
-		filev++;
-	} else {
-		for (int i = 0; i < filec; i++) {
-			for (int j = 0; j < UNSUPORTED_OPTIONS_NUM; j++) {
-				if (strcmp(filev[i], unsuported_options[j]) == 0 )
-					please_git_do_it_for_me();
-			}
+	for (i=1;i<argc;i++)
+	{
+		if (!strcmp(argv[i], "--add")) add_given = 1;
+		else if (!strcmp(argv[i], "--remove")) remove_given = 1;
+		else if (!strcmp(argv[i], "--")) { i++; break; }
+		else if (argv[i][0] != '-') break;
+		else
+		{
+			fprintf(stderr,"Unsupported option \"%s\"!\n",argv[i]);
+			goto out;
 		}
 	}
-	
 
-	
-	int exit_status = EXIT_SUCCESS;
+	filec = argc - i;
+	filev = &argv[i];
 	
 	/* Open the index */
-	git_index *index_cur;
-	if (git_repository_index(&index_cur, repo) < 0)
-		libgit_error();
-	
+	if ((err = git_repository_index(&idx, repo) != GIT_OK))
+		goto out;
 
-	char complete_path[5000];
-	for (int i = 0; i < filec; i++) {
-		strcpy(complete_path, get_git_prefix());
-		strcat(complete_path, filev[i]);
-		
+	for (int i = 0; i < filec; i++)
+	{
+		int file_exists;
+		struct stat st;
 
-		if (only_update_entry) {
-			if (git_index_find(index_cur, complete_path) < 0) {
+		snprintf(complete_path,sizeof(complete_path),"%s%s",get_git_prefix(),filev[i]);
+
+		if (!add_given)
+		{
+			if (git_index_find(idx, complete_path) < 0)
+			{
 				printf("error: %s: cannot add to the index - missing --add option?\n", filev[i]);
 				printf("fatal: Unable to process path %s\n", filev[i]);
-				return 1;
+				goto out;
 			}
 		}
 
-		int e = git_index_add_from_workdir(index_cur, complete_path);
-		
+		if (lstat(complete_path,&st) == 0) file_exists = 1;
+		else file_exists = 0;
 
-		if (e != 0)
-			libgit_error();
+		if (!remove_given && !file_exists)
+		{
+			printf("error: %s: does not exists and --remove not passed\n", filev[i]);
+			printf("fatal: Unable to process path %s\n", filev[i]);
+			goto out;
+		}
+
+		if (file_exists)
+		{
+			if ((err = git_index_add_from_workdir(idx, complete_path)) != GIT_OK)
+				goto out;
+		} else
+		{
+			if ((err = git_index_remove(idx,complete_path,0)) != GIT_OK)
+				goto out;
+		}
 	}
-
-	
-	if (exit_status == EXIT_SUCCESS)
-		git_index_write(index_cur);
-
-	
-
-	return exit_status;
+	if ((err = git_index_write(idx)) != GIT_OK)
+		goto out;
+	rc = EXIT_SUCCESS;
+out:
+	if (err != 0)
+		libgit_error();
+	return rc;
 }
-
