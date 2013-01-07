@@ -14,8 +14,6 @@
 
 int cmd_write_tree(git_repository *repo, int argc, char **argv)
 {
-	please_git_do_it_for_me();
-
 	int verify_index = 1;
 	if (argc == 1)
 		verify_index = 1;
