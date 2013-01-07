@@ -46,6 +46,9 @@ int cmd_write_tree(git_repository *repo, int argc, char **argv)
 	int missing_ok = 0;
 	char *prefix = NULL;
 
+	git_index *idx = NULL;
+	git_index *repo_idx = NULL;
+
 	char sha1buf[GIT_OID_HEXSZ + 1];
 
 	for (i=1;i<argc;i++)
@@ -57,12 +60,38 @@ int cmd_write_tree(git_repository *repo, int argc, char **argv)
 		}
 	}
 
+	if (!prefix) prefix = "";
+
 	verify_index = !missing_ok;
 
-	git_index *idx;
-
-	if ((err = git_repository_index(&idx, repo)) != GIT_OK)
+	if ((err = git_repository_index(&repo_idx, repo)) != GIT_OK)
 		goto out;
+
+	if (*prefix)
+	{
+		if ((err = git_index_new(&idx)) != GIT_OK)
+			goto out;
+
+		/* Transfer entries to the in-memory index, omitting all that
+		 * don't start with the given prefix */
+		for (size_t i = 0; i < git_index_entrycount(repo_idx); i++)
+		{
+			const git_index_entry *gie = git_index_get_byindex(repo_idx, i);
+			if (!prefixcmp(gie->path,prefix))
+			{
+				git_index_entry ngie = *gie;
+
+				/* Note that the paths are rerooted */
+				ngie.path = gie->path + strlen(prefix);
+				git_index_add(idx,&ngie);
+			}
+		}
+	} else
+	{
+		/* Take the repo index as in-memory index */
+		idx = repo_idx;
+		repo_idx = NULL;
+	}
 
 	/* check the index */
 	if (verify_index)
@@ -90,13 +119,12 @@ int cmd_write_tree(git_repository *repo, int argc, char **argv)
 
 	printf("%s\n", git_oid_tostr(sha1buf, GIT_OID_HEXSZ+1, &oid));
 
-	git_index_free(&idx);
-
 	rc = EXIT_SUCCESS;
 out:
 	if(err != GIT_OK)
 		libgit_error();
-
+	if (repo_idx) git_index_free(repo_idx);
+	if (idx) git_index_free(idx);
 	return rc;
 }
 
