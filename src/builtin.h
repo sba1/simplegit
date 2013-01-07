@@ -4,6 +4,7 @@
 // original source : https://github.com/vfr-nl/git2
 
 #include "exec-cmd.h"
+#include "git-add.h"
 #include "git-init.h"
 #include "git-rev-list.h"
 #include "git-ls-files.h"

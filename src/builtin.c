@@ -20,6 +20,7 @@ cmd_struct commands[] = {
 	{"clone", do_clone},
 	{"branch", cmd_branch},
 	{"log", cmd_log},
+	{"add", cmd_add},
 };
 
 git_cb lookup_handler(const char *cmd) {
