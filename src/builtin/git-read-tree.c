@@ -1,102 +1,61 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "errors.h"
+
 #include <git2.h>
+
+#include "errors.h"
 #include "git-ls-tree.h"
 #include "git-support.h"
 #include "repository.h"
 #include "utils.h"
 
-
-int e;
-git_index *index_cur;
-git_repository *repo;
-
-void add_tree_to_index(git_tree * tree, const char * prefix) {
-	for (size_t i = 0; i < git_tree_entrycount(tree); i++) {
-		/* Get the tree entry */
-		const git_tree_entry *tree_entry;
-		tree_entry = git_tree_entry_byindex(tree,(unsigned int)i);
-		
-		if (tree_entry == NULL) {
-			printf("Tree entry not found");
-			libgit_error();
-		}
-
-		/* Get the oid of a tree entry */
-		const git_oid *entry_oid = git_tree_entry_id (tree_entry);
-
-		/* is a sub directory ? */
-		git_tree * subtree;
-		if (git_tree_lookup(&subtree, repo, entry_oid) == 0) {
-			char * subprefix = xmalloc(sizeof(char)*1024);
-			const char * dirname = git_tree_entry_name (tree_entry);
-			git2__joinpath(subprefix, prefix, dirname);
-			add_tree_to_index(subtree, subprefix);
-			continue;
-		}
-		
-		char * completename = xmalloc(sizeof(char)*1024);
-		git2__joinpath(completename, prefix, git_tree_entry_name (tree_entry));
-		git_index_entry source_entry = {
-			{0,0},//git_index_time 	ctime
-			{0,0},//git_index_time 	mtime
-			0,//unsigned int 	dev
-			0,//unsigned int 	ino
-			0, //git_tree_entry_attributes(tree_entry),//unsigned int 	mode
-			0,//unsigned int 	uid
-			0,//unsigned int 	gid
-			0,//git_off_t 	file_size
-			*entry_oid,
-			0,
-			0,//unsigned short 	flags_extended
-			completename
-		};
-		
-		
-		git_index_add(index_cur, &source_entry);
-		
-	}
-}
-
 int cmd_read_tree(git_repository *repo, int argc, char **argv)
 {
-	please_git_do_it_for_me();
-	if (argc != 2)
-		please_git_do_it_for_me();
+	int rc = EXIT_FAILURE;
+	int err = 0;
+	int i;
+	char *treeish;
 
-	/*Find the tree*/
-	git_tree *tree;
-	git_oid oid_tree;
-
-	switch (git_oid_fromstr(&oid_tree, (const char *)argv[argc-1])) {
-		case GIT_OK:
-			break;
-		default:
-			libgit_error();
-	}
-	
-	e = git_tree_lookup(&tree, repo, &oid_tree);
-	if (e) {
-		if (e == GIT_ENOTFOUND) {
-			error("Tree object not found");
-		} else {
-			libgit_error();
+	for (i=1;i<argc;i++)
+	{
+		if (argv[i][0] != '-')
+		{
+			treeish = argv[i];
+		} else
+		{
+			fprintf(stderr,"Unknown option \"%s\"\n",argv[i]);
 		}
 	}
 
+	git_oid oid_tree;
+	git_tree *tree = NULL;
+	git_index *idx = NULL;
+
+	/* Find the tree */
+	if ((err = git_oid_fromstr(&oid_tree, treeish)) != GIT_OK)
+		goto out;
+
+	if ((err = git_tree_lookup(&tree, repo, &oid_tree)) != GIT_OK)
+		goto out;
+
 	/* Open the index */
-	if (git_repository_index(&index_cur, repo) < 0)
-		libgit_error();
+	if ((err = git_repository_index(&idx, repo)) != GIT_OK)
+		goto out;
 
 	/* Clear the index */
-	git_index_clear(index_cur);
+	git_index_clear(idx);
 
-	/* add objects of the tree to the index */
-	add_tree_to_index(tree, "");
+	if ((err = git_index_read_tree(idx,tree)) != GIT_OK)
+		goto out;
 
 	/* write the index */
-	git_index_write(index_cur);
+	git_index_write(idx);
 
-	return EXIT_SUCCESS;
+	rc = EXIT_SUCCESS;
+out:
+
+	if (idx) git_index_free(idx);
+	if (tree) git_tree_free(tree);
+	if (err) libgit_error();
+	return rc;
 }
