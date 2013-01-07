@@ -108,7 +108,8 @@ int cmd_write_tree(git_repository *repo, int argc, char **argv)
 			{
 				printf("error: invalid object %06o %s for '%s'\n", gie->mode, git_oid_tostr(sha1buf, GIT_OID_HEXSZ+1, &gie->oid), gie->path);
 				printf("fatal: git-write-tree: error building trees\n");
-				return EXIT_FAILURE;
+				err = 0;
+				goto out;
 			}
 		}
 	}
