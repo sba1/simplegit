@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <git2.h>
+
 #include "errors.h"
 #include "git-support.h"
 #include "repository.h"
@@ -10,47 +11,43 @@
 #include "strbuf.h"
 #include "quote.h"
 
-/*
- * => see http://www.kernel.org/pub/software/scm/git/docs/git-ls-files.html
- * 
- * Works :
- * nothing, there's an inner bug in libgit2
- * git ls-files --stage
- * 
- */
-
 int cmd_ls_files(git_repository *repo, int argc, char **argv)
 {
-	/* Delete the following line once git tests pass */
-	please_git_do_it_for_me();
-
+	int rc = EXIT_FAILURE;
 	int show_cached = 1;
+	int err;
+	git_index *idx;
 
 	/* options parsing */
-	if (argc > 1) {
+	if (argc > 1)
+	{
 		if (argc > 2)
+		{
 			please_git_do_it_for_me();
+			goto out;
+		}
 
 		if (strcmp(argv[1], "--stage") == 0 || strcmp(argv[1], "-s") == 0)
 			show_cached = 0;
 		else if (strcmp(argv[1], "--cached") == 0 || strcmp(argv[1], "-c") == 0)
 			show_cached = 1;
 		else
+		{
 			please_git_do_it_for_me();
+			goto out;
+		}
 	}
 
-
-	git_index *index_cur;
-	int e = git_repository_index(&index_cur, repo);
-	if (e) libgit_error();
+	if ((err = git_repository_index(&idx, repo)) != GIT_OK)
+		goto out;
 
 	char buf[GIT_OID_HEXSZ+1];
-
 	const char *prefix = get_git_prefix();
 	size_t prefix_len = strlen(prefix);
 
-	for (unsigned i = 0; i < git_index_entrycount(index_cur); i++) {
-		const git_index_entry *gie = git_index_get_byindex(index_cur, i);
+	for (unsigned i = 0; i < git_index_entrycount(idx); i++)
+	{
+		const git_index_entry *gie = git_index_get_byindex(idx, i);
 
 		if (prefixcmp(gie->path, prefix))
 			continue;
@@ -61,7 +58,11 @@ int cmd_ls_files(git_repository *repo, int argc, char **argv)
 		write_name_quoted(gie->path + prefix_len, stdout, '\n');
 	}
 
-	git_index_free(index_cur);
+	git_index_free(idx);
 
-	return EXIT_SUCCESS;
+	rc = EXIT_SUCCESS;
+
+out:
+	if (err) libgit_error();
+	return rc;
 }
