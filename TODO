@@ -1,48 +1,7 @@
+Run
+ $ make test
+in order to see what is left to do.
 
-git checkout-index -a -f
-	do other options
-	see the github entry
-
-git init (--bare | dir)
-	Some bugs still, see libgit2
-
-git rev-list --pretty=oneline | Sha1
-	do other options
-
-git commit-tree <tree> (-p <commit>)
-	do other options
-
-git ls-tree <tree-ish>
-	do other options
-
-git mktag < signature\_file
-	Done ! But it not pass all tests because git tests check the output...
-
-git ls-files (--stage | --cached)
-	Do other options
-
-git write-tree (--missing-ok)
-	Do other options
-
-git read-tree Sha1
-	Do other options
-
-git update-index (--add) <file>
-	Do other options ("--remove" first !)
-
-git cat-file (-t | -s | -e | -p | <type>) <object>
-	Do other options
-
-
-
-
-and everything else... and feel free to add any ideas here !
-
-
-
-CY TODO for OS4 port:
-
-Fix update-index (test write-tree and commit-tree)
-Add high level add and commit (should be a doddle)
-Figure out how to add merge (needed for clone and pull - might need to read more of the doc I started reading) << this is a priority
-Add push (think this should be easy although I'm not sure ssh is supported by libgit2 yet)
+As of January, 8th 2013, only six single tests out of 48 
+fail in the t0000-basic.sh test. Of course, this leaves
+an indefinitely number of other test suits that still fail.
