@@ -1,37 +1,44 @@
-A VERY minimal git client that relies on libgit2.
-======================
+Git2 - A VERY minimal git client based on libgit2
+=================================================
 
-The original source comes from https://github.com/vfr-nl/git2/
+The original source comes from 
+ https://github.com/vfr-nl/git2/
 (thanks to Vincent van Ravesteijn and Motiejus Jakštys)
+It then has been forked to
+ https://github.com/Romain-Geissler/git2.git
+ https://github.com/chris-y/git2.git
+and is currently developed under
+ https://github.com/sba1/git2
+with a mirror at
+ https://git.gitorious.org/amiga-ports/git2-amiga.git
+ 
+Note that the call forwarding to the original git for unknown
+options has been removed as the goal is to implement all
+important commands natively.
 
-For every commands (including tricky options and switchs) that
-we do not support (yet), the call is forwarded to the usual "git"
-(found in PATH) and thus git2 is completely transparent for
-users and works exactly as git do.
+The major target platform in this fork is AmigaOS4 but other
+platforms are equally important as this eases testing. 
 
+Building git2 for AmigaOS
+=========================
 
-Building git2
-======================
+Currently, it is only possible to compile git2 via a cross
+compiler and CMake. See http://sourceforge.net/projects/adtools/
+how to get the cross compiler environment.
 
-CMake is required to compile.
-
-After git-cloned you need to initialise the submodules :
-    $ git submodule init
-    $ git submodule update
-This can take a lot of time (it clones libgit2 and git repository).
-
-Then you can compile with :
-    $ make
-
+Once everything is set up, build git2 is as easy as typing
+ > make
+in the chell command prompt.
 
 Testing
-======================
+=======
 
-If you want to test our git client with the tests of git, run :
-    $ make test
-This can take a lot of time (it compiles git and then launch thousands of tests).
-As we are using the git test framework, nearly all what can be done with git test
-can be done with our test base (ie set GIT_SKIP_TESTS or GIT_TEST_OPTS).
+If you want to test git2 with the tests of the original git, run:
+ > make test
+On a POSIX computer. This can take a lot of time (it compiles git and then launch
+thousands of tests). As we are using the git test framework, nearly all what can
+be done with git test can be done with our test base (ie set GIT_SKIP_TESTS or
+GIT_TEST_OPTS).
 
 You can run a particular test by giving its name :
-   $ make t0000-basic.sh
+ > make t0000-basic.sh
