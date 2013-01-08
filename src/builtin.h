@@ -5,6 +5,7 @@
 
 #include "exec-cmd.h"
 #include "git-add.h"
+#include "git-diff-files.h"
 #include "git-init.h"
 #include "git-rev-list.h"
 #include "git-ls-files.h"
