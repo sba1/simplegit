@@ -48,6 +48,7 @@ find_package(OpenSSL)
 add_definitions(-DOPENSSL_SHA1 -DNO_OPENSSL)
 
 IF (AMIGA)
+	include_directories(${ROOT_DIRECTORY}/libgit2/deps/regex)
 #	include_directories("/SDK/local/common/include/openssl")
 #	set(LIB_SHA1 "/SDK/local/newlib/lib/libssl.a")
 ENDIF()
