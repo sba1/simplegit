@@ -3,20 +3,35 @@
 #
 
 .PHONY: all
-all:
-	# Git repo
-	git submodule init
-	git submodule update
+all: git2
+
+.PHONY: git2
+git2: libgit2
+	# git2
+	mkdir -p CMake/build-amiga/
+	cd CMake/build-amiga/ && cmake .. -DAMIGA=1 -DCMAKE_C_COMPILER=ppc-amigaos-gcc -DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
+	cd CMake/build-amiga/ && $(MAKE)
+
+.PHONY: libgit2
+libgit2: libgit-repo
 	# libgit2
 	mkdir -p libgit2/build-amiga
 	cd libgit2/build-amiga && cmake .. -DAMIGA=1 -DCMAKE_C_COMPILER=ppc-amigaos-gcc -DCMAKE_ASM_COMPILER=ppc-amigaos-gcc -DBUILD_CLAR=OFF -DBUILD_SHARED_LIBS=OFF
 	cd libgit2/build-amiga && $(MAKE)
-	# git2
-	mkdir -p CMake/build-amiga/
-	cd CMake/build-amiga/ && cmake .. -DCMAKE_C_COMPILER=ppc-amigaos-gcc -DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
-	cd CMake/build-amiga/ && $(MAKE)
+
+.PHONY: libgit-repo
+libgit-repo:
+	# Git repo
+	git submodule init
+	git submodule update
 
 .PHONY: clean
-clean:
+clean: clean-git2 clean-libgit2
+
+.PHONY: clean-libgit2
+clean-libgit2:
 	rm -Rf libgit2/build-amiga
+
+.PHONY: clean-git2
+clean-git2:
 	rm -Rf CMake/build-amiga
