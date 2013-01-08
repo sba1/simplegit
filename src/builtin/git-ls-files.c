@@ -13,28 +13,24 @@
 
 int cmd_ls_files(git_repository *repo, int argc, char **argv)
 {
+	int i;
 	int rc = EXIT_FAILURE;
 	int show_cached = 1;
 	int err;
+	char *file = NULL;
 	git_index *idx;
 
-	/* options parsing */
-	if (argc > 1)
+	for (i=1;i<argc;i++)
 	{
-		if (argc > 2)
+		if (strcmp(argv[i], "--stage") == 0 || strcmp(argv[i], "-s") == 0) show_cached = 0;
+		else if (strcmp(argv[i], "--cached") == 0 || strcmp(argv[i], "-c") == 0) show_cached = 1;
+		else if (argv[i][0] == '-')
 		{
-			please_git_do_it_for_me();
+			fprintf(stderr,"Unknown option %s!\n",argv[i]);
 			goto out;
-		}
-
-		if (strcmp(argv[1], "--stage") == 0 || strcmp(argv[1], "-s") == 0)
-			show_cached = 0;
-		else if (strcmp(argv[1], "--cached") == 0 || strcmp(argv[1], "-c") == 0)
-			show_cached = 1;
-		else
+		} else
 		{
-			please_git_do_it_for_me();
-			goto out;
+			file = argv[i];
 		}
 	}
 
@@ -51,6 +47,8 @@ int cmd_ls_files(git_repository *repo, int argc, char **argv)
 
 		if (prefixcmp(gie->path, prefix))
 			continue;
+
+		if (file && strcmp(gie->path,file)) continue;
 
 		if (!show_cached)
 			printf("%06o %s %i\t", gie->mode, git_oid_tostr(buf, GIT_OID_HEXSZ+1, &gie->oid), git_index_entry_stage(gie));
