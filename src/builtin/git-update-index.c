@@ -86,7 +86,7 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 
 	if (index_info_given)
 	{
-		char line[1024];
+		char line[5000];
 
 		/* Read the index information from stdin */
 
@@ -96,17 +96,30 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 			int pos;
 			char c;
 			int line_len = strlen(line);
+			int is_ls_files_format = 0;
 
 			if (line_len<=52)
 				continue;
 
 			memset(&e,0,sizeof(e));
 
+			/* There seem to be multiple formats that index-infos accepts.
+			 * TODO: Implement this more elegantly */
 			e.mode = strtol(line,NULL,8);
-			if (git_oid_fromstrn(&e.oid,&line[12],40) == -1)
-				continue;
 
-			pos = 52;
+			if (git_oid_fromstrn(&e.oid,&line[12],40) == -1)
+			{
+				if (git_oid_fromstrn(&e.oid,&line[7],40) == -1)
+				{
+					fprintf(stderr,"Invalid OID format!\n");
+					continue;
+				}
+				is_ls_files_format = 1;
+			}
+
+			if (is_ls_files_format) pos = 50;
+			else pos = 52;
+
 			while ((c = line[pos]))
 			{
 				if (!isspace((unsigned char)c))
@@ -114,7 +127,9 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 				pos++;
 			}
 			if (!line[pos])
+			{
 				continue;
+			}
 
 			if (line[line_len-1] == '\n') line[line_len-1] = 0;
 
