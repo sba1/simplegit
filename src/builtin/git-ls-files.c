@@ -11,6 +11,32 @@
 #include "strbuf.h"
 #include "quote.h"
 
+/**
+ * Simple path spec comparing function that supports asterisks.
+ *
+ * @param str
+ * @param prefix
+ * @return
+ */
+static int pathspeccmp(const char *str, const char *pspec)
+{
+	char s,p;
+
+	for (; ; str++, pspec++)
+	{
+		s = *str;
+		p = *pspec;
+
+		if (p == '*')
+			return 0;
+
+		if (p != s)
+			return (unsigned char)p - (unsigned char)s;
+
+		if (!p) return 0;
+	}
+}
+
 int cmd_ls_files(git_repository *repo, int argc, char **argv)
 {
 	int i;
@@ -18,7 +44,8 @@ int cmd_ls_files(git_repository *repo, int argc, char **argv)
 	int show_cached = 1;
 	int err;
 	char *file = NULL;
-	git_index *idx;
+	char buf[GIT_OID_HEXSZ+1];
+	git_index *idx = NULL;
 
 	for (i=1;i<argc;i++)
 	{
@@ -34,10 +61,11 @@ int cmd_ls_files(git_repository *repo, int argc, char **argv)
 		}
 	}
 
+	if (!file) file = "*";
+
 	if ((err = git_repository_index(&idx, repo)) != GIT_OK)
 		goto out;
 
-	char buf[GIT_OID_HEXSZ+1];
 	const char *prefix = get_git_prefix();
 	size_t prefix_len = strlen(prefix);
 
@@ -48,7 +76,8 @@ int cmd_ls_files(git_repository *repo, int argc, char **argv)
 		if (prefixcmp(gie->path, prefix))
 			continue;
 
-		if (file && strcmp(gie->path,file)) continue;
+		if (pathspeccmp(gie->path,file))
+			continue;
 
 		if (!show_cached)
 			printf("%06o %s %i\t", gie->mode, git_oid_tostr(buf, GIT_OID_HEXSZ+1, &gie->oid), git_index_entry_stage(gie));
@@ -56,11 +85,11 @@ int cmd_ls_files(git_repository *repo, int argc, char **argv)
 		write_name_quoted(gie->path + prefix_len, stdout, '\n');
 	}
 
-	git_index_free(idx);
-
 	rc = EXIT_SUCCESS;
-
 out:
 	if (err) libgit_error();
+
+	if (idx) git_index_free(idx);
+
 	return rc;
 }
