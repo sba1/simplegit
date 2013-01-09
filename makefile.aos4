@@ -1,13 +1,13 @@
 #
-# This is a all in one makefile for building git2 for AmigaOS
+# This is a all in one makefile for building SimpleGit for AmigaOS
 #
 
 .PHONY: all
-all: git2
+all: sgit
 
-.PHONY: git2
-git2: libgit2
-	# git2
+.PHONY: sgit
+sgit: libgit2
+	# sgit
 	mkdir -p CMake/build-amiga/
 	cd CMake/build-amiga/ && cmake .. -DAMIGA=1 -DCMAKE_C_COMPILER=ppc-amigaos-gcc -DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
 	cd CMake/build-amiga/ && $(MAKE)
@@ -32,6 +32,6 @@ clean: clean-git2 clean-libgit2
 clean-libgit2:
 	rm -Rf libgit2/build-amiga
 
-.PHONY: clean-git2
+.PHONY: clean-sgit
 clean-git2:
 	rm -Rf CMake/build-amiga

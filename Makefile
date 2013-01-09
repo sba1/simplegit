@@ -7,11 +7,12 @@ LIBGIT2_BUILD_DIRECTORY=${LIBGIT2_DIRECTORY}/build
 CMAKE_MAKEFILE=${BUILD_DIRECTORY}/Makefile
 CMAKE_FILE_LISTS=${CMAKE_DIRECTORY}/CMakeLists.txt
 BIN_DIRECTORY=$(abspath .)/bin
-GIT2=${BIN_DIRECTORY}/git2
+GIT2=${BIN_DIRECTORY}/sgit
 
 main:${CMAKE_MAKEFILE}
 	@rm -rf "${GIT2}";
 	@${MAKE} -C "${BUILD_DIRECTORY}";
+	cd "${BIN_DIRECTORY}" && ln -sf sgit git-init
 
 ${LIBGIT2_INCLUDE_DIRECTORY}:
 	git submodule init
@@ -30,4 +31,4 @@ test:main
 
 clean:
 	rm -rf "${BUILD_DIRECTORY}"
-	rm -rf "${LIBGIT2_BUILD_DIRECTORY}"
+#	rm -rf "${LIBGIT2_BUILD_DIRECTORY}"

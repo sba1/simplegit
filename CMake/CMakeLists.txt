@@ -1,4 +1,4 @@
-# CMake build script for the git2 project
+# CMake build script for the SimpleGit project
 #
 # Building (out of source build):
 # > mkdir build && cd build
@@ -10,7 +10,7 @@
 
 SET(CMAKE_SYSTEM_NAME "Generic")
 
-project (Git2 C)
+project (SimpleGit C)
 cmake_minimum_required (VERSION 2.6)
 
 set(ROOT_DIRECTORY ${CMAKE_SOURCE_DIR}/..)
@@ -61,7 +61,7 @@ include_directories(${LIBGIT2_DIRECTORY}/include)
 set(LIBS ${LIBS} git2.a pthread.a ${LIB_SHA1})
 link_directories(${LIBGIT2_BUILD_DIRECTORY})
 
-add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS git2-bin)
+add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS sgit-bin)
 #add_custom_target(
 #	build_libgit2
 #	COMMAND
@@ -71,7 +71,7 @@ add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} 
 #		make
 #)
 
-add_executable(git2-bin ${C_SOURCE_FILES})
-set_target_properties(git2-bin PROPERTIES OUTPUT_NAME git2)
-add_dependencies(git2-bin build_libgit2)
-target_link_libraries(git2-bin ${LIBS})
+add_executable(sgit-bin ${C_SOURCE_FILES})
+set_target_properties(sgit-bin PROPERTIES OUTPUT_NAME sgit)
+add_dependencies(sgit-bin build_libgit2)
+target_link_libraries(sgit-bin ${LIBS})
