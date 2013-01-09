@@ -8,7 +8,7 @@
 #include "git-log.h"
 #include "git-support.h"
 
-void print_commit(git_commit *wcommit)
+void print_commit(git_commit *wcommit, int with_tree)
 {
 	const char *cmsg;
 	char c;
@@ -19,19 +19,21 @@ void print_commit(git_commit *wcommit)
 	time_t tt;
 	struct tm tm;
 	const git_oid *woid;
+	const git_oid *toid;
 
 	woid = git_commit_id(wcommit);
-
-	git_oid_tostr(oid_str,sizeof(oid_str),woid);
-
 	cmsg  = git_commit_message(wcommit);
 	cauth = git_commit_author(wcommit);
 	tt = cauth->when.time + cauth->when.offset*60;
 	tm = *gmtime(&tt);
 	tm.tm_gmtoff = cauth->when.offset*60;
 	strftime(t,sizeof(t),"%a %d %b %Y %T %z",&tm);
-
-	printf("commit %s\n",oid_str);
+	printf("commit %s\n",git_oid_tostr(oid_str,sizeof(oid_str),woid));
+	if (with_tree)
+	{
+		toid = git_commit_tree_id(wcommit);
+		printf("tree %s\n",git_oid_tostr(oid_str,sizeof(oid_str),toid));
+	}
 	printf("Author: %s <%s>\n",cauth->name,cauth->email);
 	printf("Date:   %s\n",t);
 	printf("\n");
@@ -73,7 +75,7 @@ int cmd_log(git_repository *repo, int argc, char **argv)
 		if (git_commit_lookup(&wcommit, repo, &oid) != 0)
 			continue;
 
-		print_commit(wcommit);
+		print_commit(wcommit,0);
 
 		git_commit_free(wcommit);
 	}

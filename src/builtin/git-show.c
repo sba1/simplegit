@@ -46,7 +46,7 @@ int cmd_show(git_repository *repo, int argc, char **argv)
 	switch ((obj_type = git_object_type(obj)))
 	{
 		case	GIT_OBJ_COMMIT:
-				print_commit((git_commit*)obj);
+				print_commit((git_commit*)obj,1);
 				break;
 		default:
 				fprintf(stderr,"Unsupported object type %s\n",git_object_type2string(obj_type));
