@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include "errors.h"
 #include <git2.h>
+
+#include "errors.h"
 #include "git-rev-list.h"
 #include "repository.h"
 #include "git-support.h"
@@ -16,7 +17,7 @@ static void cleanup() {
 	git_revwalk_free(walk);
 }
 
-int cmd_rev_list(int argc, const char **argv)
+int cmd_rev_list(git_repository *repo, int argc, char **argv)
 {
 	/* Doesn't pass the tests due to bug in libgit2 apparently */
 	please_git_do_it_for_me();
