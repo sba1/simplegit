@@ -9,10 +9,14 @@ CMAKE_FILE_LISTS=${CMAKE_DIRECTORY}/CMakeLists.txt
 BIN_DIRECTORY=$(abspath .)/bin
 GIT2=${BIN_DIRECTORY}/sgit
 
-main:${CMAKE_MAKEFILE}
+main: dirs ${CMAKE_MAKEFILE}
 	@rm -rf "${GIT2}";
 	@${MAKE} -C "${BUILD_DIRECTORY}";
 	cd "${BIN_DIRECTORY}" && ln -sf sgit git-init
+
+.PHONY: dirs
+dirs:
+	mkdir -p $(BUILD_DIRECTORY)
 
 ${LIBGIT2_INCLUDE_DIRECTORY}:
 	git submodule init
