@@ -37,6 +37,11 @@ int cmd_show(git_repository *repo, int argc, char **argv)
 		}
 	}
 
+	if (!obj_str)
+	{
+		fprintf(stderr,"Needs a tree argument currently\n");
+		goto out;
+	}
 	if ((err = git_oid_fromstr(&obj_oid,obj_str)) != GIT_OK)
 		goto out;
 
