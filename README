@@ -31,7 +31,7 @@ Once everything is set up, building SimpleGit is as easy as typing
  $ make -f makefile.aos4
 
 in the shell command prompt. Snapshot builds are available from
- https://sonumina.de/jenkins/job/git.amiga/
+ https://sonumina.de/jenkins/job/sgit.amiga/
 
 Building SimpleGit for other platforms
 ======================================
