@@ -8,7 +8,7 @@
 #include "git-log.h"
 #include "git-support.h"
 
-static void print_commit(struct git_commit *wcommit)
+void print_commit(git_commit *wcommit)
 {
 	const char *cmsg;
 	char c;

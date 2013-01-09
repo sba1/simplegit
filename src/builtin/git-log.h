@@ -3,4 +3,6 @@
 
 int cmd_log(git_repository *repo, int argc, char **argv);
 
+void print_commit(git_commit *wcommit);
+
 #endif
