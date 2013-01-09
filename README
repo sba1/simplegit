@@ -55,4 +55,4 @@ test framework, nearly all what can be done with git test can be done with
 our test base (ie set GIT_SKIP_TESTS or GIT_TEST_OPTS).
 
 You can run a particular test by giving its name:
- $ make t0000-basic.sh
+ $ make -C tests t0000-basic.sh
