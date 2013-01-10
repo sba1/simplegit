@@ -124,7 +124,7 @@ int cmd_commit_tree(git_repository *repo, int argc, char **argv)
 	 * This is okay as usually the number of parents is small */
 	for (p=0;p<num_parents;p++)
 	{
-		for (i=p+1;i<p;i++)
+		for (i=p+1;i<num_parents;i++)
 		{
 			const git_oid *poid = git_commit_id(parents[p]);
 			const git_oid *ioid = git_commit_id(parents[i]);
