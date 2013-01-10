@@ -172,7 +172,12 @@ int cmd_commit_tree(git_repository *repo, int argc, char **argv)
 out:
 	if (err) libgit_error();
 	if (tree) git_tree_free(tree);
-	if (parents) free(parents);
+	if (parents)
+	{
+		for (i=0;i<num_parents;i++)
+			git_commit_free(parents[i]);
+		free(parents);
+	}
 	if (author_signature) git_signature_free(author_signature);
 	if (committer_signature) git_signature_free(committer_signature);
 	strbuf_release(&buffer);
