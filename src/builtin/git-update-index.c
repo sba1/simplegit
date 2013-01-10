@@ -140,7 +140,7 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 		{
 			const git_index_entry *ie;
 
-			if ((!(st.st_mode & __S_IFDIR)) && does_path_overlap_with_a_directory_in_index(idx,complete_path))
+			if ((!(st.st_mode & S_IFDIR)) && does_path_overlap_with_a_directory_in_index(idx,complete_path))
 			{
 				if (!replace_given)
 				{
