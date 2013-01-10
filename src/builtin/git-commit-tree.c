@@ -120,6 +120,33 @@ int cmd_commit_tree(git_repository *repo, int argc, char **argv)
 		}
 	}
 
+	/* Sanitize parents (remove duplicates). Use a dump O(n^2) algo.
+	 * This is okay as usually the number of parents is small */
+	for (p=0;p<num_parents;p++)
+	{
+		for (i=p+1;i<p;i++)
+		{
+			const git_oid *poid = git_commit_id(parents[p]);
+			const git_oid *ioid = git_commit_id(parents[i]);
+
+			if (!git_oid_cmp(poid,ioid))
+			{
+				git_commit_free(parents[p]);
+				parents[p] = NULL;
+			}
+		}
+	}
+	for (p=0,i=0;p<num_parents;p++)
+	{
+		if (parents[p])
+		{
+			if (i != p)
+				parents[i] = parents[p];
+			i++;
+		}
+	}
+	num_parents = i;
+
 	if ((err = git_oid_fromstr(&tree_oid,tree_arg)) != GIT_OK)
 		goto out;
 	if ((err = git_tree_lookup_prefix(&tree,repo,&tree_oid,strlen(tree_arg))) != GIT_OK)
