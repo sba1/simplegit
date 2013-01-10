@@ -21,7 +21,7 @@ static int use_unnamed(git_repository *repo, const char *url)
 
 	// Create an instance of a remote from the URL. The transport to use
 	// is detected from the URL
-	error = git_remote_new(&remote, repo, NULL, url, NULL);
+	error = git_remote_create_inmemory(&remote, repo, NULL, url);
 	if (error < 0)
 		goto cleanup;
 
@@ -67,17 +67,12 @@ int ls_remote(git_repository *repo, int argc, char **argv)
 {
 	int error;
 
-	if (argc > 1)
-	{
-		/* If there's a ':' in the name, assume it's an URL */
-		if (strchr(argv[1], ':') != NULL) {
-			error = use_unnamed(repo, argv[1]);
-		} else {
-			error = use_remote(repo, argv[1]);
-		}
-	} else
-	{
-		error = -1;
+	argc = argc;
+	/* If there's a ':' in the name, assume it's an URL */
+	if (strchr(argv[1], ':') != NULL) {
+		error = use_unnamed(repo, argv[1]);
+	} else {
+		error = use_remote(repo, argv[1]);
 	}
 
 	return error;

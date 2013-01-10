@@ -6,9 +6,14 @@
 #include "git-checkout.h"
 #include "git-support.h"
 
-static int conflict_cb(const char *conflicting_path, const git_oid *index_oid, unsigned int index_mode, unsigned int wd_mode, void *payload)
+static int notify_cb(git_checkout_notify_t why,
+	const char *path,
+	const git_diff_file *baseline,
+	const git_diff_file *target,
+	const git_diff_file *workdir,
+	void *payload)
 {
-	fprintf(stderr,"Conflict in %s\n",conflicting_path);
+	fprintf(stderr,"Notify in %s\n",path);
 	return 1;
 }
 
@@ -66,7 +71,7 @@ int cmd_checkout(git_repository *repo, int argc, char **argv)
 	/* Default options. Note by default we perform a dry checkout */
 	memset(&checkout_opts,0,sizeof(checkout_opts));
 	checkout_opts.version = GIT_CHECKOUT_OPTS_VERSION;
-	checkout_opts.conflict_cb = conflict_cb;
+	checkout_opts.notify_cb = notify_cb;
 
 	checkout_opts.checkout_strategy = GIT_CHECKOUT_FORCE|GIT_CHECKOUT_REMOVE_UNTRACKED;//GIT_CHECKOUT_SAFE|GIT_CHECKOUT_UPDATE_UNTRACKED;
 	if (git_checkout_head(repo,&checkout_opts) != 0)
