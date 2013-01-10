@@ -40,6 +40,8 @@ add_definitions(-std=gnu99 -Wall -Wextra)
 
 #add_definitions(-DNO_PTHREADS)
 
+SET(CMAKE_C_FLAGS "-Wno-missing-field-initializers ${CMAKE_C_FLAGS}")
+
 set(CMAKE_C_FLAGS_DEBUG "-g -O0")
 set(CMAKE_C_FLAGS_RELEASE "-O2")
 
