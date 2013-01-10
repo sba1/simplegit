@@ -30,10 +30,14 @@ static int pathspeccmp(const char *str, const char *pspec)
 		if (p == '*')
 			return 0;
 
+		if (!p && s == '/')
+			return 0;
+
 		if (p != s)
 			return (unsigned char)p - (unsigned char)s;
 
-		if (!p) return 0;
+		if (!p)
+			return 0;
 	}
 }
 
