@@ -143,7 +143,7 @@ int main(int argc, char **argv)
 		code = handler(repo, argc, argv);
 	} else
 	{
-		fprintf(stderr,"Command not supported\n");
+		fprintf(stderr,"Command \"%s\" not supported\n",argv[0]);
 		code = EXIT_FAILURE;
 	}
 
