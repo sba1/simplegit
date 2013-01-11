@@ -21,6 +21,7 @@
 #include "git-branch.h"
 #include "git-log.h"
 #include "git-show.h"
+#include "git-config.h"
 
 #include "common.h"
 
