@@ -79,7 +79,7 @@ int cmd_commit_tree(git_repository *repo, int argc, char **argv)
 	if (!committer_name) committer_name = "Dummy Committerr";
 	if (!committer_email) author_email ="dummyc@dummydummydummy.zz";
 
-	if (committer_date)
+	if (author_date)
 	{
 		if ((parse_date_basic(author_date, &author_timestamp, &author_offset)))
 		{
@@ -88,7 +88,7 @@ int cmd_commit_tree(git_repository *repo, int argc, char **argv)
 		}
 	}
 
-	if (author_date)
+	if (committer_date)
 	{
 		if ((parse_date_basic(committer_date, &committer_timestamp, &committer_offset)))
 		{
