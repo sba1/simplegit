@@ -22,6 +22,7 @@
 #include "git-log.h"
 #include "git-show.h"
 #include "git-config.h"
+#include "git-commit.h"
 
 #include "common.h"
 

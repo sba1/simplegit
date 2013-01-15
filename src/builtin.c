@@ -23,7 +23,8 @@ cmd_struct commands[] = {
 	{"add", cmd_add},
 	{"diff-files", cmd_diff_files},
 	{"show", cmd_show},
-	{"config", cmd_config}
+	{"config", cmd_config},
+	{"commit", cmd_commit}
 };
 
 git_cb lookup_handler(const char *cmd) {
