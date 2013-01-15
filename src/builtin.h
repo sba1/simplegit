@@ -23,6 +23,7 @@
 #include "git-show.h"
 #include "git-config.h"
 #include "git-commit.h"
+#include "git-push.h"
 
 #include "common.h"
 
