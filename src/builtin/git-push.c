@@ -6,10 +6,38 @@
 
 #include "errors.h"
 #include "git-push.h"
+#include "strbuf.h"
 
 static int push_status_callback(const char *ref, const char *msg, void *data)
 {
 	printf("%p\n",msg);
+	return 0;
+}
+
+static int push_cred_acquire_callback(git_cred **cred, const char *url, unsigned int allowed_types, void *payload)
+{
+	char buf[100];
+	char username[40];
+	char *passwd;
+
+	int i;
+
+	if (prefixcmp(url,"https:"))
+		return -1;
+
+	printf("Enter user name for %s: ",url);
+	fgets(username,sizeof(username),stdin);
+
+	snprintf(buf,sizeof(buf),"Enter password for %s: ",url);
+	passwd = getpass(buf);
+
+	for (i = strlen(username) - 1; i>=0; i--)
+		if (username[i]=='\n')
+			username[i] = 0;
+
+	if (git_cred_userpass_plaintext_new(cred,username,passwd) != GIT_OK)
+		return -1;
+
 	return 0;
 }
 
@@ -45,6 +73,8 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
+	git_remote_set_cred_acquire_cb(r,push_cred_acquire_callback,NULL);
+
 	if ((err = git_push_new(&p,r)) != GIT_OK)
 		goto out;
 
@@ -56,8 +86,6 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 
 	if ((err = git_push_finish(p)) != GIT_OK)
 		goto out;
-
-	printf("done\n");
 out:
 	if (err != GIT_OK)
 		libgit_error();
