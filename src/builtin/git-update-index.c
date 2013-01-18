@@ -165,7 +165,7 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 
 		if (file_exists_in_wd)
 		{
-			if ((err = git_index_add_from_workdir(idx, complete_path)) != GIT_OK)
+			if ((err = git_index_add_bypath(idx, complete_path)) != GIT_OK)
 				goto out;
 		} else
 		{

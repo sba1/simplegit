@@ -41,7 +41,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 					int path_skip = wd_len;
 					while (path[path_skip]=='/') path_skip++;
 
-					if ((err = git_index_add_from_workdir(idx,&path[path_skip])) != GIT_OK)
+					if ((err = git_index_add_bypath(idx,&path[path_skip])) != GIT_OK)
 						goto out;
 					num_added++;
 				} else
