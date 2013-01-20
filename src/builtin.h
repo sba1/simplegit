@@ -24,6 +24,7 @@
 #include "git-config.h"
 #include "git-commit.h"
 #include "git-push.h"
+#include "git-diff.h"
 
 #include "common.h"
 

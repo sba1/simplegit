@@ -25,7 +25,8 @@ cmd_struct commands[] = {
 	{"show", cmd_show},
 	{"config", cmd_config},
 	{"commit", cmd_commit},
-	{"push", cmd_push}
+	{"push", cmd_push},
+	{"diff", cmd_diff}
 };
 
 git_cb lookup_handler(const char *cmd) {
