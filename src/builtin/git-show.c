@@ -8,7 +8,7 @@
 #include "utils.h"
 #include "git-parse-mode.h"
 #include "git-show.h"
-#include "git-log.h"
+#include "print.h"
 #include "strbuf.h"
 #include "quote.h"
 
