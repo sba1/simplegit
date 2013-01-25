@@ -5,7 +5,6 @@
 
 #include "errors.h"
 #include "git-support.h"
-#include "repository.h"
 #include "utils.h"
 #include "git-parse-mode.h"
 #include "strbuf.h"
@@ -70,7 +69,7 @@ int cmd_ls_files(git_repository *repo, int argc, char **argv)
 	if ((err = git_repository_index(&idx, repo)) != GIT_OK)
 		goto out;
 
-	const char *prefix = get_git_prefix();
+	const char *prefix = "";
 	size_t prefix_len = strlen(prefix);
 
 	for (unsigned i = 0; i < git_index_entrycount(idx); i++)

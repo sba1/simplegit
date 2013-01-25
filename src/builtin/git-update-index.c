@@ -7,7 +7,6 @@
 #include <git2.h>
 
 #include "errors.h"
-#include "repository.h"
 #include "strbuf.h"
 #include "git-support.h"
 
@@ -116,7 +115,7 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 		int file_exists_in_index;
 		struct stat st;
 
-		snprintf(complete_path,sizeof(complete_path),"%s%s",get_git_prefix(),filev[i]);
+		snprintf(complete_path,sizeof(complete_path),"%s%s","",filev[i]);
 		file_exists_in_index = !!git_index_get_bypath(idx, complete_path, 0);
 
 		if (lstat(complete_path,&st) == 0) file_exists_in_wd = 1;

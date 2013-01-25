@@ -7,7 +7,6 @@
 #include "errors.h"
 #include "git-ls-tree.h"
 #include "git-support.h"
-#include "repository.h"
 #include "quote.h"
 
 /**

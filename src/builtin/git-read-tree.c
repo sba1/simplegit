@@ -6,7 +6,6 @@
 #include "errors.h"
 #include "git-ls-tree.h"
 #include "git-support.h"
-#include "repository.h"
 #include "utils.h"
 
 int cmd_read_tree(git_repository *repo, int argc, char **argv)

@@ -5,7 +5,6 @@
 
 #include "errors.h"
 #include "git-support.h"
-#include "repository.h"
 #include "utils.h"
 #include "git-parse-mode.h"
 #include "git-show.h"

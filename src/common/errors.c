@@ -135,6 +135,5 @@ void libgit_error()
 
 void do_exit(int exit_code)
 {
-	free_global_resources();
 	exit(exit_code);
 }

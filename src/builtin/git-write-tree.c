@@ -7,7 +7,6 @@
 
 #include "errors.h"
 #include "git-support.h"
-#include "repository.h"
 #include "strbuf.h"
 #include "utils.h"
 

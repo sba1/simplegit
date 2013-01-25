@@ -4,7 +4,6 @@
 
 #include "errors.h"
 #include "git-rev-list.h"
-#include "repository.h"
 #include "git-support.h"
 #include "parse-options.h"
 #include "strbuf.h"
@@ -79,7 +78,7 @@ int cmd_rev_list(git_repository *repo, int argc, char **argv)
 		please_git_do_it_for_me();
 	}
 
-	repository = get_git_repository();
+	repository = repo;
 
 	/* Lookup the commit object */
 	e = git_object_lookup_prefix((git_object **)&commit, repository, &commit_oid, len, GIT_OBJ_ANY);

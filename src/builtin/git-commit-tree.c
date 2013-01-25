@@ -6,7 +6,6 @@
 #include "git.h"
 #include "git-commit-tree.h"
 #include "git-support.h"
-#include "repository.h"
 #include "date.h"
 #include "strbuf.h"
 #include "environment.h"

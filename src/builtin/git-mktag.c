@@ -4,7 +4,6 @@
 #include <git2.h>
 #include "git-mktag.h"
 #include "git-support.h"
-#include "repository.h"
 #include "strbuf.h"
 
 

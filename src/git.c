@@ -3,96 +3,31 @@
 #include "builtin.h"
 #include "exec-cmd.h"
 #include "git-support.h"
-#include "run-command.h"
 #include "errors.h"
 #include "parse-options.h"
-#include "repository.h"
 #include "strbuf.h"
 #include "environment.h"
 
-static const char git_usage_string[] =
-	"git [--version] [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n"
-	"           [-p|--paginate|--no-pager] [--no-replace-objects]\n"
-	"           [--bare] [--git-dir=<path>] [--work-tree=<path>]\n"
-	"           [-c name=value] [--help]\n"
-	"           <command> [<args>]";
+static char *argv0_path;
 
-// original source : https://github.com/vfr-nl/git2
-void free_global_resources() {
-	git_support_free_arguments();
-	git_exec_cmd_free_resources();
-	free_repository();
-}
+static const char *git_extract_argv0_path(const char *argv0)
+{
+	const char *slash;
 
-static int handle_options(const char ***argv, int *argc) {
-	int handled = 0;
+	if (!argv0 || !*argv0)
+		return NULL;
+	slash = argv0 + strlen(argv0);
 
-	while (*argc > 0) {
-		const char *cmd = (*argv)[0];
-		if (cmd[0] != '-')
-			break;
+	while (argv0 <= slash && !is_dir_sep(*slash))
+		slash--;
 
-		/*
-		 * For legacy reasons, the "version" and "help"
-		 * commands can be written with "--" prepended
-		 * to make them look like flags.
-		 */
-		if (!strcmp(cmd, "--help") || !strcmp(cmd, "--version"))
-			please_git_do_it_for_me();
-
-		/*
-		 * Check remaining flags.
-		 */
-		if (!prefixcmp(cmd, "--exec-path")) {
-			printf(git_get_argv0_path());
-			exit(0);
-		} else if (!strcmp(cmd, "--html-path")) {
-			please_git_do_it_for_me();
-		} else if (!strcmp(cmd, "--man-path")) {
-			please_git_do_it_for_me();
-		} else if (!strcmp(cmd, "--info-path")) {
-			please_git_do_it_for_me();
-		} else if (!strcmp(cmd, "-p") || !strcmp(cmd, "--paginate")) {
-			please_git_do_it_for_me();
-		} else if (!strcmp(cmd, "--no-pager")) {
-			please_git_do_it_for_me();
-		} else if (!strcmp(cmd, "--no-replace-objects")) {
-			please_git_do_it_for_me();
-		} else if (!strcmp(cmd, "--git-dir")) {
-			if (*argc < 2) {
-				fprintf(stderr, "No directory given for --git-dir.\n" );
-				usage(git_usage_string);
-			}
-			setenv(GIT_DIR_ENVIRONMENT, (*argv)[1], 1);
-			(*argv)++;
-			(*argc)--;
-			handled++;
-		} else if (!prefixcmp(cmd, "--git-dir=")) {
-			setenv(GIT_DIR_ENVIRONMENT, cmd + 10, 1);
-		} else if (!strcmp(cmd, "--work-tree")) {
-			if (*argc < 2) {
-				fprintf(stderr, "No directory given for --work-tree.\n" );
-				usage(git_usage_string);
-			}
-			setenv(GIT_WORK_TREE_ENVIRONMENT, (*argv)[1], 1);
-			(*argv)++;
-			(*argc)--;
-		} else if (!prefixcmp(cmd, "--work-tree=")) {
-			setenv(GIT_WORK_TREE_ENVIRONMENT, cmd + 12, 1);
-		} else if (!strcmp(cmd, "--bare")) {
-			please_git_do_it_for_me();
-		} else if (!strcmp(cmd, "-c")) {
-			please_git_do_it_for_me();
-		} else {
-			fprintf(stderr, "Unknown option: %s\n", cmd);
-			usage(git_usage_string);
-		}
-
-		(*argv)++;
-		(*argc)--;
-		handled++;
+	if (slash >= argv0)
+	{
+		argv0_path = strndup(argv0, slash - argv0);
+		return slash + 1;
 	}
-	return handled;
+
+	return argv0;
 }
 
 /**
@@ -104,8 +39,10 @@ static int handle_options(const char ***argv, int *argc) {
  */
 int main(int argc, char **argv)
 {
+	git_repository *repo = NULL;
 	const char *cmd;
-	int code = 0;
+	int rc = EXIT_FAILURE;
+	int err;
 
 	cmd = git_extract_argv0_path(argv[0]);
 
@@ -115,39 +52,38 @@ int main(int argc, char **argv)
 		argv[0] = (char*)cmd;
 	} else
 	{
-		git_support_register_arguments(argc, (const char**)argv);
-		//register argument so that we can fallback to git
-		//if we can't achieve the job
+		int i;
 
 		argc--;
 		argv++;
-		handle_options((const char***)&argv, &argc);
 
-		if (argc == 0) {
-			usage(git_usage_string);
+		for (i=0;i<argc;i++)
+		{
+			if (argv[0][0] != '-') break;
+
+			if (!strcmp("--exec-path",argv[i]))
+			{
+				printf(argv0_path);
+				rc = EXIT_SUCCESS;
+				goto out;
+			}
 		}
 	}
 
-	// Before running the actual command, create an instance of the local
-	// repository and pass it to the function.
-	int error;
-	git_repository *repo;
 
-	error = git_repository_open(&repo, ".git");
-	if (error < 0)
+	err = git_repository_open(&repo, ".git");
+	if (err < 0)
 		repo = NULL;
 
 	git_cb handler = lookup_handler(argv[0]);
 	if (handler != NULL)
 	{
-		code = handler(repo, argc, argv);
+		rc = handler(repo, argc, argv);
 	} else
 	{
 		fprintf(stderr,"Command \"%s\" not supported\n",argv[0]);
-		code = EXIT_FAILURE;
 	}
-
-	free_global_resources();
-
-	return code;
+out:
+	git_repository_free(repo);
+	return rc;
 }

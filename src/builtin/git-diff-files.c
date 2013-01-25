@@ -7,7 +7,6 @@
 #include "errors.h"
 #include "git-diff-files.h"
 #include "git-support.h"
-#include "repository.h"
 #include "quote.h"
 
 static int file_cb(const git_diff_delta *delta, float progress, void *payload)

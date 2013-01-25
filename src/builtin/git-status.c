@@ -6,7 +6,6 @@
 #include "errors.h"
 #include "git-status.h"
 #include "git-support.h"
-#include "repository.h"
 #include "utils.h"
 
 #define GIT_STATUS_WT (GIT_STATUS_WT_MODIFIED|GIT_STATUS_WT_NEW|GIT_STATUS_WT_TYPECHANGE|GIT_STATUS_WT_DELETED)

@@ -6,7 +6,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "git-support.h"
-#include "repository.h"
 #include "utils.h"
 #include "git-parse-mode.h"
 #include "strbuf.h"
