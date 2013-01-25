@@ -3,6 +3,6 @@
 
 #include <git2.h>
 
-void print_commit(git_commit *wcommit, int with_tree);
+void print_commit(git_commit *wcommit, const char *fmt);
 
 #endif

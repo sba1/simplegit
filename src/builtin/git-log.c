@@ -32,7 +32,7 @@ int cmd_log(git_repository *repo, int argc, char **argv)
 		if (git_commit_lookup(&wcommit, repo, &oid) != 0)
 			continue;
 
-		print_commit(wcommit,0);
+		print_commit(wcommit,"commit %C\nAuthor: %a\nDate:   %d\n\n%m\n");
 
 		git_commit_free(wcommit);
 	}
