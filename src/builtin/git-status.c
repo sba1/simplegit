@@ -38,22 +38,6 @@ static int status_cb(const char *path, unsigned int status_flags, void *payload)
 	return 0;
 }
 
-/**
- * Returns the name of the branch pointed by ref.
- *
- * @param ref
- * @return the name of the branch or NULL.
- */
-const char *sgit_branch_name(git_reference *ref)
-{
-	const char *branch_name;
-
-	branch_name = git_reference_name(ref);
-	if (!branch_name) return NULL;
-
-	return branch_name + strlen("refs/heads/");
-}
-
 int cmd_status(git_repository *repo, int argc, char **argv)
 {
 	int rc = EXIT_FAILURE;
@@ -80,11 +64,10 @@ int cmd_status(git_repository *repo, int argc, char **argv)
 
 	if ((git_repository_head(&head_ref,repo)) == GIT_OK)
 	{
-		const char *branch_name = sgit_branch_name(head_ref);
-		if (branch_name)
-		{
+		const char *branch_name;
+
+		if ((err = git_branch_name(&branch_name,head_ref)) == GIT_OK)
 			printf("# On branch %s\n",branch_name);
-		}
 	} else
 	{
 		printf("# On an unnamed branch\n");
