@@ -3,7 +3,8 @@
 
 // original source : https://github.com/vfr-nl/git2
 
-#include "exec-cmd.h"
+#include <git2.h>
+
 #include "git-add.h"
 #include "git-diff-files.h"
 #include "git-init.h"
@@ -29,7 +30,10 @@
 
 #include "common.h"
 
-//int cmd_init(int argc, const char **argv);
+typedef struct cmd_struct {
+	char *cmd;
+	git_cb handler;
+} cmd_struct;
 
 extern cmd_struct commands[];
 
