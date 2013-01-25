@@ -8,136 +8,78 @@
 #include "parse-options.h"
 #include "strbuf.h"
 
-git_commit* commit = NULL;
-git_revwalk *walk = NULL;
-
-static void cleanup() {
-	git_commit_close(commit);
-	git_revwalk_free(walk);
-}
-
 int cmd_rev_list(git_repository *repo, int argc, char **argv)
 {
-	/* Doesn't pass the tests due to bug in libgit2 apparently */
-	please_git_do_it_for_me();
-
 	const char *commit_string = NULL;
 	const char *format = NULL;
 	int i = 0;
-	git_repository *repository=NULL;
 	git_oid commit_oid;
 	git_oid current_oid;
-	char commit_oid_string[GIT_OID_HEXSZ+1];
-	size_t len;
+	char current_oid_str[GIT_OID_HEXSZ+1];
 	int e;
+	int rc = EXIT_FAILURE;
+	git_commit *commit;
+	git_revwalk *walk;
 
-	/* For now, we only implement --format=oneline */
-	if (argc != 3) {
-		please_git_do_it_for_me();
-	}
-
-	for (i = 1; i < 3; ++i) {
-		if (*argv[i] == '-') {
-			if (!prefixcmp(argv[i], "--pretty=")) {
+	for (i = 1; i < argc; i++)
+	{
+		if (*argv[i] == '-')
+		{
+			if (!prefixcmp(argv[i], "--pretty="))
+			{
 				format = argv[i] + strlen("--pretty=");
+			} else
+			{
+				fprintf(stderr,"Unknown option \"%s\"\n",argv[i]);
+				goto out;
 			}
-		} else {
+		} else
+		{
 			commit_string = argv[i];
 		}
 	}
 
-	if (!commit_string) {
-		/* Show usage : ask git for now */
-		please_git_do_it_for_me();
-	}
-	if (!format) {
-		/* No option or not handled option */
-		please_git_do_it_for_me();
-	}
-	if (strcmp(format, "oneline")) {
-		/* Format not supported for now */
-		please_git_do_it_for_me();
+	if (!commit_string)
+	{
+		fprintf(stderr,"No commit id given!\n");
+		goto out;
 	}
 
-	/* Supported object specifications are full or short oid */
-	/* Create the partial oid (filled with '0's) from the given argument */
-	len = strlen(commit_string);
-	if (len > GIT_OID_HEXSZ) {
-		/* It's not a sha1 */
-		please_git_do_it_for_me();
-	}
-	memcpy(commit_oid_string, commit_string, len * sizeof(char));
-	memset(commit_oid_string + len, '0', (GIT_OID_HEXSZ - len) * sizeof(char));
-	commit_oid_string[GIT_OID_HEXSZ] = '\0';
-	e = git_oid_fromstr(&commit_oid, commit_oid_string);
-	if (e) {
-		/* Not an OID. The object can be specified in a lot
-		 * of different ways (not supported by libgit2 yet).
-		 * Fall back to git.
-		 */
-		please_git_do_it_for_me();
+	if (format)
+	{
+		fprintf(stderr,"Format \"%s\" not supported!\n",format);
+		goto out;
 	}
 
-	repository = repo;
+	if ((e = git_oid_fromstrn(&commit_oid,commit_string,strlen(commit_string))) != GIT_OK)
+		goto out;
 
-	/* Lookup the commit object */
-	e = git_object_lookup_prefix((git_object **)&commit, repository, &commit_oid, len, GIT_OBJ_ANY);
-	if (e != GIT_OK) {
-		if (e == GIT_ENOTFOUND) {
-			/* Maybe the given argument is not a sha1
-			 * but a tag name (which looks like a sha1)
-			 * Fall back to git.
-			 */
-			 please_git_do_it_for_me();
-		} else if (e == GIT_EAMBIGUOUS) {
-			error("%s is an ambiguous prefix", commit_string);
-		} else {
-			libgit_error();
-		}
-	}
-	if (git_object_type((git_object *)commit) != GIT_OBJ_COMMIT) {
-		/* Not a commit : nothing to do */
-		cleanup();
+	if ((e = git_commit_lookup_prefix(&commit,repo,&commit_oid,strlen(commit_string))) != GIT_OK)
+		goto out;
 
-		return EXIT_SUCCESS;
-	}
-
-	if (git_revwalk_new(&walk, repository)) {
-		cleanup();
-		libgit_error();
-	}
+	if ((e = git_revwalk_new(&walk, repo)) != GIT_OK)
+		goto out;
 
 	git_revwalk_sorting(walk, GIT_SORT_TIME);
 
-	if (git_revwalk_push(walk, &commit_oid)) {
-		cleanup();
-		libgit_error();
+	if ((e = git_revwalk_push(walk, &commit_oid)) != GIT_OK)
+		goto out;
+
+	while ((git_revwalk_next(&current_oid, walk)) == GIT_OK)
+	{
+		struct git_commit *wcommit;
+
+		if (git_commit_lookup(&wcommit, repo, &current_oid) != 0)
+			continue;
+
+		git_oid_tostr(current_oid_str,sizeof(current_oid_str),&current_oid);
+		printf("%s\n",current_oid_str);
+		git_commit_free(wcommit);
 	}
 
-	git_commit_close(commit);
-	if ((git_revwalk_next(&current_oid, walk)) == GIT_OK) {
-		char oid_string[GIT_OID_HEXSZ+1];
-		oid_string[GIT_OID_HEXSZ] = '\0';
-		const char *cmsg;
-
-		while (1) {
-			git_oid_fmt(oid_string, &current_oid);
-			if (git_commit_lookup(&commit, repository, &current_oid)) {
-				libgit_error();
-			}
-
-			cmsg  = git_commit_message(commit);
-			
-			git_oid_fmt(oid_string, git_commit_id(commit));
-			printf("%s %s\n", oid_string, cmsg);
-
-			if ((git_revwalk_next(&current_oid, walk)) != GIT_OK)
-				break;
-			git_commit_close(commit);
-		}
-	}
-	
-	cleanup();
-
-	return EXIT_SUCCESS;
+	git_revwalk_free(walk);
+out:
+	if (e) libgit_error();
+	if (commit) git_commit_free(commit);
+	return rc;
 }
