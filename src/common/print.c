@@ -1,8 +1,38 @@
 #include <stdio.h>
+#include <string.h>
 
 #include <git2.h>
 
 #include "print.h"
+
+
+struct optarg
+{
+	const char *start;
+	int len;
+};
+
+/**
+ * Find an optional argument enclosed by squared brackets in the given format string.
+ *
+ * @param out
+ * @param fmt
+ * @return fmt beyound the optional arg.
+ */
+const char *sgit_find_optional_arg(struct optarg *out, const char *fmt)
+{
+	if (*fmt == '[')
+	{
+		fmt++;
+		out->start = fmt;
+		while (*fmt && *fmt != ']')
+			fmt++;
+		out->len = fmt - out->start;
+		if (*fmt)
+			fmt++;
+	}
+	return fmt;
+}
 
 /**
  * Prints selected details about the given commit.
@@ -72,30 +102,14 @@ void print_commit(git_commit *wcommit, const char *fmt)
 						{
 							int i;
 							int num_parents = git_commit_parentcount(wcommit);
-							const char *prefix_start = NULL;
-							int prefix_len = 0;
-							const char *suffix_start = NULL;
-							int suffix_len = 0;
+							struct optarg prefix;
+							struct optarg suffix;
 
-							if (*fmt == '[')
-							{
-								fmt++;
-								prefix_start = fmt;
-								while (*fmt && *fmt != ']')
-									fmt++;
-								prefix_len = fmt - prefix_start;
-								if (*fmt) fmt++;
-							}
+							memset(&prefix,0,sizeof(prefix));
+							memset(&suffix,0,sizeof(suffix));
 
-							if (*fmt == '[')
-							{
-								fmt++;
-								suffix_start = fmt;
-								while (*fmt && *fmt != ']')
-									fmt++;
-								suffix_len = fmt - suffix_start;
-								if (*fmt) fmt++;
-							}
+							fmt = sgit_find_optional_arg(&prefix, fmt);
+							fmt = sgit_find_optional_arg(&suffix, fmt);
 
 							for (i=0;i<num_parents;i++)
 							{
@@ -104,11 +118,11 @@ void print_commit(git_commit *wcommit, const char *fmt)
 								if (git_commit_parent(&pcommit,wcommit,i) == GIT_OK)
 								{
 									int j;
-									for (j=0;j<prefix_len;j++)
-										printf("%c",prefix_start[j]);
+									for (j=0;j<prefix.len;j++)
+										printf("%c",prefix.start[j]);
 									printf("%s",git_oid_tostr(oid_str,sizeof(oid_str),git_commit_id(pcommit)));
-									for (j=0;j<suffix_len;j++)
-										printf("%c",suffix_start[j]);
+									for (j=0;j<suffix.len;j++)
+										printf("%c",suffix.start[j]);
 
 								}
 							}
