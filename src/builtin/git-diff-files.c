@@ -81,15 +81,25 @@ int cmd_diff_files(git_repository *repo, int argc, char **argv)
 		{
 			delta.old_file.path = e->path;
 			delta.old_file.mode = sgit_get_mode(st.st_mode);
-			git_oid_fromstrn(&delta.old_file.oid,"",0);
-			delta.status = GIT_DELTA_MODIFIED;
+
+			if (delta.new_file.mode != delta.old_file.mode ||
+				e->ctime.seconds != st.st_ctim.tv_sec ||
+				e->mtime.seconds != st.st_mtim.tv_sec)
+			{
+				git_oid_fromstrn(&delta.old_file.oid,"",0);
+				delta.status = GIT_DELTA_MODIFIED;
+			} else
+			{
+				delta.status = GIT_DELTA_UNMODIFIED;
+			}
 		} else
 		{
 			delta.status = GIT_DELTA_DELETED;
 			delta.old_file.mode = 0;
 		}
 
-		file_cb(&delta,0,NULL);
+		if (delta.status != GIT_DELTA_UNMODIFIED)
+			file_cb(&delta,0,NULL);
 	}
 
 	rc = EXIT_SUCCESS;
