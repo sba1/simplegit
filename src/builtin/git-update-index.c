@@ -86,6 +86,7 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 	int remove_given = 0;
 	int replace_given = 0;
 	int index_info_given = 0;
+	int refresh = 0;
 
 	for (i=1;i<argc;i++)
 	{
@@ -93,6 +94,7 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 		else if (!strcmp(argv[i], "--remove")) remove_given = 1;
 		else if (!strcmp(argv[i], "--replace")) replace_given = 1;
 		else if (!strcmp(argv[i], "--index-info")) index_info_given = 1;
+		else if (!strcmp(argv[i], "--refresh")) refresh = 1;
 		else if (!strcmp(argv[i], "--")) { i++; break; }
 		else if (argv[i][0] != '-') break;
 		else
@@ -108,6 +110,19 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 	/* Open the index */
 	if ((err = git_repository_index(&idx, repo) != GIT_OK))
 		goto out;
+
+	if (refresh)
+	{
+		size_t index_entries = git_index_entrycount(idx);
+
+		for (i=0;i<(int)index_entries;i++)
+		{
+			const git_index_entry *e;
+			e = git_index_get_byindex(idx,i);
+			git_index_add_bypath(idx,e->path);
+		}
+		git_index_write(idx);
+	}
 
 	for (int i = 0; i < filec; i++)
 	{
