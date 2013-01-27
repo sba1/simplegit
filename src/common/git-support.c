@@ -35,3 +35,21 @@ int git2_create_branch_from_ref(git_reference **new_branch_ref, git_reference *b
 out:
 	return err;
 }
+
+/**
+ * Returns the git mode given the stat mode.
+ *
+ * @param mode
+ * @return
+ */
+int sgit_get_mode(int st_mode)
+{
+	if (S_ISLNK(st_mode))
+		return S_IFLNK;
+
+	if (S_ISDIR(st_mode) || (st_mode & S_IFMT) == (S_IFLNK | S_IFDIR))
+		return (S_IFLNK | S_IFDIR);
+
+	return S_IFREG | ((st_mode & 0100) ? 0755 : 0644);
+}
+

@@ -30,17 +30,6 @@ static int file_cb(const git_diff_delta *delta, float progress, void *payload)
 	return 0;
 }
 
-static int sgit_get_mode(int mode)
-{
-	if (S_ISLNK(mode))
-		return S_IFLNK;
-
-	if (S_ISDIR(mode) || (mode & S_IFMT) == (S_IFLNK | S_IFDIR))
-		return (S_IFLNK | S_IFDIR);
-
-	return S_IFREG | ((mode & 0100) ? 0755 : 0644);
-}
-
 int cmd_diff_files(git_repository *repo, int argc, char **argv)
 {
 	int i;
