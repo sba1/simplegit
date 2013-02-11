@@ -69,12 +69,13 @@ int cmd_init(git_repository *dummy, int argc, char **argv)
 	}
 
 	if (!git_dir) git_dir = ".";
+	if (template_dir && !*template_dir) template_dir = ".";
 
 	git_repository_init_options init_opts;
 	memset(&init_opts,0,sizeof(init_opts));
 	init_opts.version = GIT_REPOSITORY_INIT_OPTIONS_VERSION;
 	init_opts.template_path = template_dir;
-	init_opts.flags = /*GIT_REPOSITORY_INIT_EXTERNAL_TEMPLATE|*/GIT_REPOSITORY_INIT_NO_REINIT|GIT_REPOSITORY_INIT_MKPATH|((is_bare_repository_cfg)?GIT_REPOSITORY_INIT_BARE:0);
+	init_opts.flags = (template_dir?GIT_REPOSITORY_INIT_EXTERNAL_TEMPLATE:0)|GIT_REPOSITORY_INIT_NO_REINIT|GIT_REPOSITORY_INIT_MKPATH|((is_bare_repository_cfg)?GIT_REPOSITORY_INIT_BARE:0);
 
 	err = git_repository_init_ext(&repo, git_dir, &init_opts);
 	if (err != GIT_OK) goto out;
