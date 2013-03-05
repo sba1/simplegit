@@ -14,7 +14,12 @@ static int push_status_callback(const char *ref, const char *msg, void *data)
 	return 0;
 }
 
-static int push_cred_acquire_callback(git_cred **cred, const char *url, unsigned int allowed_types, void *payload)
+static int push_cred_acquire_callback(
+        git_cred **cred,
+        const char *url,
+        const char *username_from_url,
+        unsigned int allowed_types,
+        void *payload)
 {
 	char buf[100];
 	char username[40];
