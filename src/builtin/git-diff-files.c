@@ -83,8 +83,8 @@ int cmd_diff_files(git_repository *repo, int argc, char **argv)
 			delta.old_file.mode = sgit_get_mode(st.st_mode);
 
 			if (delta.new_file.mode != delta.old_file.mode ||
-				e->ctime.seconds != st.st_ctim.tv_sec ||
-				e->mtime.seconds != st.st_mtim.tv_sec)
+				e->ctime.seconds != st.st_ctime ||
+				e->mtime.seconds != st.st_mtime)
 			{
 				git_oid_fromstrn(&delta.old_file.oid,"",0);
 				delta.status = GIT_DELTA_MODIFIED;
