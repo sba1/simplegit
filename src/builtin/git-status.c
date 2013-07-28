@@ -72,11 +72,12 @@ int cmd_status(git_repository *repo, int argc, char **argv)
 		printf("# On an unnamed branch\n");
 	}
 
+	/* FIXME: Use git_status_list() API */
 	printf("# Changes to be committed:\n#\n");
 	opt.flags = GIT_STATUS_OPT_INCLUDE_UNMODIFIED |
 			GIT_STATUS_OPT_INCLUDE_UNTRACKED |
 			GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS;
-	opt.show = GIT_STATUS_SHOW_INDEX_THEN_WORKDIR;
+	opt.show = GIT_STATUS_SHOW_INDEX_ONLY;
 
 	if ((err = git_status_foreach_ext(repo,&opt,status_cb,&mode)) != GIT_OK)
 		goto out;
