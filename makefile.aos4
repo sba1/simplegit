@@ -16,7 +16,7 @@ sgit: libgit2
 libgit2: libgit-repo
 	# libgit2
 	mkdir -p libgit2/build-amiga
-	cd libgit2/build-amiga && cmake .. -DAMIGA=1 -DCMAKE_C_COMPILER=ppc-amigaos-gcc -DBUILD_CLAR=OFF -DBUILD_SHARED_LIBS=OFF -DZLIB_LIBRARY=ON
+	cd libgit2/build-amiga && cmake .. -DAMIGA=1 -DCMAKE_C_COMPILER=ppc-amigaos-gcc -DBUILD_CLAR=OFF -DBUILD_SHARED_LIBS=OFF
 	cd libgit2/build-amiga && $(MAKE)
 
 .PHONY: libgit-repo
