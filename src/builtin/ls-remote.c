@@ -4,20 +4,12 @@
 #include <string.h>
 #include "common.h"
 
-static int show_ref__cb(git_remote_head *head, void *payload)
-{
-	char oid[GIT_OID_HEXSZ + 1] = {0};
-
-	payload = payload;
-	git_oid_fmt(oid, &head->oid);
-	printf("%s\t%s\n", oid, head->name);
-	return 0;
-}
-
 static int use_unnamed(git_repository *repo, const char *url)
 {
 	git_remote *remote = NULL;
 	int error;
+	const git_remote_head **refs;
+	size_t refs_len, i;
 
 	// Create an instance of a remote from the URL. The transport to use
 	// is detected from the URL
@@ -31,9 +23,18 @@ static int use_unnamed(git_repository *repo, const char *url)
 	if (error < 0)
 		goto cleanup;
 
-	// With git_remote_ls we can retrieve the advertised heads
-	error = git_remote_ls(remote, &show_ref__cb, NULL);
+	/**
+	 * Get the list of references on the remote and print out
+	 * their name next to what they point to.
+	 */
+	if ((error = git_remote_ls(&refs, &refs_len, remote)) < 0)
+		goto cleanup;
 
+	for (i = 0; i < refs_len; i++) {
+		char oid[GIT_OID_HEXSZ + 1] = {0};
+		git_oid_fmt(oid, &refs[i]->oid);
+		printf("%s\t%s\n", oid, refs[i]->name);
+	}
 cleanup:
 	git_remote_free(remote);
 	return error;
@@ -43,6 +44,8 @@ static int use_remote(git_repository *repo, char *name)
 {
 	git_remote *remote = NULL;
 	int error;
+	const git_remote_head **refs;
+	size_t refs_len, i;
 
 	// Find the remote by name
 	error = git_remote_load(&remote, repo, name);
@@ -53,7 +56,18 @@ static int use_remote(git_repository *repo, char *name)
 	if (error < 0)
 		goto cleanup;
 
-	error = git_remote_ls(remote, &show_ref__cb, NULL);
+	/**
+	 * Get the list of references on the remote and print out
+	 * their name next to what they point to.
+	 */
+	if ((error = git_remote_ls(&refs, &refs_len, remote)) < 0)
+		goto cleanup;
+
+	for (i = 0; i < refs_len; i++) {
+		char oid[GIT_OID_HEXSZ + 1] = {0};
+		git_oid_fmt(oid, &refs[i]->oid);
+		printf("%s\t%s\n", oid, refs[i]->name);
+	}
 
 cleanup:
 	git_remote_free(remote);

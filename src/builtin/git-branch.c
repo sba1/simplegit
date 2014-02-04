@@ -7,25 +7,6 @@
 #include "git-checkout.h"
 #include "git-support.h"
 
-struct branch_list_callback_payload
-{
-	git_repository *repo;
-};
-
-static int branch_list_callback(const char *branch_name, git_branch_t branch_type, void *payload)
-{
-	struct branch_list_callback_payload *pl = (struct branch_list_callback_payload*)payload;
-	struct git_reference *branch_ref;
-
-	if (git_branch_lookup(&branch_ref,pl->repo,branch_name,branch_type) != 0)
-		branch_ref = NULL;
-
-	printf("%s%s\n",git_branch_is_head(branch_ref)?"* ":"  ",branch_name);
-
-	git_reference_free(branch_ref);
-	return 0;
-}
-
 int cmd_branch(git_repository *repo, int argc, char **argv)
 {
 	int i;
@@ -53,9 +34,21 @@ int cmd_branch(git_repository *repo, int argc, char **argv)
 
 	if (!branch)
 	{
-		struct branch_list_callback_payload pl;
-		pl.repo = repo;
-		git_branch_foreach(repo,list_flags,branch_list_callback,&pl);
+		git_branch_iterator *iter;
+
+		if (!git_branch_iterator_new(&iter, repo, list_flags))
+		{
+			struct git_reference *branch_ref;
+			git_branch_t type;
+
+			while (!git_branch_next(&branch_ref, &type, iter))
+			{
+				const char *branch_name;
+				if (!git_branch_name(&branch_name, branch_ref))
+					printf("%s%s\n",git_branch_is_head(branch_ref)?"* ":"  ",branch_name);
+			}
+			git_branch_iterator_free(iter);
+		}
 	} else
 	{
 		int err;

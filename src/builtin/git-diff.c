@@ -61,18 +61,16 @@ char *colors[] = {
 
 static int printer(
 	const git_diff_delta *delta,
-	const git_diff_range *range,
-	char usage,
-	const char *line,
-	size_t line_len,
+	const git_diff_hunk *hunk,
+	const git_diff_line *line,
 	void *data)
 {
 	int *last_color = data, color = 0;
 
-	(void)delta; (void)range; (void)line_len;
+	(void)delta; (void)hunk;
 
 	if (*last_color >= 0) {
-		switch (usage) {
+		switch (line->origin) {
 		case GIT_DIFF_LINE_ADDITION: color = 3; break;
 		case GIT_DIFF_LINE_DELETION: color = 2; break;
 		case GIT_DIFF_LINE_ADD_EOFNL: color = 3; break;
@@ -89,7 +87,7 @@ static int printer(
 		}
 	}
 
-	fputs(line, stdout);
+	fputs(line->content, stdout);
 	return 0;
 }
 
@@ -122,7 +120,7 @@ int cmd_diff(git_repository *repo, int argc, char **argv)
 	int rc = EXIT_FAILURE;
 	git_tree *t1 = NULL, *t2 = NULL;
 	git_diff_options opts = GIT_DIFF_OPTIONS_INIT;
-	git_diff_list *diff;
+	git_diff *diff;
 	int i, color = -1, compact = 0, cached = 0;
 	char *a, *treeish1 = NULL, *treeish2 = NULL;
 
@@ -208,14 +206,14 @@ int cmd_diff(git_repository *repo, int argc, char **argv)
 	}
 	else if (t1)
 	{
-		git_diff_list *diff2;
+		git_diff *diff2;
 		if ((err = git_diff_tree_to_index(&diff, repo, t1, NULL, &opts)) != GIT_OK)
 			goto out;
 		if ((err = git_diff_index_to_workdir(&diff2, repo, NULL, &opts)) != GIT_OK)
 			goto out;
 		if ((err = git_diff_merge(diff, diff2)) != GIT_OK)
 			goto out;
-		git_diff_list_free(diff2);
+		git_diff_free(diff2);
 	}
 	else if (cached) {
 		if ((err = resolve_to_tree(repo, "HEAD", &t1)) != GIT_OK)
@@ -233,11 +231,11 @@ int cmd_diff(git_repository *repo, int argc, char **argv)
 
 	if (compact)
 	{
-		if ((err = git_diff_print_compact(diff, printer, &color)) != GIT_OK)
+		if ((err = git_diff_print(diff, GIT_DIFF_FORMAT_NAME_STATUS, printer,  &color)) != GIT_OK)
 			goto out;
 	} else
 	{
-		if ((err = git_diff_print_patch(diff, printer, &color)) != GIT_OK)
+		if ((err = git_diff_print(diff, GIT_DIFF_FORMAT_PATCH, printer, &color)) != GIT_OK)
 			goto out;
 	}
 
@@ -251,7 +249,7 @@ out:
 		printf("%d\n",err);
 		libgit_error();
 	}
-	if (diff) git_diff_list_free(diff);
+	if (diff) git_diff_free(diff);
 	if (t1) git_tree_free(t1);
 	if (t2) git_tree_free(t2);
 

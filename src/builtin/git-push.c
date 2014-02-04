@@ -55,6 +55,8 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 	git_push *p = NULL;
 	git_remote *r = NULL;
 
+	git_remote_callbacks callbacks = GIT_REMOTE_CALLBACKS_INIT;
+
 	for (i=1;i<argc;i++)
 	{
 		if (argv[i][0] == '-')
@@ -78,7 +80,9 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
-	git_remote_set_cred_acquire_cb(r,push_cred_acquire_callback,NULL);
+
+	callbacks.credentials = push_cred_acquire_callback;
+	git_remote_set_callbacks(r, &callbacks);
 
 	if ((err = git_push_new(&p,r)) != GIT_OK)
 		goto out;
