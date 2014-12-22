@@ -211,9 +211,9 @@ int cmd_update_index(git_repository *repo, int argc, char **argv)
 			 * TODO: Implement this more elegantly */
 			e.mode = strtol(line,NULL,8);
 
-			if (git_oid_fromstrn(&e.oid,&line[12],40) == -1)
+			if (git_oid_fromstrn(&e.id,&line[12],40) == -1)
 			{
-				if (git_oid_fromstrn(&e.oid,&line[7],40) == -1)
+				if (git_oid_fromstrn(&e.id,&line[7],40) == -1)
 				{
 					fprintf(stderr,"Invalid OID format!\n");
 					continue;

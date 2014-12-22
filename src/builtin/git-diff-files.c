@@ -18,8 +18,8 @@ static int file_cb(const git_diff_delta *delta, float progress, void *payload)
 	progress = progress;
 	payload = payload;
 
-	git_oid_tostr(noid_str,sizeof(noid_str),&delta->new_file.oid);
-	git_oid_tostr(ooid_str,sizeof(ooid_str),&delta->old_file.oid);
+	git_oid_tostr(noid_str,sizeof(noid_str),&delta->new_file.id);
+	git_oid_tostr(ooid_str,sizeof(ooid_str),&delta->old_file.id);
 	switch (delta->status)
 	{
 		case	GIT_DELTA_MODIFIED: status = 'M'; break;
@@ -74,7 +74,7 @@ int cmd_diff_files(git_repository *repo, int argc, char **argv)
 		e = git_index_get_byindex(idx,i);
 
 		delta.new_file.path = e->path;
-		delta.new_file.oid = e->oid;
+		delta.new_file.id = e->id;
 		delta.new_file.mode = e->mode;
 
 		if (!lstat(e->path,&st))
@@ -86,7 +86,7 @@ int cmd_diff_files(git_repository *repo, int argc, char **argv)
 				e->ctime.seconds != st.st_ctime ||
 				e->mtime.seconds != st.st_mtime)
 			{
-				git_oid_fromstrn(&delta.old_file.oid,"",0);
+				git_oid_fromstrn(&delta.old_file.id,"",0);
 				delta.status = GIT_DELTA_MODIFIED;
 			} else
 			{

@@ -28,7 +28,7 @@ int cmd_checkout_index(git_repository *repo, int argc, char **argv)
 	int i, err, rc;
 	int all = 0;
 	git_index *idx = NULL;
-	git_checkout_opts checkout_opts;
+	git_checkout_options checkout_opts;
 
 	err = 0;
 	rc = EXIT_FAILURE;
@@ -60,7 +60,7 @@ int cmd_checkout_index(git_repository *repo, int argc, char **argv)
 
 	/* Default options. Note by default we perform a dry checkout */
 	memset(&checkout_opts,0,sizeof(checkout_opts));
-	checkout_opts.version = GIT_CHECKOUT_OPTS_VERSION;
+	checkout_opts.version = GIT_CHECKOUT_OPTIONS_VERSION;
 	checkout_opts.notify_cb = notify_cb;
 
 	checkout_opts.checkout_strategy = GIT_CHECKOUT_FORCE|GIT_CHECKOUT_REMOVE_UNTRACKED;//GIT_CHECKOUT_SAFE|GIT_CHECKOUT_UPDATE_UNTRACKED;
