@@ -69,6 +69,11 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (argc <= 0)
+	{
+		fprintf(stderr,"Usage: %s <command>\n", cmd);
+		goto out;
+	}
 
 	err = git_repository_open(&repo, ".git");
 	if (err < 0)
