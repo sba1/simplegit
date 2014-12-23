@@ -15,14 +15,25 @@ all: sgit
 sgit: libgit2
 	# sgit
 	mkdir -p build-amiga/
-	cd build-amiga/ && cmake ../CMake -DAMIGA=1 -DCMAKE_SYSTEM_NAME=AmigaOS -DCMAKE_C_COMPILER=$(COMPILER) -DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
+	cd build-amiga/ && cmake ../CMake\
+		-DCMAKE_SYSTEM_NAME=AmigaOS\
+		-DCMAKE_C_COMPILER=$(COMPILER)\
+		-DAMIGA=1\
+		-DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
 	cd build-amiga/ && $(MAKE)
 
 .PHONY: libgit2
 libgit2: libgit-repo
 	# libgit2
 	mkdir -p libgit2/build-amiga
-	cd libgit2/build-amiga && cmake .. -DAMIGA=1 -DUSE_SSH=OFF -DTHREADSAFE=OFF -DCMAKE_SYSTEM_NAME=AmigaOS -DCMAKE_C_COMPILER=$(COMPILER) -DBUILD_CLAR=OFF -DBUILD_SHARED_LIBS=OFF
+	cd libgit2/build-amiga && cmake ..\
+		-DCMAKE_SYSTEM_NAME=AmigaOS\
+		-DCMAKE_C_COMPILER=$(COMPILER)\
+		-DAMIGA=1\
+		-DUSE_SSH=OFF\
+		-DTHREADSAFE=OFF\
+		-DBUILD_CLAR=OFF\
+		-DBUILD_SHARED_LIBS=OFF
 	cd libgit2/build-amiga && $(MAKE)
 
 .PHONY: libgit-repo
