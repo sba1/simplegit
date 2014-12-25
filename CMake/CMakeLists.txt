@@ -49,12 +49,6 @@ set(CMAKE_C_FLAGS_RELEASE "-O2")
 find_package(OpenSSL)
 add_definitions(-DOPENSSL_SHA1 -DNO_OPENSSL)
 
-IF (AMIGA)
-	include_directories(${ROOT_DIRECTORY}/libgit2/deps/regex)
-#	include_directories("/SDK/local/common/include/openssl")
-#	set(LIB_SHA1 "/SDK/local/newlib/lib/libssl.a")
-ENDIF()
-
 set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 
@@ -62,6 +56,12 @@ include_directories(${INCLUDE_DIRECTORIES})
 include_directories(${LIBGIT2_DIRECTORY}/include)
 set(LIBS ${LIBS} git2.a pthread.a ${LIB_SHA1})
 link_directories(${LIBGIT2_BUILD_DIRECTORY})
+
+IF (AMIGA)
+	include_directories(${ROOT_DIRECTORY}/libgit2/deps/regex)
+	link_directories(${ROOT_DIRECTORY}/interim-openssl/openssl/repo/)
+	set(LIBS ${LIBS} ssl.a crypto.a)
+ENDIF()
 
 add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS sgit-bin)
 #add_custom_target(

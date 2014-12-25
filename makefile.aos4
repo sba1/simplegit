@@ -23,18 +23,30 @@ sgit: libgit2
 	cd build-amiga/ && $(MAKE)
 
 .PHONY: libgit2
-libgit2: libgit-repo
+libgit2: libgit2/build-amiga/libgit2.a
+
+libgit2/build-amiga/libgit2.a: libgit-repo interim-openssl/openssl/repo/libssl.a
 	# libgit2
 	mkdir -p libgit2/build-amiga
 	cd libgit2/build-amiga && cmake ..\
 		-DCMAKE_SYSTEM_NAME=AmigaOS\
 		-DCMAKE_C_COMPILER=$(COMPILER)\
+		-DCMAKE_C_FLAGS="-DGIT_SSL -I$(shell readlink -f interim-openssl/openssl/repo/include/)"\
 		-DAMIGA=1\
 		-DUSE_SSH=OFF\
 		-DTHREADSAFE=OFF\
 		-DBUILD_CLAR=OFF\
 		-DBUILD_SHARED_LIBS=OFF
 	cd libgit2/build-amiga && $(MAKE)
+	touch $@
+
+.PHONY: openssl
+openssl: interim-openssl/openssl/repo/libssl.a
+
+interim-openssl/openssl/repo/libssl.a:
+	(cd interim-openssl && git pull) || \
+	    (git clone https://github.com/sba1/interim-openssl.git)
+	$(MAKE) -C interim-openssl checkout build
 
 .PHONY: libgit-repo
 libgit-repo:
