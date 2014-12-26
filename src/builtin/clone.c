@@ -85,6 +85,7 @@ int do_clone(git_repository *repo, int argc, char **argv)
 	git_checkout_options checkout_opts = GIT_CHECKOUT_OPTIONS_INIT;
 	const char *url = argv[1];
 	const char *path = argv[2];
+	const char *val;
 	int error;
 
 	(void)repo; // unused
@@ -103,6 +104,10 @@ int do_clone(git_repository *repo, int argc, char **argv)
 	clone_opts.remote_callbacks.transfer_progress = &fetch_progress;
 	clone_opts.remote_callbacks.credentials = &cred_acquire;
 	clone_opts.remote_callbacks.payload = &pd;
+
+	if ((val = getenv("GIT_SSL_NO_VERIFY")) == NULL ||
+			git_config_parse_bool(&clone_opts.ignore_cert_errors, val))
+		clone_opts.ignore_cert_errors = 0;
 
 	// Do the clone
 	error = git_clone(&cloned_repo, url, path, &clone_opts);
