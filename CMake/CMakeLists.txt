@@ -61,6 +61,7 @@ IF (AMIGA)
 	include_directories(${ROOT_DIRECTORY}/libgit2/deps/regex)
 	link_directories(${ROOT_DIRECTORY}/interim-openssl/openssl/repo/)
 	set(LIBS ${LIBS} ssl.a crypto.a)
+	set(LIBS ${LIBS} unix.a)
 ENDIF()
 
 add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS sgit-bin)
