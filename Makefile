@@ -36,3 +36,7 @@ test:main
 clean:
 	rm -rf "${BUILD_DIRECTORY}"
 #	rm -rf "${LIBGIT2_BUILD_DIRECTORY}"
+
+.PHONY: libgit2
+libgit2:
+	cd libgit2 && mkdir -p build && cd build && cmake .. -DBUILD_CLAR=0 && $(MAKE)
