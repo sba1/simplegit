@@ -33,7 +33,7 @@ static void print_progress(const progress_data *pd)
 		: 0.f;
 	int kbytes = pd->fetch_progress.received_bytes / 1024;
 
-	printf("net %3d%% (%4d kb, %5d/%5d)  /  idx %3d%% (%5d/%5d)  /  chk %3d%% (%4" PRIuZ "/%4" PRIuZ ") %s\n",
+	fprintf(stderr, "net %3d%% (%4d kb, %5d/%5d)  /  idx %3d%% (%5d/%5d)  /  chk %3d%% (%4" PRIuZ "/%4" PRIuZ ") %s\r",
 		   network_percent, kbytes,
 		   pd->fetch_progress.received_objects, pd->fetch_progress.total_objects,
 		   index_percent, pd->fetch_progress.indexed_objects, pd->fetch_progress.total_objects,
@@ -92,7 +92,7 @@ int do_clone(git_repository *repo, int argc, char **argv)
 
 	// Validate args
 	if (argc < 3) {
-		printf ("USAGE: %s <url> <path>\n", argv[0]);
+		fprintf (stderr, "USAGE: %s <url> <path>\n", argv[0]);
 		return -1;
 	}
 
