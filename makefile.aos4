@@ -20,6 +20,7 @@ sgit: libgit2
 		-DCMAKE_C_COMPILER=$(COMPILER)\
 		-DAMIGA=1\
 		-DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
+	rm -f bin/sgit
 	cd build-amiga/ && $(MAKE)
 
 .PHONY: libgit2
