@@ -86,6 +86,7 @@ int main(int argc, char **argv)
 	if (argc <= 0)
 	{
 		fprintf(stderr,"Usage: %s <command>\n", cmd);
+		print_commands_overview();
 		goto out;
 	}
 
