@@ -1,3 +1,8 @@
+/**
+ * @file
+ *
+ * This is a main entry for the simple git tool.
+ */
 #include "git.h"
 
 #include "cmds.h"

@@ -1,3 +1,6 @@
+/**
+ * @file
+ */
 #include "cmds.h"
 #include "strbuf.h"
 
