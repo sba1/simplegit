@@ -1,7 +1,12 @@
 #include "builtin.h"
 #include "strbuf.h"
 
-cmd_struct commands[] = {
+struct cmd_struct {
+	char *cmd;
+	git_cb handler;
+};
+
+struct cmd_struct commands[] = {
 	{"init", cmd_init},
 	{"rev-list", cmd_rev_list},
 	{"ls-files", cmd_ls_files},
@@ -32,7 +37,7 @@ cmd_struct commands[] = {
 
 git_cb lookup_handler(const char *cmd) {
 	unsigned int i;
-	unsigned int max = sizeof(commands) / sizeof(cmd_struct);
+	unsigned int max = sizeof(commands) / sizeof(commands[0]);
 
 	for (i = 0; i < max; i++)
 		if (!strcmp(commands[i].cmd, cmd))

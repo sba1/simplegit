@@ -30,13 +30,6 @@
 
 #include "common.h"
 
-typedef struct cmd_struct {
-	char *cmd;
-	git_cb handler;
-} cmd_struct;
-
-extern cmd_struct commands[];
-
 git_cb lookup_handler(const char *cmd);
 
 #endif /* BUILTIN_H */
