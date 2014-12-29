@@ -1,6 +1,7 @@
 #include <string.h>
 #include "git.h"
-#include "builtin.h"
+
+#include "cmds.h"
 #include "git-support.h"
 #include "errors.h"
 #include "parse-options.h"

@@ -1,4 +1,4 @@
-#include "builtin.h"
+#include "cmds.h"
 #include "strbuf.h"
 
 struct cmd_struct {
