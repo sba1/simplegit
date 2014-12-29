@@ -1,12 +1,13 @@
-#include <string.h>
 #include "git.h"
 
 #include "cmds.h"
-#include "git-support.h"
+#include "environment.h"
 #include "errors.h"
+#include "git-support.h"
 #include "parse-options.h"
 #include "strbuf.h"
-#include "environment.h"
+
+#include <string.h>
 
 static char *argv0_path;
 
