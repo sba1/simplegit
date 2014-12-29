@@ -36,6 +36,9 @@ int cmd_branch(git_repository *repo, int argc, char **argv)
 	{
 		git_branch_iterator *iter;
 
+		/* If no list flag has been specified, assume the default one */
+		if (!list_flags) list_flags = GIT_BRANCH_LOCAL;
+
 		if (!git_branch_iterator_new(&iter, repo, list_flags))
 		{
 			struct git_reference *branch_ref;
