@@ -10,6 +10,16 @@
 
 #define GIT_STATUS_WT (GIT_STATUS_WT_MODIFIED|GIT_STATUS_WT_NEW|GIT_STATUS_WT_TYPECHANGE|GIT_STATUS_WT_DELETED)
 
+/**
+ * The function that is invoked for each status entry. It prints out the
+ * status to the standard output stream.
+ *
+ * @param path the path to the file for which this status is reported
+ * @param status_flags the status of the file
+ * @param payload an integer that defines which kind of path entries are
+ *  interesting. It also holds holds the header print state.
+ * @return
+ */
 static int status_cb(const char *path, unsigned int status_flags, void *payload)
 {
 	char *txt;
@@ -27,12 +37,33 @@ static int status_cb(const char *path, unsigned int status_flags, void *payload)
 	else if (status_flags & GIT_STATUS_WT_TYPECHANGE) txt = "typechange";
 	else if (status_flags & GIT_STATUS_WT_DELETED) txt = "deleted";
 
-	if (*mode == 0 && (status_flags & GIT_STATUS_WT))
+	if (((*mode) & 1) == 0)
 	{
-		*mode = 1;
-		printf("#\n# Changes not staged for commit:\n#\n");
+		switch (*mode >> 1)
+		{
+		case	0:
+				printf("# Changes to be committed:\n#\n");
+				break;
+
+		case	1:
+				printf("#\n# Changes not staged for commit:\n#\n");
+				break;
+
+		case	2:
+				printf("#\n# Untracked files:\n#\n");
+				break;
+		}
+		*mode |= 1;
 	}
-	printf("#       %s: %s (%d)\n",txt,path,status_flags);
+	if (*mode >> 1 == 2)
+	{
+		if (status_flags & GIT_STATUS_WT_NEW)
+			printf("#       %s\n",path);
+	} else
+	{
+		if (!(status_flags & GIT_STATUS_WT_NEW))
+			printf("#       %s: %s\n",txt,path);
+	}
 
 	return 0;
 }
@@ -41,8 +72,7 @@ int cmd_status(git_repository *repo, int argc, char **argv)
 {
 	int rc = EXIT_FAILURE;
 	int err = 0;
-	int i;
-	int mode = 0;
+	int i, mode;
 
 	git_reference *head_ref = NULL;
 
@@ -73,15 +103,29 @@ int cmd_status(git_repository *repo, int argc, char **argv)
 	}
 
 	/* FIXME: Use git_status_list() API */
-	printf("# Changes to be committed:\n#\n");
 	opt.flags = GIT_STATUS_OPT_INCLUDE_UNMODIFIED |
 			GIT_STATUS_OPT_INCLUDE_UNTRACKED |
 			GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS;
 	opt.show = GIT_STATUS_SHOW_INDEX_ONLY;
 
+	/* Index modifications */
+	mode = 0<<1;
 	if ((err = git_status_foreach_ext(repo,&opt,status_cb,&mode)) != GIT_OK)
 		goto out;
 
+	mode = 1<<1;
+
+	/* Workdir vs Index modifications */
+	opt.show = GIT_STATUS_SHOW_WORKDIR_ONLY;
+	if ((err = git_status_foreach_ext(repo,&opt,status_cb,&mode)) != GIT_OK)
+		goto out;
+
+	/* Dito, but only new files are printed */
+	mode = 2<<1;
+	if ((err = git_status_foreach_ext(repo,&opt,status_cb,&mode)) != GIT_OK)
+		goto out;
+
+	printf("#\n");
 	rc = EXIT_SUCCESS;
 out:
 	if (err) libgit_error();
