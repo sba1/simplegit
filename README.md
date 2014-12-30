@@ -9,8 +9,8 @@ Building SimpleGit for AmigaOS
 ------------------------------
 
 Currently, it only is possible to compile SimpleGit via a cross compiler and
-CMake. See http://sourceforge.net/projects/adtools/ how to get the cross
-compiler environment.
+CMake. See http://sourceforge.net/projects/adtools/ or
+https://github.com/sba1/adtools/ how to get the cross compiler environment.
 
 Once everything is set up, building SimpleGit is as easy as typing
 ```
