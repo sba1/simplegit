@@ -4,6 +4,8 @@
 #include "cmds.h"
 #include "strbuf.h"
 
+#include "reset.h"
+
 struct cmd_struct {
 	char *cmd;
 	char *desc;
@@ -32,6 +34,7 @@ struct cmd_struct commands[] = {
 	{"mktag",          "", cmd_mktag},
 	{"push",           "", cmd_push},
 	{"read-tree",      "", cmd_read_tree},
+	{"reset",          "", cmd_reset},
 	{"rev-list",       "", cmd_rev_list},
 	{"show",           "", cmd_show},
 	{"status",         "Summarize working directory changes", cmd_status},
