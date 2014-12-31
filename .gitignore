@@ -2,3 +2,7 @@ bin
 build
 build-amiga
 interim-openssl
+build-deps
+.project
+.cproject
+.settings
