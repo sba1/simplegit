@@ -5,5 +5,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y cmake
   - sudo apt-get install -y --force-yes adtools-gcc
+  - git config --global user.email "mail@sebastianbauer.info"
+  - git config --global user.name "Sebastian Bauer"
 
 script: make -f makefile.aos4
