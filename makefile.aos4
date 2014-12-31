@@ -49,7 +49,7 @@ openssl: interim-openssl/openssl/repo/libssl.a
 interim-openssl/openssl/repo/libssl.a:
 	(cd interim-openssl && git pull) || \
 	    (git clone https://github.com/sba1/interim-openssl.git)
-	$(MAKE) -C interim-openssl checkout build
+	$(MAKE) -C interim-openssl checkout build CC=ppc-amigaos-gcc
 
 .PHONY: pthread
 pthread: build-deps/Local/common/include/pthread.h
