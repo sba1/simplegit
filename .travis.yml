@@ -1,0 +1,9 @@
+language: c
+
+before_install:
+  - echo "deb http://dl.bintray.com/sba1/adtools-deb /" | sudo tee -a /etc/apt/sources.list
+  - sudo apt-get update -qq
+  - sudo apt-get install -y cmake
+  - sudo apt-get install -y --force-yes adtools-gcc
+
+script: make -f makefile.aos4
