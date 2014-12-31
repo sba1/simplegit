@@ -12,12 +12,14 @@ endif
 all: sgit
 
 .PHONY: sgit
-sgit: libgit2
+sgit: libgit2 pthread
 	# sgit
 	mkdir -p build-amiga/
 	cd build-amiga/ && cmake ../CMake\
 		-DCMAKE_SYSTEM_NAME=AmigaOS\
 		-DCMAKE_C_COMPILER=$(COMPILER)\
+		-DCMAKE_C_FLAGS="-I$(shell readlink -f build-deps/Local/common/include)"\
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(shell readlink -f build-deps/Local/newlib/lib)"\
 		-DAMIGA=1\
 		-DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
 	rm -f bin/sgit
@@ -48,6 +50,21 @@ interim-openssl/openssl/repo/libssl.a:
 	(cd interim-openssl && git pull) || \
 	    (git clone https://github.com/sba1/interim-openssl.git)
 	$(MAKE) -C interim-openssl checkout build
+
+.PHONY: pthread
+pthread: build-deps/Local/common/include/pthread.h
+
+build-deps/Local/common/include/pthread.h: build-deps/SDK_53.24.lha
+	cd build-deps && lha xf SDK_53.24.lha
+	cd build-deps && lha xf SDK_Install/pthread.lha
+	touch $@
+
+build-deps/SDK_53.24.lha-done: build-deps
+	wget "http://www.hyperion-entertainment.biz/index.php?option=com_registration&amp;view=download&amp;format=raw&amp;file=69&amp;Itemid=63" -O build-deps/SDK_53.24.lha
+	touch $@
+
+build-deps:
+	mkdir -p build-deps
 
 .PHONY: libgit-repo
 libgit-repo:
