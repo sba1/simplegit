@@ -54,7 +54,7 @@ interim-openssl/openssl/repo/libssl.a:
 .PHONY: pthread
 pthread: build-deps/Local/common/include/pthread.h
 
-build-deps/Local/common/include/pthread.h: build-deps/SDK_53.24.lha
+build-deps/Local/common/include/pthread.h: build-deps/SDK_53.24.lha-done
 	cd build-deps && lha xf SDK_53.24.lha
 	cd build-deps && lha xf SDK_Install/pthread.lha
 	touch $@
