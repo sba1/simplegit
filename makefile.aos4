@@ -11,6 +11,8 @@ endif
 .PHONY: all
 all: sgit
 
+####################################################
+# The main executable
 .PHONY: sgit
 sgit: libgit2 pthread
 	# sgit
@@ -25,6 +27,8 @@ sgit: libgit2 pthread
 	rm -f bin/sgit
 	cd build-amiga/ && $(MAKE)
 
+####################################################
+# The libgit2 dependency
 .PHONY: libgit2
 libgit2: libgit2/build-amiga/libgit2.a
 
@@ -43,6 +47,9 @@ libgit2/build-amiga/libgit2.a: libgit-repo interim-openssl/openssl/repo/libssl.a
 	cd libgit2/build-amiga && $(MAKE)
 	touch $@
 
+####################################################
+# The openssl dependency needed by libgit2
+# We use the interim openssl port to support ssl
 .PHONY: openssl
 openssl: interim-openssl/openssl/repo/libssl.a
 
@@ -51,6 +58,9 @@ interim-openssl/openssl/repo/libssl.a:
 	    (git clone https://github.com/sba1/interim-openssl.git)
 	$(MAKE) -C interim-openssl checkout build CC=ppc-amigaos-gcc
 
+####################################################
+# The pthread dependency needed by sgit. We extract
+# it from the official AmigaOS SDK
 .PHONY: pthread
 pthread: build-deps/Local/common/include/pthread.h
 
@@ -71,6 +81,10 @@ libgit-repo:
 	# Git repo
 	git submodule init
 	git submodule update
+
+
+####################################################
+# Various clean targets
 
 .PHONY: clean
 clean: clean-sgit clean-libgit2
