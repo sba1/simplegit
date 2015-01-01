@@ -24,8 +24,10 @@ sgit: libgit2 pthread
 		-DCMAKE_EXE_LINKER_FLAGS="-L$(shell readlink -f build-deps/Local/newlib/lib)"\
 		-DAMIGA=1\
 		-DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
-	rm -f bin/sgit
+	rm -f bin/sgit bin/sgit.debug
 	cd build-amiga/ && $(MAKE)
+	mv bin/sgit bin/sgit.debug
+	ppc-amigaos-strip --strip-all -o bin/sgit bin/sgit.debug
 
 ####################################################
 # The libgit2 dependency
