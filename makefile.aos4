@@ -21,7 +21,7 @@ sgit: libgit2 pthread
 		-DCMAKE_SYSTEM_NAME=AmigaOS\
 		-DCMAKE_C_COMPILER=$(COMPILER)\
 		-DCMAKE_C_FLAGS="-I$(shell readlink -f build-deps/Local/common/include)"\
-		-DCMAKE_EXE_LINKER_FLAGS="-L$(shell readlink -f build-deps/Local/newlib/lib)"\
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(shell readlink -f build-deps/Local/newlib/lib) -Wl,--gc-sections"\
 		-DAMIGA=1\
 		-DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
 	rm -f bin/sgit bin/sgit.debug
