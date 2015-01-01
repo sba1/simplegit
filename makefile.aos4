@@ -3,7 +3,6 @@
 #
 
 COMPILER := $(shell which ppc-amigaos-gcc)
-LHA=$(shell pwd)/build-deps/lha/lha-1.14i.orig/src/lha
 
 ifndef COMPILER
 $(error No cross compiler for AmigaOS has been found!)
@@ -13,6 +12,12 @@ endif
 
 COMMITS := $(shell git rev-list HEAD --count)
 VERSION_TAG := $(shell date "+%Y%m%d")-$(shell printf %06d $(COMMITS))
+
+####################################################
+
+LHA = $(shell pwd)/build-deps/lha/lha-1.14i.orig/src/lha
+OPENSSL = interim-openssl/openssl/repo/libssl.a
+PTHREAD = build-deps/Local/common/include/pthread.h
 
 ####################################################
 
@@ -42,7 +47,7 @@ sgit: libgit2 pthread
 .PHONY: libgit2
 libgit2: libgit2/build-amiga/libgit2.a
 
-libgit2/build-amiga/libgit2.a: libgit-repo openssl
+libgit2/build-amiga/libgit2.a: libgit-repo $(OPENSSL)
 	# libgit2
 	mkdir -p libgit2/build-amiga
 	cd libgit2/build-amiga && cmake ..\
@@ -61,7 +66,7 @@ libgit2/build-amiga/libgit2.a: libgit-repo openssl
 # The openssl dependency needed by libgit2
 # We use the interim openssl port to support ssl
 .PHONY: openssl
-openssl: interim-openssl/openssl/repo/libssl.a
+openssl: $(OPENSSL)
 
 interim-openssl/openssl/repo/libssl.a:
 	(cd interim-openssl && git pull) || \
@@ -72,9 +77,9 @@ interim-openssl/openssl/repo/libssl.a:
 # The pthread dependency needed by sgit. We extract
 # it from the official AmigaOS SDK
 .PHONY: pthread
-pthread: build-deps/Local/common/include/pthread.h
+pthread: $(PTHREAD)
 
-build-deps/Local/common/include/pthread.h: build-deps/SDK_53.24.lha-done $(LHA)
+$(PTHREAD): build-deps/SDK_53.24.lha-done $(LHA)
 	cd build-deps && $(LHA) xf SDK_53.24.lha
 	cd build-deps && $(LHA) xf SDK_Install/pthread.lha
 	touch $@
