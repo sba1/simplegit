@@ -3,10 +3,18 @@
 #
 
 COMPILER := $(shell which ppc-amigaos-gcc)
+LHA := lha
 
 ifndef COMPILER
 $(error No cross compiler for AmigaOS has been found!)
 endif
+
+####################################################
+
+COMMITS := $(shell git rev-list HEAD --count)
+VERSION_TAG := $(shell date "+%Y%m%d")-$(shell printf %06d $(COMMITS))
+
+####################################################
 
 .PHONY: all
 all: sgit
@@ -98,3 +106,13 @@ clean-libgit2:
 .PHONY: clean-sgit
 clean-sgit:
 	rm -Rf build-amiga
+
+####################################################
+# Packaging
+
+.PHONY: prepare-os4-release
+prepare-os4-release:
+	rm -Rf dist
+	mkdir -p dist/sgit-$(VERSION_TAG)
+	cp bin/sgit dist/sgit-$(VERSION_TAG)
+	cd dist && $(LHA) ao5 sgit-$(VERSION_TAG).lha sgit-$(VERSION_TAG)
