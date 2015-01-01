@@ -32,7 +32,7 @@ sgit: libgit2 pthread
 .PHONY: libgit2
 libgit2: libgit2/build-amiga/libgit2.a
 
-libgit2/build-amiga/libgit2.a: libgit-repo interim-openssl/openssl/repo/libssl.a
+libgit2/build-amiga/libgit2.a: libgit-repo openssl
 	# libgit2
 	mkdir -p libgit2/build-amiga
 	cd libgit2/build-amiga && cmake ..\
