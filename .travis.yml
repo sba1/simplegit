@@ -3,7 +3,7 @@ language: c
 before_install:
   - echo "deb http://dl.bintray.com/sba1/adtools-deb /" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -qq
-  - sudo apt-get install -y cmake
+  - sudo apt-get install -y cmake python-mako
   - sudo apt-get install -y --force-yes adtools-sdk adtools-binutils adtools-gcc
   - git config --global user.email "mail@sebastianbauer.info"
   - git config --global user.name "Sebastian Bauer"

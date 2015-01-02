@@ -139,4 +139,14 @@ prepare-os4-release: $(LHA)
 	rm -Rf dist
 	mkdir -p dist/sgit-$(VERSION_TAG)
 	cp bin/sgit dist/sgit-$(VERSION_TAG)
+	# Generate the ReadMe.amiga file
+	python -c "\
+	from mako.template import Template;\
+	from mako.lookup import TemplateLookup;\
+	print Template(\
+		filename='ReadMe.amiga.mak',\
+		input_encoding='utf-8',\
+		output_encoding='utf-8',\
+		lookup=TemplateLookup(['./'],input_encoding='utf-8')).render(SIMPLEGIT_VERSION='0.$(COMMITS)')\
+	" >dist/sgit-$(VERSION_TAG)/ReadMe
 	cd dist && $(LHA) ao5 sgit-$(VERSION_TAG).lha sgit-$(VERSION_TAG)
