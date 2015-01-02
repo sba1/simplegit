@@ -14,8 +14,8 @@ int cmd_reset(git_repository *repo, int argc, char **argv)
 	int rc = EXIT_FAILURE;
 
 	git_strarray strarray;
-	git_reference *head_ref = NULL;
-	git_object *head = NULL;
+	const char *spec;
+	git_object *treeobj = NULL;
 
 	if (argc < 3)
 	{
@@ -23,26 +23,18 @@ int cmd_reset(git_repository *repo, int argc, char **argv)
 		return -1;
 	}
 
-	if (strcmp(argv[1],"HEAD"))
-	{
-		fprintf(stderr, "Only HEAD is supported as first argument for now!\n");
-		return -1;
-	}
+	spec = argv[1];
 
 	strarray.count = argc-2;
 	strarray.strings = argv+2;
 
-	if ((err = git_repository_head(&head_ref,repo)))
+	if ((err = git_revparse_single(&treeobj, repo, spec)))
 		goto out;
 
-	if ((err = git_reference_peel(&head, head_ref, GIT_OBJ_COMMIT)))
-		goto out;
-
-	if ((err = git_reset_default(repo, head, &strarray)))
+	if ((err = git_reset_default(repo, treeobj, &strarray)))
 		goto out;
 out:
-	if (head) git_object_free(head);
-	if (head_ref) git_reference_free(head_ref);
+	if (treeobj) git_object_free(treeobj);
 
 	if (err != GIT_OK)
 		libgit_error();
