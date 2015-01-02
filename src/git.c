@@ -36,6 +36,11 @@ static const char *git_extract_argv0_path(const char *argv0)
 	return argv0;
 }
 
+#if defined (AMIGA)
+__attribute__((unused)) static const char version_tag[] =
+	"$VER: sgit 0." SIMPLEGIT_REVISION_STRING " (" SIMPLEGIT_DATE_STRING ")";
+#endif
+
 /**
  * Main entry.
  *

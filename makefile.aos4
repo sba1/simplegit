@@ -33,7 +33,11 @@ sgit: libgit2 pthread
 	cd build-amiga/ && cmake ../CMake\
 		-DCMAKE_SYSTEM_NAME=AmigaOS\
 		-DCMAKE_C_COMPILER=$(COMPILER)\
-		-DCMAKE_C_FLAGS="-I$(shell readlink -f build-deps/Local/common/include)"\
+		-DCMAKE_C_FLAGS="\
+			-I$(shell readlink -f build-deps/Local/common/include)\
+			-DSIMPLEGIT_REVISION_STRING='\"$(COMMITS)\"'\
+			-DSIMPLEGIT_DATE_STRING='\"$(shell date +%d.%m.%Y)\"'\
+			"\
 		-DCMAKE_EXE_LINKER_FLAGS="-L$(shell readlink -f build-deps/Local/newlib/lib) -Wl,--gc-sections"\
 		-DAMIGA=1\
 		-DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
