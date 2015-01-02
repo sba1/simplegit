@@ -20,7 +20,7 @@ Once everything is set up, building SimpleGit is as easy as typing
  $ make -f makefile.aos4
 ```
 in the shell command prompt. Snapshot builds are available from
- https://sonumina.de/jenkins/job/sgit.amiga/
+ https://sonumina.de/jenkins/job/sgit.amiga/.
 That site's SHA1 fingerprint is ```56 C7 52 5C 26 DB CE 89 AF 1D 20 EC AE 30 96 E8
 88 D5 5B CA```.
 
