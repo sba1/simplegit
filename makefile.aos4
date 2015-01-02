@@ -37,7 +37,7 @@ sgit: libgit2 pthread
 		-DCMAKE_C_COMPILER=$(COMPILER)\
 		-DCMAKE_C_FLAGS="\
 			-I$(shell readlink -f build-deps/Local/common/include)\
-			-imacros $(shell readlink -f build-amiga/version.h)\
+			-imacros $(shell readlink -f .)/build-amiga/version.h\
 			"\
 		-DCMAKE_EXE_LINKER_FLAGS="-L$(shell readlink -f build-deps/Local/newlib/lib) -Wl,--gc-sections"\
 		-DAMIGA=1\
