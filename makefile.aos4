@@ -42,7 +42,7 @@ sgit: libgit2 pthread
 		-DAMIGA=1\
 		-DLIBGIT2_BUILD_DIRECTORY_NAME=build-amiga
 	rm -f bin/sgit bin/sgit.debug
-	cd build-amiga/ && $(MAKE)
+	cd build-amiga/ && $(MAKE) VERBOSE=1
 	mv bin/sgit bin/sgit.debug
 	ppc-amigaos-strip --strip-all -o bin/sgit bin/sgit.debug
 
