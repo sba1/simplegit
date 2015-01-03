@@ -150,3 +150,10 @@ prepare-os4-release: $(LHA)
 		lookup=TemplateLookup(['./'],input_encoding='utf-8')).render(SIMPLEGIT_VERSION='0.$(COMMITS)')\
 	" >dist/sgit-$(VERSION_TAG)/ReadMe
 	cd dist && $(LHA) ao5 sgit-$(VERSION_TAG).lha sgit-$(VERSION_TAG)
+
+####################################################
+# Upload the distribution to the main Aminet server
+.PHONY: upload-os4-release
+upload-os4-release:
+	cd dist && cp sgit-$(VERSION_TAG).lha sgit.lha
+	lftp -e "put dist/sgit.lha && put dist/sgit-$(VERSION_TAG)/ReadMe -o sgit.readme && quit" ftp://main.aminet.net/new
