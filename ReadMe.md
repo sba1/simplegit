@@ -8,6 +8,26 @@ This is a very simple git client based on ```libgit2``` with AmigaOS being the
 major target operating system. However, other platforms are equally important as
 this eases testing.
 
+Usage
+-----
+The program is currently called ```sgit``` to differentiate it from the standard
+```git``` command. If you start the ```sgit``` executable without any arguments,
+a list of all supported commands will be printed.
+
+The AmigaOS version of SimpleGit uses a statically linked OpenSSL version. Even if
+it is not recommended in the general case, you can use the ```GIT_SSL_NO_VERIFY```
+environment variable to skip the SSL verification. E.g., enter
+```
+ 1.> setenv GIT_SSL_NO_VERIFY 1
+ 1.> sgit clone https://github.com/sba1/simplemail simplemail
+```
+to clone and the SimpleMail repository into the ```simplemail``` folder ignoring
+any SSL relatated problems.
+
+Generally note that this is software is in very preliminary state. It may be not
+usable at all in terms of functions it provides but also in terms of bugs it
+contains.
+
 Building SimpleGit for AmigaOS
 ------------------------------
 
