@@ -10,9 +10,11 @@ this eases testing.
 
 Usage
 -----
+
 The program is currently called ```sgit``` to differentiate it from the standard
 ```git``` command. If you start the ```sgit``` executable without any arguments,
-a list of all supported commands will be printed.
+a list of all supported commands will be printed. Note that even if a command is
+listed there, it it likely a very crippled verison of the original version.
 
 The AmigaOS version of SimpleGit uses a statically linked OpenSSL version. Even if
 it is not recommended in the general case, you can use the ```GIT_SSL_NO_VERIFY```
@@ -26,7 +28,7 @@ any SSL relatated problems.
 
 Generally note that this is software is in very preliminary state. It may be not
 usable at all in terms of functions it provides but also in terms of bugs it
-contains.
+contains. Consider it as a prototype.
 
 Building SimpleGit for AmigaOS
 ------------------------------
