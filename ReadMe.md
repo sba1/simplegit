@@ -78,12 +78,11 @@ Origins
 
 Its code base derived from https://github.com/vfr-nl/git2/ (thanks to Vincent
 van Ravesteijn and Motiejus Jakštys), from which it was forked to
-https://github.com/Romain-Geissler/git2.git and
-https://github.com/chris-y/git2.git. It contains sources from the exampled
-included within ```libgit2```.
+https://github.com/Romain-Geissler/git2.git. It was then forked by Chris
+Young to https://github.com/chris-y/git2.git, which is the direct parent
+of SimpleGit.
 
 It is currently developed at https://github.com/sba1/simplegit.git with
-https://git.gitorious.org/amiga-ports/git2-amiga.git being a mirror.
+https://git.gitorious.org/amiga-ports/git2-amiga.git being a mirror. The
+sources contains work from the examples included within ```libgit2```.
 
-Note that the call forwarding to the original git for unknown options has been
-removed as the goal is to implement all important commands natively.
