@@ -134,12 +134,14 @@ clean-sgit:
 ####################################################
 # Packaging
 
-.PHONY: prepare-os4-release
-prepare-os4-release: $(LHA)
-	rm -Rf dist
-	mkdir -p dist/sgit-$(VERSION_TAG)
-	cp bin/sgit dist/sgit-$(VERSION_TAG)
-	# Generate the ReadMe.amiga file
+ReadMe.plain: ReadMe.md
+	pandoc $< -t plain >$@
+
+AMIGA_README = build-amiga/ReadMe
+
+$(AMIGA_README): ReadMe.amiga.mak ReadMe.plain
+	mkdir -p build-amiga
+	# Generate the ReadMe file for Aminet
 	python -c "\
 	from mako.template import Template;\
 	from mako.lookup import TemplateLookup;\
@@ -148,7 +150,14 @@ prepare-os4-release: $(LHA)
 		input_encoding='utf-8',\
 		output_encoding='utf-8',\
 		lookup=TemplateLookup(['./'],input_encoding='utf-8')).render(SIMPLEGIT_VERSION='0.$(COMMITS)')\
-	" >dist/sgit-$(VERSION_TAG)/ReadMe
+	" >$@
+
+.PHONY: prepare-os4-release
+prepare-os4-release: $(LHA) $(AMIGA_README)
+	rm -Rf dist
+	mkdir -p dist/sgit-$(VERSION_TAG)
+	cp bin/sgit dist/sgit-$(VERSION_TAG)
+	cp $(AMIGA_README) dist/sgit-$(VERSION_TAG)
 	cd dist && $(LHA) ao5 sgit-$(VERSION_TAG).lha sgit-$(VERSION_TAG)
 
 ####################################################

@@ -7,4 +7,4 @@ Kurz:          Ein einfacher und unvollständiger git Client
 Requires:      OS 4.0
 Version:       ${SIMPLEGIT_VERSION}
 
-<%include file="ReadMe.md" />
+<%include file="ReadMe.plain" />
