@@ -19,9 +19,7 @@ int cmd_show(git_repository *repo, int argc, char **argv)
 	int rc = EXIT_FAILURE;
 	int err = 0;
 	char *obj_str = NULL;
-	git_oid obj_oid;
-	git_index *idx = NULL;
-	git_object *obj;
+	git_object *obj = NULL;
 	git_otype obj_type;
 
 	for (i=1;i<argc;i++)
@@ -42,10 +40,8 @@ int cmd_show(git_repository *repo, int argc, char **argv)
 		fprintf(stderr,"Needs a tree argument currently\n");
 		goto out;
 	}
-	if ((err = git_oid_fromstr(&obj_oid,obj_str)) != GIT_OK)
-		goto out;
 
-	if ((err = git_object_lookup_prefix(&obj,repo,&obj_oid,strlen(obj_str),GIT_OBJ_ANY)))
+	if ((err = git_revparse_single(&obj, repo, obj_str)))
 		goto out;
 
 	switch ((obj_type = git_object_type(obj)))
@@ -59,9 +55,10 @@ int cmd_show(git_repository *repo, int argc, char **argv)
 	}
 	rc = EXIT_SUCCESS;
 out:
-	if (err) libgit_error();
+	if (obj) git_object_free(obj);
 
-	if (idx) git_index_free(idx);
+	if (err != GIT_OK)
+		libgit_error();
 
 	return rc;
 }
