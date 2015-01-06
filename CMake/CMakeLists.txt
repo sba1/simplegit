@@ -35,6 +35,7 @@ set(BINARIES_DIRECTORY ${ROOT_DIRECTORY}/bin)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 set(EXECUTABLE_OUTPUT_PATH ${BINARIES_DIRECTORY})
 set(EXECUTABLE_SOURCE_FILE ${SRC_DIRECTORY}/git.c)
+set(UNIT_TESTS_DIRECTORY ${ROOT_DIRECTORY}/unittests)
 
 file(GLOB_RECURSE C_SOURCE_FILES ${SRC_DIRECTORY}/*.c)
 list(REMOVE_ITEM C_SOURCE_FILES ${EXECUTABLE_SOURCE_FILE})
@@ -81,3 +82,11 @@ add_executable(sgit-bin ${EXECUTABLE_SOURCE_FILE})
 set_target_properties(sgit-bin PROPERTIES OUTPUT_NAME sgit)
 add_dependencies(sgit-bin build_libgit2)
 target_link_libraries(sgit-bin sgit-lib ${LIBS})
+
+IF (NOT AMIGA)
+	enable_testing()
+
+	add_executable(sgit-test ${UNIT_TESTS_DIRECTORY}/sgit-test.c)
+
+	add_test(sgit-git ${EXECUTABLE_OUTPUT_PATH}/sgit-test)
+ENDIF()
