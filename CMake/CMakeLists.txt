@@ -39,11 +39,9 @@ set(EXECUTABLE_SOURCE_FILE ${SRC_DIRECTORY}/git.c)
 file(GLOB_RECURSE C_SOURCE_FILES ${SRC_DIRECTORY}/*.c)
 list(REMOVE_ITEM C_SOURCE_FILES ${EXECUTABLE_SOURCE_FILE})
 
-add_definitions(-std=gnu99 -Wall -Wextra)
-
 #add_definitions(-DNO_PTHREADS)
 
-SET(CMAKE_C_FLAGS "-Wno-missing-field-initializers ${CMAKE_C_FLAGS}")
+SET(CMAKE_C_FLAGS "-Wno-missing-field-initializers -std=gnu99 -Wall -Wextra ${CMAKE_C_FLAGS}")
 
 set(CMAKE_C_FLAGS_DEBUG "-g -O0")
 set(CMAKE_C_FLAGS_RELEASE "-O2")
