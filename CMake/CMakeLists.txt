@@ -65,7 +65,8 @@ IF (AMIGA)
 	set(LIBS ${LIBS} unix.a)
 ENDIF()
 
-add_custom_target(test COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS sgit-bin)
+# The extra git-test target involving the git test suite
+add_custom_target(git-test-suite COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_DIRECTORY} DEPENDS sgit-bin)
 #add_custom_target(
 #	build_libgit2
 #	COMMAND
