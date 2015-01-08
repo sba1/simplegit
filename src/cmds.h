@@ -18,6 +18,7 @@
 #include "builtin/log.h"
 #include "builtin/ls-files.h"
 #include "builtin/ls-tree.h"
+#include "builtin/merge.h"
 #include "builtin/mktag.h"
 #include "builtin/push.h"
 #include "builtin/read-tree.h"

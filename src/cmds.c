@@ -32,6 +32,7 @@ struct cmd_struct commands[] = {
 	{"ls-remote",      "", ls_remote},
 	{"ls-tree",        "", cmd_ls_tree},
 	{"mktag",          "", cmd_mktag},
+	{"merge",          "", cmd_merge},
 	{"push",           "", cmd_push},
 	{"read-tree",      "", cmd_read_tree},
 	{"reset",          "", cmd_reset},
