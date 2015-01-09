@@ -28,7 +28,18 @@ any SSL relatated problems.
 
 Generally note that this is software is in very preliminary state. It may be not
 usable at all in terms of functions it provides but also in terms of bugs it
-contains. Consider it as a prototype.
+contains. Consider it as a prototype and use it at your own risk.
+
+Bug reports
+-----------
+
+Please use the GitHub Issue form for filing bug reports or enhancement requests:
+https://github.com/sba1/simplegit/issues
+
+Changes
+-------
+
+Refer to the git log for changes.
 
 Building SimpleGit for AmigaOS
 ------------------------------
@@ -85,4 +96,3 @@ of SimpleGit.
 It is currently developed at https://github.com/sba1/simplegit.git with
 https://git.gitorious.org/amiga-ports/git2-amiga.git being a mirror. The
 sources contains work from the examples included within ```libgit2```.
-
