@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/sba1/simplegit.svg?branch=master)](https://travis-ci.org/sba1/simplegit)
-[![PayPal Donate](https://img.shields.io/badge/paypal-donate-yellow.svg?style=flat)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GMK9426WMR4NW)
+[![PayPal Donate](https://img.shields.io/badge/donate-paypal-yellow.svg?style=flat)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GMK9426WMR4NW)
 
 SimpleGit
 =========
