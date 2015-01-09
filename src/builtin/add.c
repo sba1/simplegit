@@ -33,9 +33,13 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 	{
 		if (argv[i][0] != '-')
 		{
+			/* Use a local buffer for the 2nd arg of realpath() on AmigaOS 4
+			 * doesn't accept a NULL pointer for the 2nd arg.
+			 */
+			char path_buf[PATH_MAX];
 			char *path;
 
-			if ((path = realpath(argv[i],NULL)))
+			if ((path = realpath(argv[i],path_buf)))
 			{
 				if (!prefixcmp(path,wd))
 				{
@@ -49,7 +53,6 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 				{
 					fprintf(stderr,"%s is outside repository!\n",argv[i]);
 				}
-				free(path);
 			} else
 			{
 				fprintf(stderr,"Couldn't determine absolute path of %s: %s!\n",argv[i], strerror(errno));
