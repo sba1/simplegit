@@ -52,7 +52,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 				free(path);
 			} else
 			{
-				fprintf(stderr,"Couldn't determine absolute path of %s!\n",argv[i]);
+				fprintf(stderr,"Couldn't determine absolute path of %s: %s!\n",argv[i], strerror(errno));
 			}
 		} else
 		{
