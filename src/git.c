@@ -106,6 +106,7 @@ int main(int argc, char **argv)
 	} else
 	{
 		fprintf(stderr,"Command \"%s\" not supported\n",argv[0]);
+		rc = 20;
 	}
 out:
 	git_repository_free(repo);
