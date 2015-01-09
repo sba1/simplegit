@@ -97,7 +97,15 @@ int main(int argc, char **argv)
 
 	err = git_repository_open(&repo, ".git");
 	if (err < 0)
+	{
+		if (strcmp(argv[0], "init") && strcmp(argv[0], "config"))
+		{
+			libgit_error();
+			goto out;
+		}
+
 		repo = NULL;
+	}
 
 	git_cb handler = lookup_handler(argv[0]);
 	if (handler != NULL)
