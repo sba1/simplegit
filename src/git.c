@@ -98,7 +98,9 @@ int main(int argc, char **argv)
 	err = git_repository_open(&repo, ".git");
 	if (err < 0)
 	{
-		if (strcmp(argv[0], "init") && strcmp(argv[0], "config"))
+		/* Does the command require a repo? Check against those that do not
+		 * require one */
+		if (strcmp(argv[0], "init") && strcmp(argv[0], "config") && strcmp(argv[0], "clone"))
 		{
 			libgit_error();
 			goto out;
