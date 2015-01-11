@@ -24,6 +24,10 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 	int num_added = 0;
 	git_strarray paths;
 	const char *wd;
+	int wd_len;
+
+	char **relative_paths = NULL;
+	int num_relative_paths = 0;
 
 	if (argc < 2)
 	{
@@ -36,12 +40,17 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 		fprintf(stderr,"Couldn't determine workdir!\n");
 		goto out;
 	}
+	wd_len = strlen(wd);
+
+	if (!(relative_paths = (char**)malloc(sizeof(*relative_paths)*(argc - 1))))
+	{
+		fprintf(stderr,"Memory allocation failed!\n");
+		goto out;
+	}
+	memset(relative_paths, 0, sizeof(*relative_paths)*(argc - 1));
 
 	if ((err = git_repository_index(&idx,repo)) != GIT_OK)
 		goto out;
-
-	paths.count = argc - 1;
-	paths.strings = &argv[1];
 
 	/* Check if any path points outside the directory and bailout if so */
 	for (i=1;i<argc;i++)
@@ -70,6 +79,20 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 					fprintf(stderr,"%s is outside the Git repository\n",argv[i]);
 					goto out;
 				}
+
+				if (strlen(&path[wd_len]))
+				{
+					relative_paths[num_relative_paths] = strdup(&path[wd_len]);
+				} else
+				{
+					relative_paths[num_relative_paths] = strdup(".");
+				}
+				if (!relative_paths[num_relative_paths])
+				{
+					fprintf(stderr,"Memory allocation failed!\n");
+					goto out;
+				}
+				num_relative_paths++;
 			} else
 			{
 				fprintf(stderr,"Couldn't determine absolute path of %s: %s!\n",argv[i], strerror(errno));
@@ -82,6 +105,9 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 		}
 	}
 
+	paths.count = num_relative_paths;
+	paths.strings = relative_paths;
+
 	if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT, cmd_add_matched_paths_callback, &num_added)))
 		goto out;
 
@@ -93,6 +119,14 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 
 	rc = EXIT_SUCCESS;
 out:
+	if (relative_paths)
+	{
+		int i;
+		for (i = 0; i < num_relative_paths; i++)
+			free(relative_paths[i]);
+
+		free(relative_paths);
+	}
 	if (idx) git_index_free(idx);
 	if (err != GIT_OK)
 		libgit_error();
