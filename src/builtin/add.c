@@ -22,9 +22,11 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 	int rc = EXIT_FAILURE;
 	git_index *idx = NULL;
 	int num_added = 0;
+	int root_added = 0;
 	git_strarray paths;
 	const char *wd;
 	int wd_len;
+	DIR *dir = NULL;
 
 	char **relative_paths = NULL;
 	int num_relative_paths = 0;
@@ -82,17 +84,18 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 
 				if (strlen(&path[wd_len]))
 				{
-					relative_paths[num_relative_paths] = strdup(&path[wd_len]);
+					if (!(relative_paths[num_relative_paths] = strdup(&path[wd_len])))
+					{
+						fprintf(stderr,"Memory allocation failed!\n");
+						goto out;
+					}
+					num_relative_paths++;
 				} else
 				{
-					relative_paths[num_relative_paths] = strdup(".");
+					/* Remember that the root dir have been added.
+					 * TODO: Do we really have to add the other paths then? */
+					root_added = 1;
 				}
-				if (!relative_paths[num_relative_paths])
-				{
-					fprintf(stderr,"Memory allocation failed!\n");
-					goto out;
-				}
-				num_relative_paths++;
 			} else
 			{
 				fprintf(stderr,"Couldn't determine absolute path of %s: %s!\n",argv[i], strerror(errno));
@@ -105,11 +108,51 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 		}
 	}
 
-	paths.count = num_relative_paths;
-	paths.strings = relative_paths;
+	if (num_relative_paths)
+	{
+		paths.count = num_relative_paths;
+		paths.strings = relative_paths;
 
-	if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT, cmd_add_matched_paths_callback, &num_added)))
-		goto out;
+		if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT, cmd_add_matched_paths_callback, &num_added)))
+			goto out;
+	}
+
+	if (root_added)
+	{
+		/* At least in libgit 0.20.3 adding the root directory didn't work.
+		 * We have to add the directories manually.
+		 */
+		struct dirent *dirent;
+		if (!(dir = opendir(wd)))
+		{
+			fprintf(stderr,"Can browse root of repository!\n");
+			goto out;
+		}
+
+		while ((dirent = readdir(dir)))
+		{
+			int ignore;
+			char *dirname;
+
+			if (!strcmp(dirent->d_name,".") || !strcmp(dirent->d_name,".."))
+				continue;
+
+			if ((err = git_ignore_path_is_ignored(&ignore, repo, dirent->d_name)))
+				goto out;
+
+			if (ignore) continue;
+
+			dirname = dirent->d_name;
+			paths.count = 1;
+			paths.strings = &dirname;
+
+			if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT, cmd_add_matched_paths_callback, &num_added)))
+				goto out;
+		}
+
+		closedir(dir);
+		dir = NULL;
+	}
 
 	if (num_added)
 	{
@@ -119,6 +162,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 
 	rc = EXIT_SUCCESS;
 out:
+	if (dir) closedir(dir);
 	if (relative_paths)
 	{
 		int i;
