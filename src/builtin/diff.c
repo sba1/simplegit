@@ -9,16 +9,18 @@
 
 static int resolve_to_tree(git_repository *repo, const char *identifier, git_tree **tree)
 {
-	int err;
-	git_object *obj;
+	int err = 0;
+	git_object *obj = NULL;
 
 	if ((err = git_revparse_single(&obj, repo, identifier)))
-		return err;
+		goto out;
 
 	if ((err = git_object_peel((git_object**)tree, obj, GIT_OBJ_TREE)))
-		return err;
+		goto out;
 
-	return 0;
+out:
+	if (obj) git_object_free(obj);
+	return err;
 }
 
 char *colors[] = {
