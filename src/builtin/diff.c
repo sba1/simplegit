@@ -23,7 +23,7 @@ out:
 	return err;
 }
 
-char *colors[] = {
+static char *colors[] = {
 	"\033[m", /* reset */
 	"\033[1m", /* bold */
 	"\033[31m", /* red */
@@ -59,7 +59,11 @@ static int printer(
 		}
 	}
 
-	fputs(line->content, stdout);
+	if (line->origin == GIT_DIFF_LINE_CONTEXT ||
+		line->origin == GIT_DIFF_LINE_ADDITION ||
+		line->origin == GIT_DIFF_LINE_DELETION)
+		fputc(line->origin, stdout);
+	fwrite(line->content, 1, line->content_len, stdout);
 	return 0;
 }
 
@@ -216,14 +220,12 @@ int cmd_diff(git_repository *repo, int argc, char **argv)
 
 	rc = EXIT_SUCCESS;
 out:
-	if (err)
-	{
-		printf("%d\n",err);
-		libgit_error();
-	}
 	if (diff) git_diff_free(diff);
 	if (t1) git_tree_free(t1);
 	if (t2) git_tree_free(t2);
+
+	if (err != GIT_OK)
+		libgit_error();
 
 	return rc;
 }
