@@ -150,7 +150,8 @@ $(AMIGA_README): ReadMe.amiga.mak ReadMe.plain
 		input_encoding='utf-8',\
 		output_encoding='utf-8',\
 		lookup=TemplateLookup(['./'],input_encoding='utf-8')).render(SIMPLEGIT_VERSION='0.$(COMMITS)')\
-	" >$@
+	" >$@.utf8
+	iconv --from-code=UTF8 --to-code=ISO-8859-15 $@.utf8 >$@
 
 .PHONY: prepare-os4-release
 prepare-os4-release: $(LHA) $(AMIGA_README)
