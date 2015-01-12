@@ -7,49 +7,18 @@
 
 #include "errors.h"
 
-static int resolve_to_tree(	git_repository *repo, const char *identifier, git_tree **tree)
+static int resolve_to_tree(git_repository *repo, const char *identifier, git_tree **tree)
 {
-	int err = 0;
-	size_t len = strlen(identifier);
-	git_oid oid;
-	git_object *obj = NULL;
+	int err;
+	git_object *obj;
 
-	/* try to resolve as OID */
-	if (git_oid_fromstrn(&oid, identifier, len) == 0)
-		git_object_lookup_prefix(&obj, repo, &oid, len, GIT_OBJ_ANY);
+	if ((err = git_revparse_single(&obj, repo, identifier)))
+		return err;
 
-	/* try to resolve as reference */
-	if (obj == NULL)
-	{
-		git_reference *ref, *resolved;
-		if (git_reference_lookup(&ref, repo, identifier) == 0)
-		{
-			git_reference_resolve(&resolved, ref);
-			git_reference_free(ref);
-			if (resolved)
-			{
-				git_object_lookup(&obj, repo, git_reference_target(resolved), GIT_OBJ_ANY);
-				git_reference_free(resolved);
-			}
-		}
-	}
+	if ((err = git_object_peel((git_object**)tree, obj, GIT_OBJ_TREE)))
+		return err;
 
-	if (obj == NULL)
-		return GIT_ENOTFOUND;
-
-	switch (git_object_type(obj)) {
-	case GIT_OBJ_TREE:
-		*tree = (git_tree *)obj;
-		break;
-	case GIT_OBJ_COMMIT:
-		err = git_commit_tree(tree, (git_commit *)obj);
-		git_object_free(obj);
-		break;
-	default:
-		err = GIT_ENOTFOUND;
-	}
-
-	return err;
+	return 0;
 }
 
 char *colors[] = {
