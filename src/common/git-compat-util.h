@@ -241,8 +241,6 @@
 #endif
 #endif
 
-#include "compat/bswap.h"
-
 static inline const char *skip_prefix(const char *str, const char *prefix)
 {
 	size_t len = strlen(prefix);
