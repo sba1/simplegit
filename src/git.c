@@ -9,7 +9,6 @@
 #include "environment.h"
 #include "errors.h"
 #include "git-support.h"
-#include "parse-options.h"
 #include "strbuf.h"
 
 #include <string.h>

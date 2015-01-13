@@ -6,7 +6,6 @@
 
 #include "errors.h"
 #include "git-support.h"
-#include "parse-options.h"
 #include "strbuf.h"
 
 int cmd_rev_list(git_repository *repo, int argc, char **argv)
