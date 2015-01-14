@@ -13,7 +13,13 @@ int cmd_read_tree(git_repository *repo, int argc, char **argv)
 	int rc = EXIT_FAILURE;
 	int err = 0;
 	int i;
-	char *treeish;
+	char *treeish = NULL;
+
+	if (argc < 2)
+	{
+		fprintf (stderr, "USAGE: %s <treeish>\n", argv[0]);
+		goto out;
+	}
 
 	for (i=1;i<argc;i++)
 	{
@@ -24,6 +30,12 @@ int cmd_read_tree(git_repository *repo, int argc, char **argv)
 		{
 			fprintf(stderr,"Unknown option \"%s\"\n",argv[i]);
 		}
+	}
+
+	if (!treeish)
+	{
+		fprintf(stderr, "No tree-ish given\n");
+		goto out;
 	}
 
 	git_oid oid_tree;
