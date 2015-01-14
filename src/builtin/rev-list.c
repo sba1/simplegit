@@ -16,7 +16,7 @@ int cmd_rev_list(git_repository *repo, int argc, char **argv)
 	git_oid commit_oid;
 	git_oid current_oid;
 	char current_oid_str[GIT_OID_HEXSZ+1];
-	int e;
+	int err = 0;
 	int rc = EXIT_FAILURE;
 	git_commit *commit;
 	git_revwalk *walk;
@@ -51,18 +51,18 @@ int cmd_rev_list(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
-	if ((e = git_oid_fromstrn(&commit_oid,commit_string,strlen(commit_string))) != GIT_OK)
+	if ((err = git_oid_fromstrn(&commit_oid,commit_string,strlen(commit_string))) != GIT_OK)
 		goto out;
 
-	if ((e = git_commit_lookup_prefix(&commit,repo,&commit_oid,strlen(commit_string))) != GIT_OK)
+	if ((err = git_commit_lookup_prefix(&commit,repo,&commit_oid,strlen(commit_string))) != GIT_OK)
 		goto out;
 
-	if ((e = git_revwalk_new(&walk, repo)) != GIT_OK)
+	if ((err = git_revwalk_new(&walk, repo)) != GIT_OK)
 		goto out;
 
 	git_revwalk_sorting(walk, GIT_SORT_TIME);
 
-	if ((e = git_revwalk_push(walk, &commit_oid)) != GIT_OK)
+	if ((err = git_revwalk_push(walk, &commit_oid)) != GIT_OK)
 		goto out;
 
 	while ((git_revwalk_next(&current_oid, walk)) == GIT_OK)
@@ -79,7 +79,7 @@ int cmd_rev_list(git_repository *repo, int argc, char **argv)
 
 	git_revwalk_free(walk);
 out:
-	if (e) libgit_error();
+	if (err) libgit_error();
 	if (commit) git_commit_free(commit);
 	return rc;
 }
