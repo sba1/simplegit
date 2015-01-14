@@ -96,7 +96,7 @@ int cmd_diff(git_repository *repo, int argc, char **argv)
 	int rc = EXIT_FAILURE;
 	git_tree *t1 = NULL, *t2 = NULL;
 	git_diff_options opts = GIT_DIFF_OPTIONS_INIT;
-	git_diff *diff;
+	git_diff *diff = NULL;
 	int i, color = -1, compact = 0, cached = 0;
 	char *a, *treeish1 = NULL, *treeish2 = NULL;
 
