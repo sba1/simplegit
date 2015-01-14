@@ -44,7 +44,7 @@ list(REMOVE_ITEM C_SOURCE_FILES ${EXECUTABLE_SOURCE_FILE})
 
 SET(CMAKE_C_FLAGS "-Wno-missing-field-initializers -std=gnu99 -Wall -Wextra ${CMAKE_C_FLAGS}")
 
-set(CMAKE_C_FLAGS_DEBUG "-g -O0")
+set(CMAKE_C_FLAGS_DEBUG "-g -O1")
 set(CMAKE_C_FLAGS_RELEASE "-O2")
 
 #include libssl
