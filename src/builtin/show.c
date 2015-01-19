@@ -8,7 +8,6 @@
 #include "errors.h"
 #include "git-support.h"
 #include "utils.h"
-#include "git-parse-mode.h"
 #include "print.h"
 #include "strbuf.h"
 #include "quote.h"
