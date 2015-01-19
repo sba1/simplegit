@@ -44,7 +44,7 @@ int cmd_ls_files(git_repository *repo, int argc, char **argv)
 	int i;
 	int rc = EXIT_FAILURE;
 	int show_cached = 1;
-	int err;
+	int err = 0;
 	char *file = NULL;
 	char buf[GIT_OID_HEXSZ+1];
 	git_index *idx = NULL;
