@@ -26,9 +26,9 @@ out:
 static char *colors[] = {
 	"\033[m", /* reset */
 	"\033[1m", /* bold */
-	"\033[31m", /* red */
-	"\033[32m", /* green */
-	"\033[36m" /* cyan */
+	"\033[47m", /* low-light */
+	"\033[42m", /* high-light */
+	"\033[33m" /* blue */
 };
 
 static int printer(
