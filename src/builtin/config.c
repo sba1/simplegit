@@ -52,13 +52,14 @@ int cmd_config(git_repository *repo, int argc, char **argv)
 
 	if (val)
 	{
-		fprintf(stderr,"Setting config vals is not supported for now!\n");
-		goto out;
+		if ((err = git_config_set_string(config, name, val)))
+			goto out;
+	} else
+	{
+		if ((err = git_config_get_string(&val,config,name)) != GIT_OK)
+			goto out;
+		printf("%s\n",val);
 	}
-
-	if ((err = git_config_get_string(&val,config,name)) != GIT_OK)
-		goto out;
-	printf("%s\n",val);
 
 	rc = EXIT_SUCCESS;
 out:
