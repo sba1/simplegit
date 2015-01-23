@@ -159,6 +159,7 @@ prepare-os4-release: $(LHA) $(AMIGA_README)
 	mkdir -p dist/sgit-$(VERSION_TAG)
 	cp bin/sgit dist/sgit-$(VERSION_TAG)
 	cp $(AMIGA_README) dist/sgit-$(VERSION_TAG)
+	cp contrib/* dist/sgit-$(VERSION_TAG)
 	cd dist && $(LHA) ao5 sgit-$(VERSION_TAG).lha sgit-$(VERSION_TAG)
 
 ####################################################
