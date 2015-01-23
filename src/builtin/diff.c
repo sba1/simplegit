@@ -26,9 +26,15 @@ out:
 static char *colors[] = {
 	"\033[m", /* reset */
 	"\033[1m", /* bold */
+#ifdef __amigaos4__
 	"\033[47m", /* low-light */
 	"\033[42m", /* high-light */
 	"\033[33m" /* blue */
+#else
+	"\033[31m", /* red */
+	"\033[32m", /* green */
+	"\033[36m" /* cyan */
+#endif
 };
 
 static int printer(
