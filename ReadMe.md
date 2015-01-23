@@ -30,6 +30,13 @@ Generally note that this is software is in a very preliminary state. It may be n
 usable at all in terms of functions it provides but also in terms of bugs it
 contains. Consider it as a prototype and use it at your own risk.
 
+To display diff in color the normal ```sgit diff --color``` command can be used.
+But if the output does not look good for you in the AmigaDOS console, you can use
+the ```gitdiff``` script instead. Make sure it has the Executable and Script bit
+set, and exists in the path. Edit the E[47m and E[45m entries to your liking.
+Ref: http://wiki.amigaos.net/wiki/AmigaOS_Manual:_AmigaDOS_Advanced_Features
+The script uses ```sed``` which is part of the SDK.
+
 Bug reports
 -----------
 
