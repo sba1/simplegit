@@ -63,7 +63,7 @@ IF (AMIGA)
 	include_directories(${ROOT_DIRECTORY}/libgit2/deps/regex)
 	link_directories(${ROOT_DIRECTORY}/interim-openssl/openssl/repo/)
 	set(LIBS ${LIBS} ssl.a crypto.a)
-	set(LIBS ${LIBS} unix.a)
+	set(LIBS ${LIBS} unix.a auto.a)
 ENDIF()
 
 # The extra git-test target involving the git test suite
