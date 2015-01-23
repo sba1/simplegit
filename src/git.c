@@ -53,9 +53,9 @@ int main(int argc, char **argv)
 	const char *cmd;
 	int rc = EXIT_FAILURE;
 	int err;
-	int git_threads_initialied_err;
+	int git_libgit2_initialied_err;
 
-	if ((git_threads_initialied_err = git_threads_init()))
+	if ((git_libgit2_initialied_err = git_libgit2_init()))
 	{
 		fprintf(stderr,"Thread system initialization failed!\n");
 		goto out;
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 	}
 out:
 	git_repository_free(repo);
-	if (!git_threads_initialied_err)
-		git_threads_shutdown();
+	if (!git_libgit2_initialied_err)
+		git_libgit2_shutdown();
 	return rc;
 }

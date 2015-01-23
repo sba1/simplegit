@@ -71,7 +71,7 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 			fprintf(stderr,"Only one argument supported for now!\n");
 			goto out;
 		}
-		if ((err = git_remote_load(&r,repo,argv[i])) != GIT_OK)
+		if ((err = git_remote_lookup(&r,repo,argv[i])) != GIT_OK)
 			goto out;
 	}
 

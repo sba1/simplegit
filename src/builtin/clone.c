@@ -110,10 +110,6 @@ int do_clone(git_repository *repo, int argc, char **argv)
 	clone_opts.remote_callbacks.credentials = &cred_acquire;
 	clone_opts.remote_callbacks.payload = &pd;
 
-	if ((val = getenv("GIT_SSL_NO_VERIFY")) == NULL ||
-			git_config_parse_bool(&clone_opts.ignore_cert_errors, val))
-		clone_opts.ignore_cert_errors = 0;
-
 	// Do the clone
 	error = git_clone(&cloned_repo, url, path, &clone_opts);
 	printf("\n");
