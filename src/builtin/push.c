@@ -9,12 +9,6 @@
 #include "errors.h"
 #include "strbuf.h"
 
-static int push_status_callback(const char *ref, const char *msg, void *data)
-{
-	printf("%p\n",msg);
-	return 0;
-}
-
 static int push_cred_acquire_callback(
         git_cred **cred,
         const char *url,
@@ -52,11 +46,11 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 	int err = GIT_OK;
 	int i;
 	int rc = EXIT_FAILURE;
-
-	git_push *p = NULL;
-	git_remote *r = NULL;
-
+	git_strarray refs = {NULL, 0};
+	git_push_options push_options = GIT_PUSH_OPTIONS_INIT;
 	git_remote_callbacks callbacks = GIT_REMOTE_CALLBACKS_INIT;
+
+	git_remote *r = NULL;
 
 	for (i=1;i<argc;i++)
 	{
@@ -68,8 +62,12 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 
 		if (r)
 		{
-			fprintf(stderr,"Only one argument supported for now!\n");
-			goto out;
+			if (refs.count) {
+				fprintf(stderr, "USAGE: %s <remote> <refspec>\n", argv[0]);
+				goto out;
+			}
+			refs.strings = &argv[i];
+			refs.count = 1;
 		}
 		if ((err = git_remote_lookup(&r,repo,argv[i])) != GIT_OK)
 			goto out;
@@ -81,25 +79,20 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
+	if (!refs.count)
+	{
+		fprintf(stderr,"No refspec given!\n");
+		goto out;
+	}
 
 	callbacks.credentials = push_cred_acquire_callback;
 	git_remote_set_callbacks(r, &callbacks);
-
-	if ((err = git_push_new(&p,r)) != GIT_OK)
+	if ((err = git_remote_push(r, &refs, &push_options, NULL, NULL)))
 		goto out;
 
-	if ((err = git_push_status_foreach(p,push_status_callback,NULL)) != GIT_OK)
-		goto out;
-
-	if ((err = git_push_add_refspec(p,"refs/heads/master")) != GIT_OK)
-		goto out;
-
-	if ((err = git_push_finish(p)) != GIT_OK)
-		goto out;
 out:
 	if (err != GIT_OK)
 		libgit_error();
-	if (p) git_push_free(p);
 	if (r) git_remote_free(r);
 	return rc;
 }
