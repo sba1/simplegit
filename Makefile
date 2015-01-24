@@ -23,7 +23,11 @@ ${LIBGIT2_INCLUDE_DIRECTORY}:
 	git submodule update;
 
 ${CMAKE_MAKEFILE}:${LIBGIT2_INCLUDE_DIRECTORY} ${CMAKE_FILE_LISTS}
-	@mkdir -p "${BUILD_DIRECTORY}" && cd "${BUILD_DIRECTORY}" && cmake "${CMAKE_DIRECTORY}";
+	mkdir -p "${BUILD_DIRECTORY}"
+	echo "#define SIMPLEGIT_REVISION_STRING \"$(COMMITS)\"" >${BUILD_DIRECTORY}/sgit-version.h
+	echo "#define SIMPLEGIT_DATE_STRING \"$(shell date +%d.%m.%Y)\"" >>${BUILD_DIRECTORY}/sgit-version.h
+	cd "${BUILD_DIRECTORY}" && cmake "${CMAKE_DIRECTORY}" -DCMAKE_C_FLAGS="\
+		-imacros ${BUILD_DIRECTORY}/sgit-version.h"
 
 .PHONY:${CMAKE_MAKEFILE}
 
