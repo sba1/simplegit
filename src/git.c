@@ -55,11 +55,12 @@ int main(int argc, char **argv)
 	int err;
 	int git_libgit2_initialied_err;
 
-	if ((git_libgit2_initialied_err = git_libgit2_init()))
+	if ((git_libgit2_initialied_err = git_libgit2_init()) < 0)
 	{
-		fprintf(stderr,"Thread system initialization failed!\n");
+		fprintf(stderr,"The libgit2 initialization failed!\n");
 		goto out;
 	}
+	git_libgit2_initialied_err = 0;
 
 	cmd = git_extract_argv0_path(argv[0]);
 
