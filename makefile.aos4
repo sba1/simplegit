@@ -30,14 +30,14 @@ all: sgit
 sgit: libgit2 pthread
 	# sgit
 	mkdir -p build-amiga/
-	echo "#define SIMPLEGIT_REVISION_STRING \"$(COMMITS)\"" >build-amiga/version.h
-	echo "#define SIMPLEGIT_DATE_STRING \"$(shell date +%d.%m.%Y)\"" >>build-amiga/version.h
+	echo "#define SIMPLEGIT_REVISION_STRING \"$(COMMITS)\"" >build-amiga/sgit-version.h
+	echo "#define SIMPLEGIT_DATE_STRING \"$(shell date +%d.%m.%Y)\"" >>build-amiga/sgit-version.h
 	cd build-amiga/ && cmake ../CMake\
 		-DCMAKE_SYSTEM_NAME=AmigaOS\
 		-DCMAKE_C_COMPILER=$(COMPILER)\
 		-DCMAKE_C_FLAGS="\
 			-I$(shell readlink -f build-deps/Local/common/include)\
-			-imacros $(shell readlink -f .)/build-amiga/version.h\
+			-imacros $(shell readlink -f .)/build-amiga/sgit-version.h\
 			"\
 		-DCMAKE_EXE_LINKER_FLAGS="-L$(shell readlink -f build-deps/Local/newlib/lib) -Wl,--gc-sections"\
 		-DAMIGA=1\
