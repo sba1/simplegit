@@ -41,6 +41,12 @@ static int push_cred_acquire_callback(
 	return 0;
 }
 
+static int push_update_reference_callback(const char *refname, const char *status, void *data)
+{
+	printf("%s: %s\n", refname, status?status:"Ok");
+	return 0;
+}
+
 int cmd_push(git_repository *repo, int argc, char **argv)
 {
 	int err = GIT_OK;
@@ -88,6 +94,7 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 	}
 
 	callbacks.credentials = push_cred_acquire_callback;
+	callbacks.push_update_reference = push_update_reference_callback;
 	git_remote_set_callbacks(r, &callbacks);
 	if ((err = git_remote_push(r, &refs, &push_options, NULL, NULL)))
 		goto out;
