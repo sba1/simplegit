@@ -87,12 +87,6 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
-	if (!refs.count)
-	{
-		fprintf(stderr,"No refspec given!\n");
-		goto out;
-	}
-
 	callbacks.credentials = push_cred_acquire_callback;
 	callbacks.push_update_reference = push_update_reference_callback;
 	git_remote_set_callbacks(r, &callbacks);
