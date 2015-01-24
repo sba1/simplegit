@@ -85,7 +85,6 @@ int do_clone(git_repository *repo, int argc, char **argv)
 	git_checkout_options checkout_opts = GIT_CHECKOUT_OPTIONS_INIT;
 	const char *url = argv[1];
 	const char *path = argv[2];
-	const char *val;
 	int error;
 
 	(void)repo; // unused
