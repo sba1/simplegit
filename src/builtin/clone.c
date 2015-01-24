@@ -108,6 +108,7 @@ int do_clone(git_repository *repo, int argc, char **argv)
 	clone_opts.remote_callbacks.transfer_progress = &fetch_progress;
 	clone_opts.remote_callbacks.credentials = &cred_acquire;
 	clone_opts.remote_callbacks.payload = &pd;
+	clone_opts.remote_callbacks.certificate_check = certificate_check;
 
 	// Do the clone
 	error = git_clone(&cloned_repo, url, path, &clone_opts);

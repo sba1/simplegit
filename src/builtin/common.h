@@ -18,6 +18,18 @@ int cred_acquire_cb(git_cred **out,
 		unsigned int allowed_types,
 		void *payload);
 
+
+/**
+ * Function that can be passed to the remote certificate callbacks.
+ *
+ * @param cert
+ * @param valid
+ * @param host
+ * @param payload
+ * @return
+ */
+int certificate_check(git_cert *cert, int valid, const char *host, void *payload);
+
 #ifndef PRIuZ
 /* Define the printf format specifer to use for size_t output */
 #if defined(_MSC_VER) || defined(__MINGW32__)

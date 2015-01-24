@@ -32,3 +32,22 @@ int cred_acquire_cb(git_cred **out,
 
 	return git_cred_userpass_plaintext_new(out, username, password);
 }
+
+int certificate_check(git_cert *cert, int valid, const char *host, void *payload)
+{
+	char *val;
+	int ssl_no_verify = 0;
+
+	if (valid)
+		return 1;
+
+	if (!(val = getenv("GIT_SSL_NO_VERIFY")))
+		return 0;
+
+	if (git_config_parse_bool(&ssl_no_verify, val) < 0)
+		return 0;
+
+	if (ssl_no_verify)
+		fprintf(stderr, "Ignoring that certificate could not be verified as GIT_SSL_NO_VERIFY variable is set.");
+	return ssl_no_verify;
+}
