@@ -27,6 +27,7 @@
 #include "builtin/status.h"
 #include "builtin/update-index.h"
 #include "builtin/write-tree.h"
+#include "builtin/version.h"
 
 #include "common.h"
 
