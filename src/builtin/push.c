@@ -68,9 +68,11 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 			}
 			refs.strings = &argv[i];
 			refs.count = 1;
+		} else
+		{
+			if ((err = git_remote_lookup(&r,repo,argv[i])) != GIT_OK)
+				goto out;
 		}
-		if ((err = git_remote_lookup(&r,repo,argv[i])) != GIT_OK)
-			goto out;
 	}
 
 	if (!r)
