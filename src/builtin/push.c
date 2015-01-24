@@ -55,6 +55,7 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 	git_strarray refs = {NULL, 0};
 	git_push_options push_options = GIT_PUSH_OPTIONS_INIT;
 	git_remote_callbacks callbacks = GIT_REMOTE_CALLBACKS_INIT;
+	char *ref_fullname = NULL;
 
 	git_remote *r = NULL;
 
@@ -68,11 +69,22 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 
 		if (r)
 		{
+			git_reference *ref;
+
 			if (refs.count) {
 				fprintf(stderr, "USAGE: %s <remote> <refspec>\n", argv[0]);
 				goto out;
 			}
-			refs.strings = &argv[i];
+
+			if (!git_reference_dwim(&ref, repo, argv[i]))
+			{
+				ref_fullname = strdup(git_reference_name(ref));
+				refs.strings = &ref_fullname;
+				git_reference_free(ref);
+			} else
+			{
+				refs.strings = &argv[i];
+			}
 			refs.count = 1;
 		} else
 		{
@@ -96,6 +108,7 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 out:
 	if (err != GIT_OK)
 		libgit_error();
+	free(ref_fullname);
 	if (r) git_remote_free(r);
 	return rc;
 }
