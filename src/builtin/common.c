@@ -48,6 +48,6 @@ int certificate_check(git_cert *cert, int valid, const char *host, void *payload
 		return 0;
 
 	if (ssl_no_verify)
-		fprintf(stderr, "Ignoring that certificate could not be verified as GIT_SSL_NO_VERIFY variable is set.");
+		fprintf(stderr, "Ignoring that certificate could not be verified as GIT_SSL_NO_VERIFY variable is set.\n");
 	return ssl_no_verify;
 }
