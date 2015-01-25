@@ -47,7 +47,6 @@ sgit: libgit2 pthread
 	cd build-amiga/ && $(MAKE) VERBOSE=1
 	mv bin/sgit bin/sgit.debug
 	ppc-amigaos-strip --strip-all -o bin/sgit bin/sgit.debug
-	cp bin/sgit ~/amiga/share/git
 
 ####################################################
 # The libgit2 dependency
