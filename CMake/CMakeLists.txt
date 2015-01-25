@@ -64,6 +64,8 @@ IF (AMIGA)
 	link_directories(${ROOT_DIRECTORY}/interim-openssl/openssl/repo/)
 	set(LIBS ${LIBS} ssl.a crypto.a)
 	set(LIBS ${LIBS} unix.a auto.a)
+ELSE()
+	set(LIBS ${LIBS} ssl crypto)
 ENDIF()
 
 # The extra git-test target involving the git test suite
