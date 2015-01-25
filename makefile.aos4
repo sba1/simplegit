@@ -36,6 +36,7 @@ sgit: libgit2 pthread
 		-DCMAKE_SYSTEM_NAME=AmigaOS\
 		-DCMAKE_C_COMPILER=$(COMPILER)\
 		-DCMAKE_C_FLAGS="\
+			-DUSE_SSL -I$(shell readlink -f interim-openssl/openssl/repo/include/)\
 			-I$(shell readlink -f build-deps/Local/common/include)\
 			-imacros $(shell readlink -f .)/build-amiga/sgit-version.h\
 			"\
@@ -46,6 +47,7 @@ sgit: libgit2 pthread
 	cd build-amiga/ && $(MAKE) VERBOSE=1
 	mv bin/sgit bin/sgit.debug
 	ppc-amigaos-strip --strip-all -o bin/sgit bin/sgit.debug
+	cp bin/sgit ~/amiga/share/git
 
 ####################################################
 # The libgit2 dependency
