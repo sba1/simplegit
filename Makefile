@@ -9,6 +9,8 @@ CMAKE_FILE_LISTS=${CMAKE_DIRECTORY}/CMakeLists.txt
 BIN_DIRECTORY=$(abspath .)/bin
 GIT2=${BIN_DIRECTORY}/sgit
 
+COMMITS := $(shell git rev-list HEAD --count)
+
 main: dirs ${CMAKE_MAKEFILE}
 	@rm -rf "${GIT2}";
 	@${MAKE} -C "${BUILD_DIRECTORY}";
