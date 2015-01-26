@@ -38,6 +38,12 @@ int cmd_checkout(git_repository *repo, int argc, char **argv)
 		}
 	}
 
+	if (!branch)
+	{
+		fprintf (stderr, "USAGE: %s <branch>\n", argv[0]);
+		return -1;
+	}
+
 	/* Try local branch */
 	if (git_branch_lookup(&branch_ref,repo,branch,GIT_BRANCH_LOCAL) != 0)
 	{
