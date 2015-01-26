@@ -4,14 +4,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <git2.h>
-#include "commit-tree.h"
 
-#include "errors.h"
-#include "git.h"
-#include "git-support.h"
+#include "common.h"
 #include "date.h"
-#include "strbuf.h"
 #include "environment.h"
+#include "errors.h"
+#include "git-support.h"
+#include "git.h"
+#include "strbuf.h"
 
 int cmd_commit(git_repository *repo, int argc, char **argv)
 {

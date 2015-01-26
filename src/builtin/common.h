@@ -12,6 +12,23 @@ int fetch(git_repository *repo, int argc, char **argv);
 int index_pack(git_repository *repo, int argc, char **argv);
 int do_clone(git_repository *repo, int argc, char **argv);
 
+
+/**
+ * Instantiates the signature for the author.
+ *
+ * @param author_signature
+ * @return
+ */
+int sgit_get_author_signature(git_signature **author_signature);
+
+/**
+ * Instantiates the signature for the committer.
+ *
+ * @param committer_signature
+ * @return
+ */
+int sgit_get_committer_signature(git_signature** committer_signature);
+
 int cred_acquire_cb(git_cred **out,
 		const char * url,
 		const char * username_from_url,

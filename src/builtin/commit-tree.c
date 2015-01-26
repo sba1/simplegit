@@ -4,81 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "errors.h"
-#include "git.h"
-#include "git-support.h"
+#include "common.h"
 #include "date.h"
-#include "strbuf.h"
 #include "environment.h"
-
-/**
- * Instantiates the signature for the author.
- *
- * @param author_signature
- * @return
- */
-int sgit_get_author_signature(git_signature **author_signature)
-{
-	int author_offset = 0;
-	char *author_name = NULL;
-	char *author_email = NULL;
-	char *author_date = NULL;
-	unsigned long author_timestamp = 0;
-
-	author_name = getenv(GIT_AUTHOR_NAME_ENVIRONMENT);
-	author_email = getenv(GIT_AUTHOR_EMAIL_ENVIRONMENT);
-	author_date = getenv(GIT_AUTHOR_DATE_ENVIRONMENT);
-	if (!author_name)
-		author_name = "Dummy Author";
-
-	if (!author_email)
-		author_email = "dummya@dummydummydummy.zz";
-
-	if (author_date)
-	{
-		if ((parse_date_basic(author_date, &author_timestamp, &author_offset)))
-		{
-			fprintf(stderr, "Bad author date format\n!");
-			return GIT_ERROR;
-		}
-	}
-	return git_signature_new(author_signature, author_name, author_email,
-			author_timestamp, author_offset);
-}
-
-/**
- * Instantiates the signature for the committer.
- *
- * @param committer_signature
- * @return
- */
-int sgit_get_committer_signature(git_signature** committer_signature)
-{
-	char *committer_name = NULL;
-	char *committer_email = NULL;
-	char *committer_date = NULL;
-	unsigned long committer_timestamp = 0;
-	int committer_offset = 0;
-	committer_name = getenv(GIT_COMMITTER_NAME_ENVIRONMENT);
-	committer_email = getenv(GIT_COMMITTER_EMAIL_ENVIRONMENT);
-	committer_date = getenv(GIT_COMMITTER_DATE_ENVIRONMENT);
-	if (!committer_name)
-		committer_name = "Dummy Committerr";
-
-	if (!committer_email)
-		committer_email = "dummyc@dummydummydummy.zz";
-
-	if (committer_date)
-	{
-		if ((parse_date_basic(committer_date, &committer_timestamp, &committer_offset)))
-		{
-			fprintf(stderr, "Bad committer date format\n!");
-			return GIT_ERROR;
-		}
-	}
-	return git_signature_new(committer_signature, committer_name,
-			committer_email, committer_timestamp, committer_offset);
-}
+#include "errors.h"
+#include "git-support.h"
+#include "git.h"
+#include "strbuf.h"
 
 int cmd_commit_tree(git_repository *repo, int argc, char **argv)
 {
