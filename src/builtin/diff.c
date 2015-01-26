@@ -73,7 +73,7 @@ static int printer(
 	return 0;
 }
 
-static int check_uint16_param(const char *arg, const char *pattern, uint16_t *val)
+static int check_uint32_param(const char *arg, const char *pattern, uint32_t *val)
 {
 	size_t len = strlen(pattern);
 	uint16_t strval;
@@ -147,9 +147,9 @@ int cmd_diff(git_repository *repo, int argc, char **argv)
 			opts.flags |= GIT_DIFF_INCLUDE_IGNORED;
 		else if (!strcmp(a, "--untracked"))
 			opts.flags |= GIT_DIFF_INCLUDE_UNTRACKED;
-		else if (!check_uint16_param(a, "-U", &opts.context_lines) &&
-			!check_uint16_param(a, "--unified=", &opts.context_lines) &&
-			!check_uint16_param(a, "--inter-hunk-context=",
+		else if (!check_uint32_param(a, "-U", &opts.context_lines) &&
+			!check_uint32_param(a, "--unified=", &opts.context_lines) &&
+			!check_uint32_param(a, "--inter-hunk-context=",
 				&opts.interhunk_lines) &&
 			!check_str_param(a, "--src-prefix=", &opts.old_prefix) &&
 			!check_str_param(a, "--dst-prefix=", &opts.new_prefix))
