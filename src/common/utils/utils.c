@@ -8,7 +8,6 @@
 #include <limits.h>
 #include "utils.h"
 #include "errors.h"
-#include "abspath.h"
 #include "git-compat-util.h"
 
 static void do_nothing(size_t size)
