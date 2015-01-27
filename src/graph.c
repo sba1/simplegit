@@ -1,7 +1,7 @@
 #include "graph.h"
 
-#include <memory.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_COLUMNS 16
 
