@@ -65,7 +65,8 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 			{
 				if (used_columns >= MAX_COLUMNS)
 					goto bailout;
-				first_to_be_inserted = used_columns;
+				if (first_to_be_inserted == MAX_COLUMNS)
+					first_to_be_inserted = used_columns;
 				assigned_to[used_columns++] = p;
 			}
 		}
