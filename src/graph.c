@@ -27,6 +27,9 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		int first_to_be_inserted = MAX_COLUMNS;
 		int first_to_be_removed = MAX_COLUMNS;
 		int num_to_be_removed = 0;
+		cell_state_t row[MAX_COLUMNS];
+
+		memset(row,0,sizeof(row));
 
 		n = callbacks->get_node(i, callbacks->userdata);
 
@@ -47,12 +50,9 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		/* Print current state */
 		for (k = 0; k < used_columns; k++)
 		{
-			if (assigned_to[k] == n)
-				printf("* ");
-			else
-				printf("| ");
+			if (assigned_to[k] == n) row[k] |= NODE;
+			else row[k] |= TOP_TO_CENTER;
 		}
-		printf(" %s\n", callbacks->get_text(n, callbacks->userdata));
 
 		/* Assign parents */
 		for (l = 0; l < callbacks->get_num_parents(n, callbacks->userdata); l++)
@@ -89,18 +89,18 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		if (first_to_be_inserted != MAX_COLUMNS)
 		{
 			for (k = 0; k < used_columns && k < first_to_be_inserted; k++)
-				printf("| ");
+				row[k] |= TOP_TO_BOTTOM;
 			for (; k < used_columns; k++)
-				printf("\b\\  ");
+				row[k] |= LEFT_TO_CENTER|BOTTOM_TO_CENTER; /* Merge */
 		} else
 		{
-			for (k = 0; k < used_columns && k < first_to_be_removed; k++)
-				printf("| ");
-			for (; k < used_columns; k++)
-				printf("\b/  ");
+			for (k = 0; k < TOP_TO_BOTTOM && k < first_to_be_removed; k++)
+				row[k] |= TOP_TO_BOTTOM;
+			for (; k < used_columns; k++) /* Fork */
+				row[k] |= LEFT_TO_CENTER|TOP_TO_CENTER;
 		}
-		printf("\n");
 
+		callbacks->print_row(row, used_columns, callbacks->userdata);
 		/* Then remove them, also one by one */
 		for (j = 0; j < num_to_be_removed; j++)
 		{
