@@ -9,19 +9,19 @@ typedef void * node_t;
 typedef enum
 {
 	/** There is an edge from left (center) to the center */
-	LEFT_TO_CENTER = 0<<0,
+	LEFT_TO_CENTER = 1<<0,
 
 	/** There is an edge from top (center) to the center */
-	TOP_TO_CENTER = 0<<1,
+	TOP_TO_CENTER = 1<<1,
 
 	/** There is an edge from right (center) to the center */
-	RIGHT_TO_CENTER = 0<<2,
+	RIGHT_TO_CENTER = 1<<2,
 
 	/** There is an edge from bottom (center) to the center */
-	BOTTOM_TO_CENTER = 0<<3,
+	BOTTOM_TO_CENTER = 1<<3,
 
 	/** Put in a node */
-	NODE = 0<<4,
+	NODE = 1<<4,
 
 	/** There is an edge from the top (center) to the bottom (center) */
 	TOP_TO_BOTTOM = (TOP_TO_CENTER | BOTTOM_TO_CENTER),
