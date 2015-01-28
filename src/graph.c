@@ -16,6 +16,8 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		int j,k,l;
 		node_t n;
 		int to_be_removed[MAX_COLUMNS];
+		int first_to_be_inserted = MAX_COLUMNS;
+		int first_to_be_removed = MAX_COLUMNS;
 		int num_to_be_removed = 0;
 
 		n = callbacks->get_node(i, callbacks->userdata);
@@ -34,14 +36,14 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		if (j == used_columns)
 			assigned_to[used_columns++] = n;
 
+		/* Print current state */
 		for (k = 0; k < used_columns; k++)
 		{
 			if (assigned_to[k] == n)
-				printf("*");
+				printf("* ");
 			else
-				printf("|");
+				printf("| ");
 		}
-
 		printf(" %s\n", callbacks->get_text(n, callbacks->userdata));
 
 		/* Assign parents */
@@ -55,6 +57,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 			{
 				if (used_columns >= MAX_COLUMNS)
 					goto bailout;
+				first_to_be_inserted = used_columns;
 				assigned_to[used_columns++] = p;
 			}
 		}
@@ -65,9 +68,30 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 			for (k = j + 1; k < used_columns; k++)
 			{
 				if (assigned_to[j] == assigned_to[k])
+				{
+					first_to_be_removed = k;
 					to_be_removed[num_to_be_removed++] = k;
+				}
 			}
 		}
+
+		/* Print still existing branches and merge or fork points (with respect to the history.
+		 * i.e., as seen from bottom). This works only for the most simple cases.
+		 */
+		if (first_to_be_inserted != MAX_COLUMNS)
+		{
+			for (k = 0; k < used_columns && k < first_to_be_inserted; k++)
+				printf("| ");
+			for (; k < used_columns; k++)
+				printf("\b\\  ");
+		} else
+		{
+			for (k = 0; k < used_columns && k < first_to_be_removed; k++)
+				printf("| ");
+			for (; k < used_columns; k++)
+				printf("\b/  ");
+		}
+		printf("\n");
 
 		/* Then remove them, also one by one */
 		for (j = 0; j < num_to_be_removed; j++)
