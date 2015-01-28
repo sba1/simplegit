@@ -1,3 +1,11 @@
+/**
+ * @file
+ *
+ * The simple graph renderer for SimpleGit.
+ +
+ * (c) 2015 by Sebastian Bauer
+ */
+
 #include "graph.h"
 
 #include <stdio.h>
