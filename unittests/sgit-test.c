@@ -16,12 +16,13 @@ struct node g[] =
 	{1,{1},"Head"},			/* 0 */
 	{1,{2},"Head~1"},		/* 1 */
 	{1,{3},"Head~2"},		/* 2 */
-	{2,{4,6},"Merge"},		/* 3 */
+	{3,{4,6,7},"Merge"},	/* 3 */
 	{1,{5},"Branch1"},		/* 4 */
-	{1,{7},"Branch1~1"},	/* 5 */
-	{1,{7},"Branch2"},		/* 6 */
-	{1,{8},"Common"},		/* 7 */
-	{0,{},"Common~1"}		/* 8 */
+	{1,{8},"Branch1~1"},	/* 5 */
+	{1,{8},"Branch2"},		/* 6 */
+	{1,{8},"Branch3"},		/* 7 */
+	{1,{9},"Common"},		/* 8 */
+	{0,{},"Common~1"}		/* 9 */
 };
 
 static node_t get_node(int index, void *userdata)
