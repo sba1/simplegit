@@ -54,7 +54,9 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 			else row[k] |= TOP_TO_CENTER;
 		}
 
-		/* Assign parents */
+		/* Assign parents. For now, the first parent gets the same column as the
+		 * current commit. Each of the other parent gets a new column.
+		 */
 		for (l = 0; l < callbacks->get_num_parents(n, callbacks->userdata); l++)
 		{
 			node_t p = callbacks->get_parent(n, l, callbacks->userdata);
