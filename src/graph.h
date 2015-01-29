@@ -41,9 +41,6 @@ typedef struct
 	/** Returns the index'th node of the given node starting with 0 */
 	node_t (*get_parent)(node_t node, int index, void *userdata);
 
-	/** Returns the text for the given node */
-	const char * (*get_text)(node_t node, void *userdata);
-
 	/** The client shall print the given cell state */
 	void (*print_row)(node_t node, cell_state_t *states, int num, void *userdata);
 

@@ -42,11 +42,6 @@ static node_t get_parent(node_t node, int index, void *userdata)
 	return g[(intptr_t)node].parents[index];
 }
 
-static const char *get_text(node_t node, void *userdata)
-{
-	return g[(intptr_t)node].text;
-}
-
 void print_row(node_t node, cell_state_t *states, int num, void *userdata)
 {
 	int i;
@@ -83,7 +78,6 @@ int main(int argc, char **argv)
 	callbacks.get_node = get_node;
 	callbacks.get_num_parents = get_num_parents;
 	callbacks.get_parent = get_parent;
-	callbacks.get_text = get_text;
 	callbacks.print_row = print_row;
 
 	graph_render(sizeof(g)/sizeof(g[0]), &callbacks);
