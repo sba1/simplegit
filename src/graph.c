@@ -103,7 +103,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 				row[k] |= LEFT_TO_CENTER|TOP_TO_CENTER;
 		}
 
-		callbacks->print_row(row, used_columns, callbacks->userdata);
+		callbacks->print_row(n, row, used_columns, callbacks->userdata);
 		/* Then remove them, also one by one */
 		for (j = 0; j < num_to_be_removed; j++)
 		{

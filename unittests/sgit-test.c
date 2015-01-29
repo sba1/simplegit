@@ -47,7 +47,7 @@ static const char *get_text(node_t node, void *userdata)
 	return g[(intptr_t)node].text;
 }
 
-void print_row(cell_state_t *states, int num, void *userdata)
+void print_row(node_t node, cell_state_t *states, int num, void *userdata)
 {
 	int i;
 
@@ -65,7 +65,7 @@ void print_row(cell_state_t *states, int num, void *userdata)
 		else if (states[i] & TOP_TO_BOTTOM) printf(" |");
 		else printf("  ");
 	}
-	printf("\n");
+	printf(" %s\n", g[((intptr_t)node)].text);
 
 	for (i = 0; i < num; i++)
 	{

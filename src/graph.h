@@ -45,7 +45,7 @@ typedef struct
 	const char * (*get_text)(node_t node, void *userdata);
 
 	/** The client shall print the given cell state */
-	void (*print_row)(cell_state_t *states, int num, void *userdata);
+	void (*print_row)(node_t node, cell_state_t *states, int num, void *userdata);
 
 	/** The user data that is supplied to various callbacks */
 	void *userdata;
