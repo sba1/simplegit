@@ -16,6 +16,7 @@ typedef enum
 
 	/** There is an edge from right (center) to the center */
 	RIGHT_TO_CENTER = 1<<2,
+	CENTER_TO_RIGHT = RIGHT_TO_CENTER,
 
 	/** There is an edge from bottom (center) to the center */
 	BOTTOM_TO_CENTER = 1<<3,
