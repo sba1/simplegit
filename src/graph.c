@@ -68,12 +68,24 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 			if (l==0)
 			{
 				assigned_to[j] = p;
+
+				/* There must be something coming from if this is a merge */
+				if (num_parents != 1)
+					row[j] |= RIGHT_TO_CENTER;
 			} else
 			{
 				if (used_columns >= MAX_COLUMNS)
 					goto bailout;
 				if (first_to_be_inserted == MAX_COLUMNS)
 					first_to_be_inserted = used_columns;
+
+				/* The cell must have an connection to the left.
+				 * All but the last one must have a connection to the right.
+				 */
+				row[used_columns] |= LEFT_TO_CENTER;
+				if (l < num_parents - 1)
+					row[used_columns] |= RIGHT_TO_CENTER;
+
 				assigned_to[used_columns++] = p;
 			}
 		}
@@ -101,10 +113,6 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 				row[k] |= TOP_TO_BOTTOM;
 			for (; k < used_columns; k++)
 				row[k] |= LEFT_TO_CENTER|BOTTOM_TO_CENTER; /* Merge */
-
-			/* There must be something coming from the right as this is a merge */
-			row[col_of_n] |= RIGHT_TO_CENTER;
-
 		} else
 		{
 			for (k = 0; k < TOP_TO_BOTTOM && k < first_to_be_removed; k++)
