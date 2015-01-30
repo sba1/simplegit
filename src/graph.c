@@ -99,6 +99,9 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 				{
 					first_to_be_removed = k;
 					to_be_removed[num_to_be_removed++] = k;
+
+					row[j] |= RIGHT_TO_CENTER;
+					row[k] |= LEFT_TO_CENTER;
 				}
 			}
 		}
