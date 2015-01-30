@@ -91,6 +91,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		 */
 		if (first_to_be_inserted != MAX_COLUMNS)
 		{
+			/* Straight lines from the beginning to the first inserted branch */
 			for (k = 0; k < used_columns && k < first_to_be_inserted; k++)
 				row[k] |= TOP_TO_BOTTOM;
 			for (; k < used_columns; k++)
