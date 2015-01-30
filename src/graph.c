@@ -27,6 +27,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		int first_to_be_inserted = MAX_COLUMNS;
 		int first_to_be_removed = MAX_COLUMNS;
 		int num_to_be_removed = 0;
+		int col_of_n;
 		cell_state_t row[MAX_COLUMNS];
 
 		memset(row,0,sizeof(row));
@@ -46,6 +47,8 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		/* Possibly assign a new column */
 		if (j == used_columns)
 			assigned_to[used_columns++] = n;
+
+		col_of_n = j;
 
 		/* Print current state */
 		for (k = 0; k < used_columns; k++)
@@ -96,6 +99,10 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 				row[k] |= TOP_TO_BOTTOM;
 			for (; k < used_columns; k++)
 				row[k] |= LEFT_TO_CENTER|BOTTOM_TO_CENTER; /* Merge */
+
+			/* There must be something coming from the right as this is a merge */
+			row[col_of_n] |= RIGHT_TO_CENTER;
+
 		} else
 		{
 			for (k = 0; k < TOP_TO_BOTTOM && k < first_to_be_removed; k++)
