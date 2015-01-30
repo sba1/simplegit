@@ -27,12 +27,14 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		int first_to_be_inserted = MAX_COLUMNS;
 		int first_to_be_removed = MAX_COLUMNS;
 		int num_to_be_removed = 0;
+		int num_parents;
 		int col_of_n;
 		cell_state_t row[MAX_COLUMNS];
 
 		memset(row,0,sizeof(row));
 
 		n = callbacks->get_node(i, callbacks->userdata);
+		num_parents = callbacks->get_num_parents(n, callbacks->userdata);
 
 		for (j = 0; j < MAX_COLUMNS && j < used_columns; j++)
 		{
@@ -60,7 +62,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		/* Assign parents. For now, the first parent gets the same column as the
 		 * current commit. Each of the other parent gets a new column.
 		 */
-		for (l = 0; l < callbacks->get_num_parents(n, callbacks->userdata); l++)
+		for (l = 0; l < num_parents; l++)
 		{
 			node_t p = callbacks->get_parent(n, l, callbacks->userdata);
 			if (l==0)
