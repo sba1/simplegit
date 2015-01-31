@@ -3,12 +3,6 @@
 #include "utils.h"
 #include "errors.h"
 
-void please_git_do_it_for_me()
-{
-	fprintf(stderr,"please_git_do_it_for_me()\n");
-	exit(20);
-}
-
 /**
  * Create a branch with a given branch name from a reference.
  *
