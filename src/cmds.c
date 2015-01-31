@@ -5,6 +5,7 @@
 #include "strbuf.h"
 
 #include "reset.h"
+#include "stash.h"
 
 struct cmd_struct {
 	char *cmd;
@@ -39,6 +40,7 @@ struct cmd_struct commands[] = {
 	{"reset",          1, "Reset the HEAD or the index to a specific state", cmd_reset},
 	{"rev-list",       0, "Show information about commit objects", cmd_rev_list},
 	{"show",           1, "Show objects", cmd_show},
+	{"stash",          1, "Manage separate the separate stash of changes", cmd_stash},
 	{"status",         1, "Summarize working directory changes", cmd_status},
 	{"update-index",   0, "Update the index with files from the working directory", cmd_update_index},
 	{"write-tree",     0, "Create a write object from the current index", cmd_write_tree},
