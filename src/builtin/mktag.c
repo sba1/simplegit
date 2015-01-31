@@ -7,37 +7,34 @@
 #include "git-support.h"
 #include "strbuf.h"
 
-
-
 int cmd_mktag(git_repository *repo, int argc,  char **argv)
 {
-	please_git_do_it_for_me();
-	
-	(void)argc;
-	(void)argv;
-	int e;
-	
-	if (argc != 1) {
-		printf("git mktag < signaturefile\n");
-		return 1;
+	int err = GIT_OK;
+	int rc = EXIT_FAILURE;
+	char sha1buf[GIT_OID_HEXSZ + 1];
+	struct strbuf buf = STRBUF_INIT;
+	git_oid oid;
+
+	if (argc != 1)
+	{
+		fprintf (stderr, "USAGE: %s < signaturefile\n", argv[0]);
+		return EXIT_FAILURE;
 	}
 
-	struct strbuf buf = STRBUF_INIT;
-	if (strbuf_read(&buf, 0, 4096) < 0) {
-		die_errno("could not read from stdin");
+	if (strbuf_read(&buf, 0, 4096) < 0)
+	{
+		fprintf(stderr, "Couldn't read signature file from stdin.");
+		goto out;
 	}
-	git_oid oid_tag;
-	
-	e = git_tag_create_frombuffer(&oid_tag,repo,buf.buf,0);
-	if( e != GIT_EEXISTS && e != GIT_OK )
+
+	if ((err = git_tag_create_frombuffer(&oid,repo,buf.buf,0)) < 0)
+		goto out;
+
+	printf("%s\n", git_oid_tostr(sha1buf, GIT_OID_HEXSZ+1, &oid));
+	rc = EXIT_SUCCESS;
+out:
+	if (err != GIT_OK)
 		libgit_error();
-	
-	char *oid_tag_string = malloc(sizeof(char)*41);
-	git_oid_fmt(oid_tag_string, &oid_tag);
-	oid_tag_string[40] = '\0';
-	printf("%s\n", oid_tag_string);
-	
-	
-	return EXIT_SUCCESS;
+	return rc;
 }
 
