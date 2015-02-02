@@ -11,7 +11,7 @@
 
 static void print_usage(char *name)
 {
-	fprintf (stderr, "USAGE: %s\n", name);
+	fprintf (stderr, "USAGE: %s [tagname]\n", name);
 }
 
 static int list_foreach_cb(const char *name, git_oid *oid, void *payload)
@@ -29,12 +29,30 @@ int cmd_tag(git_repository *repo, int argc, char **argv)
 	int err = GIT_OK;
 	int rc = EXIT_FAILURE;
 
-	if (argc != 1)
+	if (argc > 2)
 	{
 		print_usage(argv[0]);
 		goto out;
 	}
-	git_tag_foreach(repo, list_foreach_cb, NULL);
+	if (argc == 1)
+	{
+		git_tag_foreach(repo, list_foreach_cb, NULL);
+	} else
+	{
+		git_reference *head_ref;
+		git_object *head_obj;
+		git_oid oid;
+
+		if ((err = git_repository_head(&head_ref,repo)))
+			goto out;
+
+		if ((err = git_reference_peel(&head_obj, head_ref, GIT_OBJ_COMMIT)))
+			goto out;
+
+		if ((err = git_tag_create_lightweight(&oid, repo, argv[1], head_obj, 0)))
+			goto out;
+	}
+
 	rc = EXIT_SUCCESS;
 out:
 	if (err != GIT_OK)
