@@ -4,6 +4,7 @@
 #include "cmds.h"
 #include "strbuf.h"
 
+#include "cherry-pick.h"
 #include "reset.h"
 #include "stash.h"
 #include "tag.h"
@@ -21,6 +22,7 @@ struct cmd_struct commands[] = {
 	{"cat-file",       0, "Show content of repository objects", cmd_cat_file},
 	{"checkout-index", 0, "Copy files from the index", cmd_checkout_index},
 	{"checkout",       1, "Copy a branch or paths to the working directory", cmd_checkout},
+	{"cherry-pick",    1, "Redo commits", cmd_cherry_pick},
 	{"clone",          1, "Fetch and checkout a repository into a new directory", do_clone},
 	{"commit-tree",    0, "Create a new commit object from a tree object", cmd_commit_tree},
 	{"commit",         1, "Create a new commit from the index", cmd_commit},
