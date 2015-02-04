@@ -5,7 +5,10 @@
 #include "cherry-pick.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <git2.h>
+
+#include "errors.h"
 
 static void print_usage(char *name)
 {
