@@ -13,24 +13,9 @@ void vreportf(const char *prefix, const char *err, va_list params)
 	fprintf(stderr, "%s%s\n", prefix, msg);
 }
 
-static void usage_builtin(const char *err, va_list params)
-{
-	vreportf("usage: ", err, params);
-}
-
 static void die_builtin(const char *err, va_list params)
 {
 	vreportf("fatal: ", err, params);
-}
-
-static void error_builtin(const char *err, va_list params)
-{
-	vreportf("error: ", err, params);
-}
-
-static void warn_builtin(const char *warn, va_list params)
-{
-	vreportf("warning: ", warn, params);
 }
 
 static void libgit_error_builtin()
@@ -45,26 +30,8 @@ static void libgit_error_builtin()
 	}
 }
 
-static void (*usage_routine)(const char *err, va_list params) = usage_builtin;
 static void (*die_routine)(const char *err, va_list params) = die_builtin;
-static void (*error_routine)(const char *err, va_list params) = error_builtin;
-static void (*warn_routine)(const char *err, va_list params) = warn_builtin;
 static void (*libgit_error_routine)() = libgit_error_builtin;
-
-void NORETURN usagef(const char *err, ...)
-{
-	va_list params;
-
-	va_start(params, err);
-	usage_routine(err, params);
-	va_end(params);
-	do_exit(129);
-}
-
-void NORETURN usage(const char *err)
-{
-	usagef("%s", err);
-}
 
 void set_die_routine(NORETURN_PTR void (*routine)(const char *err, va_list params))
 {
@@ -108,25 +75,6 @@ void die_errno(const char *fmt, ...)
 	die_routine(fmt_with_err, params);
 	va_end(params);
 	do_exit(128);
-}
-
-int error(const char *err, ...)
-{
-	va_list params;
-
-	va_start(params, err);
-	error_routine(err, params);
-	va_end(params);
-	exit(-1);
-}
-
-void warning(const char *warn, ...)
-{
-	va_list params;
-
-	va_start(params, warn);
-	warn_routine(warn, params);
-	va_end(params);
 }
 
 void libgit_error()
