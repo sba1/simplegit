@@ -18,6 +18,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 	int i;
 	int used_columns = 0;
 	node_t assigned_to[MAX_COLUMNS] = {0};
+	int aboves[MAX_COLUMNS] = {0};
 
 	for (i = 0; i < num_nodes; i++)
 	{
@@ -48,7 +49,10 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 
 		/* Possibly assign a new column */
 		if (j == used_columns)
+		{
+			aboves[used_columns] = -1;
 			assigned_to[used_columns++] = n;
+		}
 
 		col_of_n = j;
 
@@ -57,6 +61,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		{
 			if (assigned_to[k] == n) row[k] |= NODE;
 			else row[k] |= TOP_TO_CENTER;
+			aboves[k] = k;
 		}
 
 		/* Assign parents. For now, the first parent gets the same column as the
@@ -67,6 +72,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 			node_t p = callbacks->get_parent(n, l, callbacks->userdata);
 			if (l==0)
 			{
+				aboves[col_of_n] = col_of_n;
 				assigned_to[j] = p;
 
 				/* There must be something coming from if this is a merge */
@@ -86,6 +92,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 				if (l < num_parents - 1)
 					row[used_columns] |= RIGHT_TO_CENTER;
 
+				aboves[used_columns] = col_of_n;
 				assigned_to[used_columns++] = p;
 			}
 		}
