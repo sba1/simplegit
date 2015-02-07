@@ -4,6 +4,7 @@
 
 #include "reset.h"
 
+#include "common.h"
 #include "errors.h"
 
 #include <git2.h>
@@ -12,6 +13,8 @@ int cmd_rebase(git_repository *repo, int argc, char **argv)
 {
 	int err = GIT_OK;
 	int rc = EXIT_FAILURE;
+
+	git_signature *sig = NULL;
 
 	const char *upstream_str;
 	git_reference *upstream_ref = NULL;
@@ -22,32 +25,44 @@ int cmd_rebase(git_repository *repo, int argc, char **argv)
 
 	git_rebase *rebase = NULL;
 
+	int abort = 0;
+
 	if (argc < 2)
 	{
 		fprintf(stderr, "USAGE: %s <upstream>\n", argv[0]);
-		goto out;
-	}
-
-	if (git_repository_head_detached(repo))
-	{
-		fprintf(stderr, "Does not work on detached head!\n");
+		fprintf(stderr, "USAGE: %s --abort\n", argv[0]);
 		goto out;
 	}
 
 	upstream_str = argv[1];
+	if (!strcmp(upstream_str, "--abort"))
+		abort = 1;
 
-	if ((err = git_reference_dwim(&upstream_ref, repo, upstream_str)))
-		goto out;
-	if ((err = git_annotated_commit_from_ref(&upstream, repo, upstream_ref)))
-		goto out;
-
-	if ((err = git_repository_head(&branch_ref,repo)) < 0)
-		goto out;
-	if ((err = git_annotated_commit_from_ref(&branch, repo, branch_ref)))
+	if ((err = sgit_get_author_signature(&sig)))
 		goto out;
 
-	if ((err = git_rebase_init(&rebase, repo, branch, upstream, NULL, NULL, NULL)))
-		goto out;
+	if (abort)
+	{
+		if ((err = git_rebase_open(&rebase, repo)))
+			goto out;
+
+		if ((err = git_rebase_abort(rebase, sig)))
+			goto out;
+	} else
+	{
+		if ((err = git_reference_dwim(&upstream_ref, repo, upstream_str)))
+			goto out;
+		if ((err = git_annotated_commit_from_ref(&upstream, repo, upstream_ref)))
+			goto out;
+
+		if ((err = git_repository_head(&branch_ref,repo)) < 0)
+			goto out;
+		if ((err = git_annotated_commit_from_ref(&branch, repo, branch_ref)))
+			goto out;
+
+		if ((err = git_rebase_init(&rebase, repo, branch, upstream, NULL, NULL, NULL)))
+			goto out;
+	}
 out:
 	if (err != GIT_OK)
 		libgit_error();
@@ -57,5 +72,6 @@ out:
 
 	if (branch) git_annotated_commit_free(branch);
 	if (branch_ref) git_reference_free(branch_ref);
+	if (sig) git_signature_free(sig);
 	return rc;
 }
