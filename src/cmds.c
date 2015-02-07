@@ -5,6 +5,7 @@
 #include "strbuf.h"
 
 #include "cherry-pick.h"
+#include "rebase.h"
 #include "reset.h"
 #include "stash.h"
 #include "tag.h"
@@ -40,6 +41,7 @@ struct cmd_struct commands[] = {
 	{"merge",          1, "Join histories defined by commit together", cmd_merge},
 	{"push",           1, "Update the remote references and push associated objects", cmd_push},
 	{"read-tree",      0, "Read a tree object into the index", cmd_read_tree},
+	{"rebase",         1, "Reapply changes", cmd_rebase},
 	{"reset",          1, "Reset the HEAD or the index to a specific state", cmd_reset},
 	{"rev-list",       0, "Show information about commit objects", cmd_rev_list},
 	{"show",           1, "Show objects", cmd_show},
