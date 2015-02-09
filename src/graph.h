@@ -31,6 +31,18 @@ typedef enum
 	LEFT_TO_RIGHT = (LEFT_TO_CENTER | RIGHT_TO_CENTER),
 } cell_state_t;
 
+/**
+ * This basically describes an edge set.
+ */
+struct graph_print_data
+{
+	int num_aboves;
+	int *aboves;
+	int collapse_goal;
+	int num_collapsing;
+	int *collapsing;
+};
+
 typedef struct
 {
 	/** Returns the node at the given index */
@@ -44,6 +56,9 @@ typedef struct
 
 	/** The client shall print the given cell state */
 	void (*print_row)(node_t node, cell_state_t *states, int num, void *userdata);
+
+	/** The client shall print the given row */
+	void (*new_print_row)(node_t node, struct graph_print_data *data, void *userdata);
 
 	/** The user data that is supplied to various callbacks */
 	void *userdata;

@@ -19,6 +19,9 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 	int used_columns = 0;
 	node_t assigned_to[MAX_COLUMNS] = {0};
 	int aboves[MAX_COLUMNS] = {0};
+	int aboves_previous[MAX_COLUMNS] = {0};
+	int num_aboves_previous = 0;
+	struct graph_print_data pd = {0};
 
 	for (i = 0; i < num_nodes; i++)
 	{
@@ -27,6 +30,7 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		int to_be_removed[MAX_COLUMNS];
 		int first_to_be_inserted = MAX_COLUMNS;
 		int first_to_be_removed = MAX_COLUMNS;
+		int collapse_goal = MAX_COLUMNS;
 		int num_to_be_removed = 0;
 		int num_parents;
 		int col_of_n;
@@ -50,7 +54,8 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 		/* Possibly assign a new column */
 		if (j == used_columns)
 		{
-			aboves[used_columns] = -1;
+			aboves[j] = -1;
+			row[j] |= NODE;
 			assigned_to[used_columns++] = n;
 		}
 
@@ -104,6 +109,9 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 			{
 				if (assigned_to[j] == assigned_to[k])
 				{
+					if (collapse_goal == MAX_COLUMNS)
+						collapse_goal = j;
+
 					first_to_be_removed = k;
 					to_be_removed[num_to_be_removed++] = k;
 
@@ -131,7 +139,28 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 				row[k] |= LEFT_TO_CENTER|TOP_TO_CENTER;
 		}
 
+
+		if (callbacks->new_print_row)
+		{
+			pd.num_aboves = num_aboves_previous;
+			pd.aboves = aboves_previous;
+			pd.collapse_goal = collapse_goal;
+			pd.num_collapsing = num_to_be_removed;
+			pd.collapsing = to_be_removed;
+			callbacks->new_print_row(n, &pd, callbacks->userdata);
+		}
+
+		{
+			int o;
+
+			for (o = 0; o < used_columns; o++)
+				aboves_previous[o] = aboves[o];
+
+			num_aboves_previous = used_columns;
+		}
+
 		callbacks->print_row(n, row, used_columns, callbacks->userdata);
+
 		/* Then remove them, also one by one */
 		for (j = 0; j < num_to_be_removed; j++)
 		{
