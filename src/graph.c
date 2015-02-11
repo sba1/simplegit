@@ -142,8 +142,8 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 
 		if (callbacks->new_print_row)
 		{
-			pd.num_aboves = num_aboves_previous;
-			pd.aboves = aboves_previous;
+			pd.num_aboves = used_columns;
+			pd.aboves = aboves;
 			pd.collapse_goal = collapse_goal;
 			pd.num_collapsing = num_to_be_removed;
 			pd.collapsing = to_be_removed;
