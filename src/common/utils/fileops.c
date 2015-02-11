@@ -199,65 +199,6 @@ int remove_dir_recursively(struct strbuf *path)
 	return ret;
 }
 
-
-int git2_creat_force(const char *path, int mode)
-{
-	if (git2_mkdir_2file(path) < GIT_OK)
-		return GIT_ERROR;
-	
-
-	if (!git2_isdir(path)) {
-		struct strbuf pathbuf = STRBUF_INIT;
-		char * buf_path = xmalloc(strlen(path)*sizeof(char));
-		memcpy(buf_path, path, strlen(path)*sizeof(char));
-		strbuf_attach(&pathbuf, (void *)buf_path, strlen(path)*sizeof(char), strlen(path)*sizeof(char));
-		if (remove_dir_recursively(&pathbuf) != 0)
-			return GIT_ERROR;
-	}
-	
-	return git2_creat(path, mode);
-}
-
-//int git2_read(git_file fd, void *buf, size_t cnt)
-//{
-//	char *b = buf;
-//	while (cnt) {
-//		ssize_t r = read(fd, b, cnt);
-//		if (r < 0) {
-//			if (errno == EINTR || errno == EAGAIN)
-//				continue;
-//			return git__throw(GIT_EOSERR, "Failed to read from file");
-//		}
-//		if (!r) {
-//			errno = EPIPE;
-//			return git__throw(GIT_EOSERR, "Failed to read from file");
-//		}
-//		cnt -= r;
-//		b += r;
-//	}
-//	return GIT_OK;
-//}
-//
-//int git2_write(git_file fd, void *buf, size_t cnt)
-//{
-//	char *b = buf;
-//	while (cnt) {
-//		ssize_t r = write(fd, b, cnt);
-//		if (r < 0) {
-//			if (errno == EINTR || errno == EAGAIN)
-//				continue;
-//			return git__throw(GIT_EOSERR, "Failed to write to file");
-//		}
-//		if (!r) {
-//			errno = EPIPE;
-//			return git__throw(GIT_EOSERR, "Failed to write to file");
-//		}
-//		cnt -= r;
-//		b += r;
-//	}
-//	return GIT_OK;
-//}
-//
 int git2_isdir(const char *path)
 {
 	struct stat st;
