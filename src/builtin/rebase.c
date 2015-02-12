@@ -7,6 +7,8 @@
 #include "common.h"
 #include "errors.h"
 
+#include <stdio.h>
+
 #include <git2.h>
 
 int cmd_rebase(git_repository *repo, int argc, char **argv)

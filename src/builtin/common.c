@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "environment.h"
+#include "utils/date.h"
 
 /* Shamelessly borrowed from http://stackoverflow.com/questions/3417837/
  * with permission of the original author, Martin Pool.

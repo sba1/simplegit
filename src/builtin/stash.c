@@ -6,6 +6,8 @@
 
 #include "errors.h"
 
+#include <stdio.h>
+
 #include <git2.h>
 
 static void print_usage(char *name)

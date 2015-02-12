@@ -2,6 +2,7 @@
  * Various trivial helper wrappers around standard functions
  * original source : official git source code
  */
+#include <assert.h>
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
