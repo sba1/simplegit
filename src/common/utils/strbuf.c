@@ -8,6 +8,16 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#ifndef HAVE_STRCHRNUL
+#define strchrnul gitstrchrnul
+static inline char *gitstrchrnul(const char *s, int c)
+{
+	while (*s && *s != c)
+		s++;
+	return (char *)s;
+}
+#endif
+
 int prefixcmp(const char *str, const char *prefix)
 {
 	for (; ; str++, prefix++)
