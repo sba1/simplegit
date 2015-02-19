@@ -4,11 +4,10 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "errors.h"
-#include "git2.h"
-#include "git.h"
-#include "git-support.h"
 #include "environment.h"
+#include "errors.h"
+#include "git-support.h"
+#include "strbuf.h"
 
 static int getarg(int argc, char **argv, int *argpos, char *arg, const char **value)
 {
