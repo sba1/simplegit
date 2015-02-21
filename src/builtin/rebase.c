@@ -28,17 +28,18 @@ int cmd_rebase(git_repository *repo, int argc, char **argv)
 	git_rebase *rebase = NULL;
 
 	int abort = 0;
+	int cont = 0;
 
 	if (argc < 2)
 	{
 		fprintf(stderr, "USAGE: %s <upstream>\n", argv[0]);
-		fprintf(stderr, "USAGE: %s --abort\n", argv[0]);
+		fprintf(stderr, "USAGE: %s --abort|--continue\n", argv[0]);
 		goto out;
 	}
 
 	upstream_str = argv[1];
-	if (!strcmp(upstream_str, "--abort"))
-		abort = 1;
+	if (!strcmp(upstream_str, "--abort")) abort = 1;
+	else if (!strcmp(upstream_str, "--continue")) cont = 1;
 
 	if ((err = sgit_get_author_signature(&sig)))
 		goto out;
@@ -58,18 +59,25 @@ int cmd_rebase(git_repository *repo, int argc, char **argv)
 
 		checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE;
 
-		if ((err = git_reference_dwim(&upstream_ref, repo, upstream_str)))
-			goto out;
-		if ((err = git_annotated_commit_from_ref(&upstream, repo, upstream_ref)))
-			goto out;
+		if (cont)
+		{
+			if ((err = git_rebase_open(&rebase, repo)))
+				goto out;
+		} else
+		{
+			if ((err = git_reference_dwim(&upstream_ref, repo, upstream_str)))
+				goto out;
+			if ((err = git_annotated_commit_from_ref(&upstream, repo, upstream_ref)))
+				goto out;
 
-		if ((err = git_repository_head(&branch_ref,repo)) < 0)
-			goto out;
-		if ((err = git_annotated_commit_from_ref(&branch, repo, branch_ref)))
-			goto out;
+			if ((err = git_repository_head(&branch_ref,repo)) < 0)
+				goto out;
+			if ((err = git_annotated_commit_from_ref(&branch, repo, branch_ref)))
+				goto out;
 
-		if ((err = git_rebase_init(&rebase, repo, branch, upstream, NULL, NULL, NULL)))
-			goto out;
+			if ((err = git_rebase_init(&rebase, repo, branch, upstream, NULL, NULL, NULL)))
+				goto out;
+		}
 
 		while (!(err = git_rebase_next(&oper, rebase, &checkout_opts)))
 		{
