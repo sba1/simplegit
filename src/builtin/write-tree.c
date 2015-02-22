@@ -68,8 +68,12 @@ int cmd_write_tree(git_repository *repo, int argc, char **argv)
 
 	if (*prefix)
 	{
+		int prefix_doesnt_end_with_slash;
+
 		if ((err = git_index_new(&idx)) != GIT_OK)
 			goto out;
+
+		prefix_doesnt_end_with_slash = prefix[strlen(prefix)] != '/';
 
 		/* Transfer entries to the in-memory index, omitting all that
 		 * don't start with the given prefix */
@@ -81,7 +85,7 @@ int cmd_write_tree(git_repository *repo, int argc, char **argv)
 				git_index_entry ngie = *gie;
 
 				/* Note that the paths are rerooted */
-				ngie.path = gie->path + strlen(prefix);
+				ngie.path = gie->path + strlen(prefix) + prefix_doesnt_end_with_slash;
 				if ((err = git_index_add(idx,&ngie)))
 					goto out;
 			}
