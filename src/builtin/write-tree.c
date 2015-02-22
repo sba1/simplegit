@@ -82,7 +82,8 @@ int cmd_write_tree(git_repository *repo, int argc, char **argv)
 
 				/* Note that the paths are rerooted */
 				ngie.path = gie->path + strlen(prefix);
-				git_index_add(idx,&ngie);
+				if ((err = git_index_add(idx,&ngie)))
+					goto out;
 			}
 		}
 	} else
