@@ -54,13 +54,15 @@ int cmd_read_tree(git_repository *repo, int argc, char **argv)
 		goto out;
 
 	/* Clear the index */
-	git_index_clear(idx);
+	if ((err = git_index_clear(idx)))
+		goto out;
 
 	if ((err = git_index_read_tree(idx,tree)) != GIT_OK)
 		goto out;
 
 	/* write the index */
-	git_index_write(idx);
+	if ((err = git_index_write(idx)))
+		goto out;
 
 	rc = EXIT_SUCCESS;
 out:
