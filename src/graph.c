@@ -19,7 +19,6 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 	int used_columns = 0;
 	node_t assigned_to[MAX_COLUMNS] = {0};
 	int aboves[MAX_COLUMNS] = {0};
-	int aboves_previous[MAX_COLUMNS] = {0};
 	int num_aboves_previous = 0;
 	struct graph_print_data pd = {0};
 
@@ -142,21 +141,15 @@ void graph_render(int num_nodes, graph_callbacks *callbacks)
 
 		if (callbacks->new_print_row)
 		{
+			pd.num_aboves_previous = num_aboves_previous;
 			pd.num_aboves = used_columns;
 			pd.aboves = aboves;
 			pd.collapse_goal = collapse_goal;
 			pd.num_collapsing = num_to_be_removed;
 			pd.collapsing = to_be_removed;
 			callbacks->new_print_row(n, &pd, callbacks->userdata);
-		}
 
-		{
-			int o;
-
-			for (o = 0; o < used_columns; o++)
-				aboves_previous[o] = aboves[o];
-
-			num_aboves_previous = used_columns;
+			num_aboves_previous = pd.num_aboves;
 		}
 
 		callbacks->print_row(n, row, used_columns, callbacks->userdata);

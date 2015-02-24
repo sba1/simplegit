@@ -36,6 +36,7 @@ typedef enum
  */
 struct graph_print_data
 {
+	int num_aboves_previous;
 	int num_aboves;
 	int *aboves;
 	int collapse_goal;
