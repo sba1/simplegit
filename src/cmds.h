@@ -1,5 +1,5 @@
-#ifndef BUILTIN_H
-#define BUILTIN_H
+#ifndef CMDS_H
+#define CMDS_H
 
 // original source : https://github.com/vfr-nl/git2
 
@@ -38,4 +38,4 @@ void print_commands_overview(void);
 
 git_cb lookup_handler(const char *cmd);
 
-#endif /* BUILTIN_H */
+#endif /* CMDS_H */
