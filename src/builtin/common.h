@@ -19,7 +19,7 @@ int do_clone(git_repository *repo, int argc, char **argv);
  * @param author_signature
  * @return
  */
-int sgit_get_author_signature(git_signature **author_signature);
+int sgit_get_author_signature(git_repository *repo, git_signature **author_signature);
 
 /**
  * Instantiates the signature for the committer.
@@ -27,7 +27,7 @@ int sgit_get_author_signature(git_signature **author_signature);
  * @param committer_signature
  * @return
  */
-int sgit_get_committer_signature(git_signature** committer_signature);
+int sgit_get_committer_signature(git_repository *repo, git_signature** committer_signature);
 
 int cred_acquire_cb(git_cred **out,
 		const char * url,

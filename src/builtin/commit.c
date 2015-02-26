@@ -64,10 +64,10 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 	if ((git_repository_head(&head,repo)) == GIT_OK)
 		git_reference_peel((git_object**)&parent,head,GIT_OBJ_COMMIT);
 
-	if ((err = sgit_get_author_signature(&author_signature)) != GIT_OK)
+	if ((err = sgit_get_author_signature(repo, &author_signature)) != GIT_OK)
 		goto out;
 
-	if ((err = sgit_get_committer_signature(&committer_signature)) != GIT_OK)
+	if ((err = sgit_get_committer_signature(repo, &committer_signature)) != GIT_OK)
 		goto out;
 
 	if ((num_parents = !!parent))

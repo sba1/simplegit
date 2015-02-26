@@ -56,13 +56,20 @@ int certificate_check(git_cert *cert, int valid, const char *host, void *payload
 	return ssl_no_verify;
 }
 
-int sgit_get_author_signature(git_signature **author_signature)
+int sgit_get_author_signature(git_repository *repo, git_signature **author_signature)
 {
+	int err;
 	int author_offset = 0;
 	char *author_name = NULL;
 	char *author_email = NULL;
 	char *author_date = NULL;
 	unsigned long author_timestamp = 0;
+
+	err = git_signature_default(author_signature, repo);
+	if (err == 0)
+		return 0;
+	if (err != GIT_ENOTFOUND)
+		return err;
 
 	author_name = getenv(GIT_AUTHOR_NAME_ENVIRONMENT);
 	author_email = getenv(GIT_AUTHOR_EMAIL_ENVIRONMENT);
@@ -85,13 +92,21 @@ int sgit_get_author_signature(git_signature **author_signature)
 			author_timestamp, author_offset);
 }
 
-int sgit_get_committer_signature(git_signature** committer_signature)
+int sgit_get_committer_signature(git_repository *repo, git_signature** committer_signature)
 {
+	int err;
 	char *committer_name = NULL;
 	char *committer_email = NULL;
 	char *committer_date = NULL;
 	unsigned long committer_timestamp = 0;
 	int committer_offset = 0;
+
+	err = git_signature_default(committer_signature, repo);
+	if (err == 0)
+		return 0;
+	if (err != GIT_ENOTFOUND)
+		return err;
+
 	committer_name = getenv(GIT_COMMITTER_NAME_ENVIRONMENT);
 	committer_email = getenv(GIT_COMMITTER_EMAIL_ENVIRONMENT);
 	committer_date = getenv(GIT_COMMITTER_DATE_ENVIRONMENT);

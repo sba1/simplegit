@@ -41,7 +41,7 @@ int cmd_rebase(git_repository *repo, int argc, char **argv)
 	if (!strcmp(upstream_str, "--abort")) abort = 1;
 	else if (!strcmp(upstream_str, "--continue")) cont = 1;
 
-	if ((err = sgit_get_author_signature(&sig)))
+	if ((err = sgit_get_author_signature(repo, &sig)))
 		goto out;
 
 	if (abort)
