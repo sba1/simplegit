@@ -5,14 +5,6 @@
 
 typedef int (*git_cb)(git_repository *, int , char **);
 
-int ls_remote(git_repository *repo, int argc, char **argv);
-int parse_pkt_line(git_repository *repo, int argc, char **argv);
-int show_remote(git_repository *repo, int argc, char **argv);
-int fetch(git_repository *repo, int argc, char **argv);
-int index_pack(git_repository *repo, int argc, char **argv);
-int do_clone(git_repository *repo, int argc, char **argv);
-
-
 /**
  * Instantiates the signature for the author.
  *
