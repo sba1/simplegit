@@ -76,6 +76,7 @@ int cmd_status(git_repository *repo, int argc, char **argv)
 	int i, mode;
 
 	git_reference *head_ref = NULL;
+	git_reference *upstream_ref = NULL;
 
 	git_status_options opt = GIT_STATUS_OPTIONS_INIT;
 
@@ -101,6 +102,41 @@ int cmd_status(git_repository *repo, int argc, char **argv)
 	} else
 	{
 		printf("# On an unnamed branch\n");
+	}
+
+	if (!(err = git_branch_upstream(&upstream_ref, head_ref)))
+	{
+		const git_oid *local, *upstream;
+
+		local = git_reference_target(head_ref);
+		upstream = git_reference_target(upstream_ref);
+
+		if (local && upstream)
+		{
+			const char *upstream_name;
+			size_t ahead, behind;
+
+			if ((err = git_branch_name(&upstream_name, upstream_ref)))
+				goto out;
+
+			if ((err = git_graph_ahead_behind(&ahead, &behind, repo, local, upstream)))
+				goto out;
+
+			if (ahead && behind)
+			{
+				printf("# You branch and its upstream branch '%s' have diverged.\n", upstream_name);
+				printf("# They have %d and %d different commits each, respectively.\n", (int)ahead, (int)behind);
+			} else if (behind)
+			{
+				printf("# Your branch is behind its upstream branch '%s' by %d commits.\n", upstream_name, (int)behind);
+			} else if (ahead)
+			{
+				printf("# Your branch is ahead its upstream branch '%s' by %d commits.\n", upstream_name, (int)ahead);
+			}
+		}
+	} else if (err != GIT_ENOTFOUND)
+	{
+		goto out;
 	}
 
 	/* FIXME: Use git_status_list() API */
