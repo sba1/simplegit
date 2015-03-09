@@ -3,10 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef _WIN32
-# include <pthread.h>
-# include <unistd.h>
-#endif
 
 struct dl_data {
 	git_remote *remote;
@@ -79,9 +75,6 @@ int fetch(git_repository *repo, int argc, char **argv)
 	const git_transfer_progress *stats;
 	struct dl_data data;
 	git_remote_callbacks callbacks = GIT_REMOTE_CALLBACKS_INIT;
-#ifndef _WIN32
-	pthread_t worker;
-#endif
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s fetch <repo>\n", argv[-1]);
@@ -108,33 +101,7 @@ int fetch(git_repository *repo, int argc, char **argv)
 
 	stats = git_remote_stats(remote);
 
-#ifdef _WIN32
 	download(&data);
-#else
-	pthread_create(&worker, NULL, download, &data);
-
-	// Loop while the worker thread is still running. Here we show processed
-	// and total objects in the pack and the amount of received
-	// data. Most frontends will probably want to show a percentage and
-	// the download rate.
-	do {
-		usleep(10000);
-
-		if (stats->received_objects == stats->total_objects) {
-			printf("Resolving deltas %d/%d\r",
-			       stats->indexed_deltas, stats->total_deltas);
-		} else if (stats->total_objects > 0) {
-			printf("Received %d/%d objects (%d) in %" PRIuZ " bytes\r",
-			       stats->received_objects, stats->total_objects,
-				   stats->indexed_objects, stats->received_bytes);
-		}
-	} while (!data.finished);
-
-	if (data.ret < 0)
-		goto on_error;
-
-	pthread_join(worker, NULL);
-#endif
 
 	/**
 	 * If there are local objects (we got a thin pack), then tell
@@ -162,8 +129,4 @@ int fetch(git_repository *repo, int argc, char **argv)
 	git_remote_free(remote);
 
 	return 0;
-
- on_error:
-	git_remote_free(remote);
-	return -1;
 }
