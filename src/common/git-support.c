@@ -1,9 +1,9 @@
-#include <unistd.h>
+#include "git-support.h"
+
+#include <stddef.h>
 #include <sys/stat.h>
 
-#include "git-support.h"
-#include "utils.h"
-#include "errors.h"
+#include <git2.h>
 
 /**
  * Create a branch with a given branch name from a reference.

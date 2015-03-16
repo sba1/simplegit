@@ -1,10 +1,14 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <git2.h>
-#include "git.h"
 #include "errors.h"
+
+#include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <git2.h>
+
+#include "git-compat-util.h"
 
 void vreportf(const char *prefix, const char *err, va_list params)
 {

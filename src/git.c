@@ -3,15 +3,19 @@
  *
  * This is a main entry for the simple git tool.
  */
+
 #include "git.h"
 
-#include "cmds.h"
-#include "environment.h"
-#include "errors.h"
-#include "git-support.h"
-#include "strbuf.h"
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+#include <git2.h>
+
+#include "cmds.h"
+#include "common.h"
+#include "errors.h"
+#include "strbuf.h"
 
 static char *argv0_path;
 
