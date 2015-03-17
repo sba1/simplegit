@@ -3,4 +3,4 @@
 	url = http://git.kernel.org/pub/scm/git/git.git
 [submodule "libgit2"]
 	path = libgit2
-	url = https://git.gitorious.org/amiga-ports/libgit2-amiga.git
+	url = git@github.com:sba1/libgit2.git
