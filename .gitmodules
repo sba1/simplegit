@@ -3,4 +3,4 @@
 	url = http://git.kernel.org/pub/scm/git/git.git
 [submodule "libgit2"]
 	path = libgit2
-	url = git@github.com:sba1/libgit2.git
+	url = https://github.com/sba1/libgit2.git
