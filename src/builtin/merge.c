@@ -36,7 +36,7 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 		goto out;
 
 	checkout_options.checkout_strategy = GIT_CHECKOUT_SAFE_CREATE;
-	// FIXME: I think that libgit2 prototype is wrong
+
 	if ((err = git_merge(repo, (const git_annotated_commit **)&commit_merge_head, 1, &merge_options, &checkout_options)))
 		goto out;
 out:
