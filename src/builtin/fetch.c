@@ -1,8 +1,10 @@
-#include "common.h"
-#include <git2.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
+#include <git2.h>
+
+#include "common.h"
+#include "errors.h"
 
 struct dl_data {
 	git_remote *remote;
@@ -16,32 +18,6 @@ static int progress_cb(const char *str, int len, void *data)
 	printf("remote: %.*s", len, str);
 	fflush(stdout); /* We don't have the \n to force the flush */
 	return 0;
-}
-
-static void *download(void *ptr)
-{
-	struct dl_data *data = (struct dl_data *)ptr;
-
-	// Connect to the remote end specifying that we want to fetch
-	// information from it.
-	if (git_remote_connect(data->remote, GIT_DIRECTION_FETCH) < 0) {
-		data->ret = -1;
-		goto exit;
-	}
-
-	// Download the packfile and index it. This function updates the
-	// amount of received data and the indexer stats which lets you
-	// inform the user about progress.
-	if (git_remote_download(data->remote, NULL) < 0) {
-		data->ret = -1;
-		goto exit;
-	}
-
-	data->ret = 0;
-
-exit:
-	data->finished = 1;
-	return &data->ret;
 }
 
 /**
@@ -71,10 +47,12 @@ static int update_cb(const char *refname, const git_oid *a, const git_oid *b, vo
 /** Entry point for this command */
 int fetch(git_repository *repo, int argc, char **argv)
 {
-	git_remote *remote = NULL;
-	const git_transfer_progress *stats;
-	struct dl_data data;
+	int err = GIT_OK;
+	int rc = EXIT_FAILURE;
 	git_remote_callbacks callbacks = GIT_REMOTE_CALLBACKS_INIT;
+
+	const git_transfer_progress *stats;
+	git_remote *remote = NULL;
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s fetch <repo>\n", argv[-1]);
@@ -84,8 +62,8 @@ int fetch(git_repository *repo, int argc, char **argv)
 	// Figure out whether it's a named remote or a URL
 	printf("Fetching %s for repo at %s\n", argv[1], git_repository_path(repo));
 	if (git_remote_lookup(&remote, repo, argv[1]) < 0) {
-		if (git_remote_create_anonymous(&remote, repo, argv[1], NULL) < 0)
-			return -1;
+		if ((err = git_remote_create_anonymous(&remote, repo, argv[1], NULL)) < 0)
+			goto out;
 	}
 
 	// Set up the callbacks (only update_tips for now)
@@ -94,14 +72,16 @@ int fetch(git_repository *repo, int argc, char **argv)
 	callbacks.credentials = cred_acquire_cb;
 	git_remote_set_callbacks(remote, &callbacks);
 
-	// Set up the information for the background worker thread
-	data.remote = remote;
-	data.ret = 0;
-	data.finished = 0;
-
 	stats = git_remote_stats(remote);
 
-	download(&data);
+	if ((err = git_remote_connect(remote, GIT_DIRECTION_FETCH) < 0))
+		goto out;
+
+	// Download the packfile and index it. This function updates the
+	// amount of received data and the indexer stats which lets you
+	// inform the user about progress.
+	if ((err = git_remote_download(remote, NULL) < 0))
+		goto out;
 
 	/**
 	 * If there are local objects (we got a thin pack), then tell
@@ -123,10 +103,13 @@ int fetch(git_repository *repo, int argc, char **argv)
 	// right commits. This may be needed even if there was no packfile
 	// to download, which can happen e.g. when the branches have been
 	// changed but all the needed objects are available locally.
-	if (git_remote_update_tips(remote, NULL, NULL) < 0)
-		return -1;
+	if ((err = git_remote_update_tips(remote, NULL, NULL)) < 0)
+		goto out;
 
-	git_remote_free(remote);
-
-	return 0;
+	rc = EXIT_SUCCESS;
+out:
+	if (err != GIT_OK)
+		libgit_error();
+	if (remote) git_remote_free(remote);
+	return rc;
 }
