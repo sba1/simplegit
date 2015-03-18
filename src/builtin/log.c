@@ -6,25 +6,37 @@
 
 #include <git2.h>
 
+#include "errors.h"
 #include "git-support.h"
 #include "print.h"
 #include "show.h"
 
 int cmd_log(git_repository *repo, int argc, char **argv)
 {
+	int err = 0;
 	int rc;
-	int i;
 	git_revwalk *walk;
 	git_oid oid;
+	git_reference *revision_ref = NULL;
+	git_object *revision_obj = NULL;
 
 	rc = EXIT_FAILURE;
 
-	for (i=1;i<argc;i++)
-	{
-	}
-
 	git_revwalk_new(&walk,repo);
-	git_revwalk_push_head(walk);
+	if (argc > 1)
+	{
+		if ((err = git_reference_dwim(&revision_ref, repo, argv[1])))
+			goto out;
+
+		if ((err = git_reference_peel(&revision_obj, revision_ref, GIT_OBJ_ANY)))
+			goto out;
+
+		if ((err = git_revwalk_push(walk, git_object_id(revision_obj))))
+			goto out;
+	} else
+	{
+		git_revwalk_push_head(walk);
+	}
 
 	while ((git_revwalk_next(&oid, walk)) == 0)
 	{
@@ -42,5 +54,9 @@ int cmd_log(git_repository *repo, int argc, char **argv)
 
 	rc = EXIT_SUCCESS;
 out:
+	if (err != GIT_OK)
+		libgit_error();
+	if (revision_obj) git_object_free(revison_obj);
+	if (revision_ref) git_reference_free(revision_ref);
 	return rc;
 }
