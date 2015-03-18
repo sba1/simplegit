@@ -32,8 +32,9 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 
 	if ((err = git_branch_lookup(&commit_ref, repo, commit_str, GIT_BRANCH_LOCAL)))
 	{
-		if ((err = git_branch_lookup(&commit_ref, repo, commit_str, GIT_BRANCH_REMOTE)))
+		if (err == GIT_ENOTFOUND && (err = git_branch_lookup(&commit_ref, repo, commit_str, GIT_BRANCH_REMOTE)))
 			goto out;
+		else goto out;
 	}
 	if ((err = git_annotated_commit_from_ref(&commit_merge_head, repo, commit_ref)))
 		goto out;
