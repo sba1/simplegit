@@ -70,6 +70,7 @@ int fetch(git_repository *repo, int argc, char **argv)
 	callbacks.update_tips = &update_cb;
 	callbacks.sideband_progress = &progress_cb;
 	callbacks.credentials = cred_acquire_cb;
+	callbacks.certificate_check = certificate_check;
 	git_remote_set_callbacks(remote, &callbacks);
 
 	stats = git_remote_stats(remote);
