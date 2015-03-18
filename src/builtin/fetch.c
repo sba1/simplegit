@@ -82,7 +82,7 @@ int fetch(git_repository *repo, int argc, char **argv)
 	}
 
 	// Figure out whether it's a named remote or a URL
-	printf("Fetching %s for repo %p\n", argv[1], repo);
+	printf("Fetching %s for repo at %s\n", argv[1], git_repository_path(repo));
 	if (git_remote_lookup(&remote, repo, argv[1]) < 0) {
 		if (git_remote_create_anonymous(&remote, repo, argv[1], NULL) < 0)
 			return -1;
