@@ -56,7 +56,7 @@ int cmd_log(git_repository *repo, int argc, char **argv)
 out:
 	if (err != GIT_OK)
 		libgit_error();
-	if (revision_obj) git_object_free(revison_obj);
+	if (revision_obj) git_object_free(revision_obj);
 	if (revision_ref) git_reference_free(revision_ref);
 	return rc;
 }
