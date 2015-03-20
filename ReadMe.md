@@ -103,3 +103,8 @@ of SimpleGit.
 It is currently developed at https://github.com/sba1/simplegit.git with
 https://git.gitorious.org/amiga-ports/git2-amiga.git being a mirror. The
 sources contains work from the examples included within ```libgit2```.
+
+Thanks for testing
+------------------
+
+  Huber Maier
