@@ -107,4 +107,4 @@ sources contains work from the examples included within ```libgit2```.
 Thanks for testing
 ------------------
 
-  Huber Maier
+  Hubert Maier
