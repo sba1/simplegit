@@ -74,7 +74,7 @@ libgit2/build-amiga/libgit2.a: libgit-repo $(OPENSSL)
 .PHONY: openssl
 openssl: $(OPENSSL)
 
-interim-openssl/openssl/repo/libssl.a:
+$(OPENSSL):
 	(cd interim-openssl && git pull) || \
 	    (git clone https://github.com/sba1/interim-openssl.git)
 	$(MAKE) -C interim-openssl checkout build CC=ppc-amigaos-gcc
