@@ -74,7 +74,7 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 		if ((err = git_checkout_tree(repo, (git_object*)commit_tree_obj, &checkout_options)))
 			goto out;
 
-		if ((err = git_reference_set_target(&new_ref, head_ref, git_commit_id(commit_obj), NULL, NULL)))
+		if ((err = git_reference_set_target(&new_ref, head_ref, git_commit_id((git_commit*)commit_obj), NULL, NULL)))
 			goto out;
 
 		goto out;
