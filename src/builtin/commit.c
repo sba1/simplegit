@@ -13,6 +13,30 @@
 #include "git.h"
 #include "strbuf.h"
 
+static int mergehead_count_cb(const git_oid *oid, void *payload)
+{
+	int *nparents = (int*)payload;
+	*nparents = *nparents + 1;
+	return 0;
+}
+
+struct mergehead_peel_payload
+{
+	git_repository *repo;
+	git_commit **next_parent;
+};
+
+static int mergehead_peel_cb(const git_oid *oid, void *payload)
+{
+	int err;
+	struct mergehead_peel_payload *peel_payload = (struct mergehead_peel_payload*)payload;
+
+	if ((err = git_commit_lookup(peel_payload->next_parent, peel_payload->repo, oid)))
+		return -1;
+	peel_payload->next_parent++;
+	return 0;
+}
+
 int cmd_commit(git_repository *repo, int argc, char **argv)
 {
 	int err = 0;
@@ -61,24 +85,43 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
+	/* Count the number of parents */
 	if ((git_repository_head(&head,repo)) == GIT_OK)
-		git_reference_peel((git_object**)&parent,head,GIT_OBJ_COMMIT);
-
-	if ((err = sgit_get_author_signature(repo, &author_signature)) != GIT_OK)
+		num_parents++;
+	err = git_repository_mergehead_foreach(repo, mergehead_count_cb, &num_parents);
+	if (err && err != GIT_ENOTFOUND)
 		goto out;
 
-	if ((err = sgit_get_committer_signature(repo, &committer_signature)) != GIT_OK)
-		goto out;
-
-	if ((num_parents = !!parent))
+	/* Now determine the actual parents */
+	if (num_parents)
 	{
 		if (!(parents = malloc(sizeof(*parents)*num_parents)))
 		{
 			fprintf(stderr,"Not enough memory!\n");
 			goto out;
 		}
+
+		if ((err = git_reference_peel((git_object**)&parent,head,GIT_OBJ_COMMIT)))
+			goto out;
 		parents[0] = parent;
+
+		if (num_parents > 1)
+		{
+			struct mergehead_peel_payload peel_payload;
+
+			peel_payload.repo = repo;
+			peel_payload.next_parent = parents + 1;
+
+			if ((err = git_repository_mergehead_foreach(repo, mergehead_peel_cb, &peel_payload)))
+				goto out;
+		}
 	}
+
+	if ((err = sgit_get_author_signature(repo, &author_signature)) != GIT_OK)
+		goto out;
+
+	if ((err = sgit_get_committer_signature(repo, &committer_signature)) != GIT_OK)
+		goto out;
 
 	/* Write index as tree */
 	if ((err = git_repository_index(&idx,repo)) != GIT_OK)
