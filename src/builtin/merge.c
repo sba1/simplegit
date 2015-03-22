@@ -4,6 +4,7 @@
 
 #include "reset.h"
 
+#include "commit.h"
 #include "errors.h"
 
 #include <stdio.h>
@@ -30,6 +31,8 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 
 	git_merge_options merge_options = GIT_MERGE_OPTIONS_INIT;
 	git_checkout_options checkout_options = GIT_CHECKOUT_OPTIONS_INIT;
+
+	git_index *index = NULL;
 
 	if (argc < 2)
 	{
@@ -82,7 +85,25 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 
 	if ((err = git_merge(repo, (const git_annotated_commit **)&commit_merge_head, 1, &merge_options, &checkout_options)))
 		goto out;
+
+	if ((err = git_repository_index(&index, repo)))
+		goto out;
+
+	if (!git_index_has_conflicts(index))
+	{
+		char *argv[3];
+		char message[256];
+		snprintf(message, sizeof(message),"Merged branch '%s'",commit_str);
+		argv[0] = "commit";
+		argv[1] = "-m";
+		argv[2] = message;
+		cmd_commit(repo, 3, argv);
+	} else
+	{
+		printf("conflict during merge! Please resolve and commit\n");
+	}
 out:
+	if (index) git_index_free(index);
 	if (commit_merge_head) git_annotated_commit_free(commit_merge_head);
 	if (commit_obj) git_object_free(commit_obj);
 	if (commit_ref) git_reference_free(commit_ref);
