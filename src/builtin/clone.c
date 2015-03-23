@@ -33,13 +33,12 @@ static void print_progress(const progress_data *pd)
 		: 0.f;
 	int kbytes = pd->fetch_progress.received_bytes / 1024;
 
-	fprintf(stderr, "net %3d%% (%4d kb, %5d/%5d)  /  idx %3d%% (%5d/%5d)  /  chk %3d%% (%4" PRIuZ "/%4" PRIuZ ") %s\r",
+	fprintf(stderr, "net %3d%% (%4d kb, %5d/%5d)  /  idx %3d%% (%5d/%5d)  /  chk %3d%% (%4" PRIuZ "/%4" PRIuZ ")\r",
 		   network_percent, kbytes,
 		   pd->fetch_progress.received_objects, pd->fetch_progress.total_objects,
 		   index_percent, pd->fetch_progress.indexed_objects, pd->fetch_progress.total_objects,
 		   checkout_percent,
-		   pd->completed_steps, pd->total_steps,
-		   pd->path);
+		   pd->completed_steps, pd->total_steps);
 }
 
 static int fetch_progress(const git_transfer_progress *stats, void *payload)
