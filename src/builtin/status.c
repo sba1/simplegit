@@ -98,7 +98,17 @@ int cmd_status(git_repository *repo, int argc, char **argv)
 		const char *branch_name;
 
 		if ((err = git_branch_name(&branch_name,head_ref)) == GIT_OK)
-			printf("# On branch %s\n",branch_name);
+		{
+			int num_parents = 0;
+			sgit_repository_mergeheads_count(&num_parents, repo);
+			if (num_parents)
+			{
+				printf("# On branch %s, but merging\n",branch_name);
+			} else
+			{
+				printf("# On branch %s\n",branch_name);
+			}
+		}
 	} else
 	{
 		printf("# On an unnamed branch\n");
