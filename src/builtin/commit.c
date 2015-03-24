@@ -13,13 +13,6 @@
 #include "git.h"
 #include "strbuf.h"
 
-static int mergehead_count_cb(const git_oid *oid, void *payload)
-{
-	int *nparents = (int*)payload;
-	*nparents = *nparents + 1;
-	return 0;
-}
-
 struct mergehead_peel_payload
 {
 	git_repository *repo;
@@ -88,7 +81,7 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 	/* Count the number of parents */
 	if ((git_repository_head(&head,repo)) == GIT_OK)
 		num_parents++;
-	err = git_repository_mergehead_foreach(repo, mergehead_count_cb, &num_parents);
+	err = sgit_repository_mergeheads_count(&num_parents, repo);
 	if (err && err != GIT_ENOTFOUND)
 		goto out;
 

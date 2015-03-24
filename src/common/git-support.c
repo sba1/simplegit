@@ -32,6 +32,27 @@ out:
 	return err;
 }
 
+
+static int mergehead_count_cb(const git_oid *oid, void *payload)
+{
+	int *nparents = (int*)payload;
+	*nparents = *nparents + 1;
+	return 0;
+}
+
+/**
+ * Returns the number of merge heads of the given repository.
+ *
+ * @param num_parents where the number of merge heads will be stored.
+ * @param repo the repository to query.
+ * @return 0 or an error code. In partular GIT_ENOTFOUND if there are no
+ *  merge heads.
+ */
+int sgit_repository_mergeheads_count(int *num_parents, git_repository *repo)
+{
+	return git_repository_mergehead_foreach(repo, mergehead_count_cb, num_parents);
+}
+
 /**
  * Returns the git mode given the stat mode.
  *
