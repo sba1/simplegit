@@ -13,13 +13,15 @@
 
 int cmd_merge(git_repository *repo, int argc, char **argv)
 {
+	int i;
 	int err = GIT_OK;
 	int rc = EXIT_FAILURE;
+	int autocommit = 1;
 
 	git_merge_analysis_t analysis;
 	git_merge_preference_t preference;
 
-	const char *commit_str;
+	const char *commit_str = NULL;
 	git_reference *commit_ref = NULL;
 	git_object *commit_obj = NULL;
 	git_annotated_commit *commit_merge_head = NULL;
@@ -36,10 +38,20 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 
 	if (argc < 2)
 	{
-		fprintf (stderr, "USAGE: %s <commit>\n", argv[0]);
+		fprintf (stderr, "USAGE: %s <commit> [--no-commit]\n", argv[0]);
 		return -1;
 	}
 
+	for (i=1; i < argc; i++)
+	{
+		if (!strcmp(argv[i], "--no-commit")) autocommit = 0;
+		else if (!commit_str) commit_str = argv[i];
+		else
+		{
+			fprintf (stderr, "USAGE: %s <commit> [--no-commit]\n", argv[0]);
+			goto out;
+		}
+	}
 	commit_str = argv[1];
 
 	if ((err = git_branch_lookup(&commit_ref, repo, commit_str, GIT_BRANCH_LOCAL)))
@@ -91,13 +103,16 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 
 	if (!git_index_has_conflicts(index))
 	{
-		char *argv[3];
-		char message[256];
-		snprintf(message, sizeof(message),"Merged branch '%s'",commit_str);
-		argv[0] = "commit";
-		argv[1] = "-m";
-		argv[2] = message;
-		cmd_commit(repo, 3, argv);
+		if (autocommit)
+		{
+			char *argv[3];
+			char message[256];
+			snprintf(message, sizeof(message),"Merged branch '%s'",commit_str);
+			argv[0] = "commit";
+			argv[1] = "-m";
+			argv[2] = message;
+			cmd_commit(repo, 3, argv);
+		}
 	} else
 	{
 		printf("conflict during merge! Please resolve and commit\n");
