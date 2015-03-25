@@ -101,10 +101,25 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
+	if (refs.count == 0)
+	{
+		git_strarray cfg_refs;
+
+		if ((err = git_remote_get_push_refspecs(&cfg_refs, r)))
+			goto out;
+
+		if (!cfg_refs.count)
+		{
+			fprintf(stderr, "No refspec given and no refspec configured. "
+					"Pushing is probably a noop.\n");
+		}
+		git_strarray_free(&cfg_refs);
+	}
 	callbacks.credentials = push_cred_acquire_callback;
 	callbacks.push_update_reference = push_update_reference_callback;
 	callbacks.certificate_check = certificate_check;
 	git_remote_set_callbacks(r, &callbacks);
+
 	if ((err = git_remote_push(r, &refs, &push_options, NULL, NULL)))
 		goto out;
 
