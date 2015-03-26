@@ -25,6 +25,8 @@ static int use_remote(git_repository *repo, char *name)
 	 * each of the remote references.
 	 */
 	callbacks.credentials = cred_acquire_cb;
+	callbacks.certificate_check = certificate_check;
+
 	git_remote_set_callbacks(remote, &callbacks);
 
 	error = git_remote_connect(remote, GIT_DIRECTION_FETCH);
