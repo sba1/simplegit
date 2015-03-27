@@ -117,6 +117,10 @@ int sgit_get_committer_signature(git_repository *repo, git_signature** committer
 	committer_name = getenv(GIT_COMMITTER_NAME_ENVIRONMENT);
 	committer_email = getenv(GIT_COMMITTER_EMAIL_ENVIRONMENT);
 	committer_date = getenv(GIT_COMMITTER_DATE_ENVIRONMENT);
+
+	if (!committer_name || !committer_email)
+		fprintf(stderr,"Committer information not properly configured!\n");
+
 	if (!committer_name)
 		committer_name = "Dummy Committer";
 
