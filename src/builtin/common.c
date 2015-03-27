@@ -88,8 +88,15 @@ int sgit_get_author_signature(git_repository *repo, git_signature **author_signa
 			return GIT_ERROR;
 		}
 	}
-	return git_signature_new(author_signature, author_name, author_email,
+
+	if (!author_timestamp)
+	{
+		return git_signature_now(author_signature, author_name, author_email);
+	} else
+	{
+		return git_signature_new(author_signature, author_name, author_email,
 			author_timestamp, author_offset);
+	}
 }
 
 int sgit_get_committer_signature(git_repository *repo, git_signature** committer_signature)
@@ -124,7 +131,13 @@ int sgit_get_committer_signature(git_repository *repo, git_signature** committer
 			return GIT_ERROR;
 		}
 	}
-	return git_signature_new(committer_signature, committer_name,
-			committer_email, committer_timestamp, committer_offset);
+	if (!committer_timestamp)
+	{
+		return git_signature_now(committer_signature, committer_name, committer_email);
+	} else
+	{
+		return git_signature_new(committer_signature, committer_name,
+				committer_email, committer_timestamp, committer_offset);
+	}
 }
 
