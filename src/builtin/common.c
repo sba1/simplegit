@@ -74,6 +74,10 @@ int sgit_get_author_signature(git_repository *repo, git_signature **author_signa
 	author_name = getenv(GIT_AUTHOR_NAME_ENVIRONMENT);
 	author_email = getenv(GIT_AUTHOR_EMAIL_ENVIRONMENT);
 	author_date = getenv(GIT_AUTHOR_DATE_ENVIRONMENT);
+
+	if (!author_name || !author_email)
+		fprintf(stderr,"Author information not properly configured!\n");
+
 	if (!author_name)
 		author_name = "Dummy Author";
 
