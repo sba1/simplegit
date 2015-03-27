@@ -118,7 +118,7 @@ int sgit_get_committer_signature(git_repository *repo, git_signature** committer
 	committer_email = getenv(GIT_COMMITTER_EMAIL_ENVIRONMENT);
 	committer_date = getenv(GIT_COMMITTER_DATE_ENVIRONMENT);
 	if (!committer_name)
-		committer_name = "Dummy Committerr";
+		committer_name = "Dummy Committer";
 
 	if (!committer_email)
 		committer_email = "dummyc@dummydummydummy.zz";
