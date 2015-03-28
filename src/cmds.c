@@ -36,6 +36,7 @@
 #include "builtin/rebase.h"
 #include "builtin/reset.h"
 #include "builtin/rev-list.h"
+#include "builtin/rm.h"
 #include "builtin/show.h"
 #include "builtin/stash.h"
 #include "builtin/status.h"
@@ -78,6 +79,7 @@ struct cmd_struct commands[] = {
 	{"rebase",         1, "Reapply changes", cmd_rebase},
 	{"reset",          1, "Reset the HEAD or the index to a specific state", cmd_reset},
 	{"rev-list",       0, "Show information about commit objects", cmd_rev_list},
+	{"rm",             1, "Remove files", cmd_rm},
 	{"show",           1, "Show objects", cmd_show},
 	{"stash",          1, "Manage separate the separate stash of changes", cmd_stash},
 	{"status",         1, "Summarize working directory changes", cmd_status},
