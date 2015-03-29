@@ -1,11 +1,13 @@
-#include "common.h"
-#include <git2.h>
-#include <git2/clone.h>
+#include "clone.h"
+
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <pthread.h>
-#include <unistd.h>
+
+#include <git2.h>
+
+#include "common.h"
+#include "errors.h"
 
 /* Shamelessly borrowed from http://stackoverflow.com/questions/3417837/ */
 #ifdef UNUSED
@@ -78,13 +80,15 @@ static int cred_acquire(git_cred **out,
 
 int do_clone(git_repository *repo, int argc, char **argv)
 {
+	int err = 0;
+	int rc = EXIT_FAILURE;
+
 	progress_data pd = {{0}};
 	git_repository *cloned_repo = NULL;
 	git_clone_options clone_opts = GIT_CLONE_OPTIONS_INIT;
 	git_checkout_options checkout_opts = GIT_CHECKOUT_OPTIONS_INIT;
 	const char *url = argv[1];
 	const char *path = argv[2];
-	int error;
 
 	(void)repo; // unused
 
@@ -110,13 +114,14 @@ int do_clone(git_repository *repo, int argc, char **argv)
 	clone_opts.remote_callbacks.certificate_check = certificate_check;
 
 	// Do the clone
-	error = git_clone(&cloned_repo, url, path, &clone_opts);
+	err = git_clone(&cloned_repo, url, path, &clone_opts);
 	printf("\n");
-	if (error != 0) {
-		const git_error *err = giterr_last();
-		if (err) printf("ERROR %d: %s\n", err->klass, err->message);
-		else printf("ERROR %d: no detailed info\n", error);
-	}
-	else if (cloned_repo) git_repository_free(cloned_repo);
-	return error;
+	if (err)
+		goto out;
+
+	rc = EXIT_SUCCESS;
+out:
+	if (err) libgit_error();
+	if (cloned_repo) git_repository_free(cloned_repo);
+	return rc;
 }
