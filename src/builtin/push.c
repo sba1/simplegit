@@ -3,45 +3,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
 #include <git2.h>
 
 #include "common.h"
 #include "errors.h"
 #include "strbuf.h"
-
-static int push_cred_acquire_callback(
-        git_cred **cred,
-        const char *url,
-        const char *username_from_url,
-        unsigned int allowed_types,
-        void *payload)
-{
-	char buf[100];
-	char username[40];
-	char *passwd;
-
-	int i;
-
-	if (prefixcmp(url,"https:"))
-		return -1;
-
-	printf("Enter user name for %s: ",url);
-	fgets(username,sizeof(username),stdin);
-
-	snprintf(buf,sizeof(buf),"Enter password for %s: ",url);
-	passwd = getpass(buf);
-
-	for (i = strlen(username) - 1; i>=0; i--)
-		if (username[i]=='\n')
-			username[i] = 0;
-
-	if (git_cred_userpass_plaintext_new(cred,username,passwd) != GIT_OK)
-		return -1;
-
-	return 0;
-}
 
 static int push_update_reference_callback(const char *refname, const char *status, void *data)
 {
@@ -115,7 +82,7 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 		}
 		git_strarray_free(&cfg_refs);
 	}
-	callbacks.credentials = push_cred_acquire_callback;
+	callbacks.credentials = cred_acquire_cb;
 	callbacks.push_update_reference = push_update_reference_callback;
 	callbacks.certificate_check = certificate_check;
 	git_remote_set_callbacks(r, &callbacks);

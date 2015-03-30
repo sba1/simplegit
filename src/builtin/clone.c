@@ -59,25 +59,6 @@ static void checkout_progress(const char *path, size_t cur, size_t tot, void *pa
 	print_progress(pd);
 }
 
-static int cred_acquire(git_cred **out,
-		const char * UNUSED(url),
-		const char * UNUSED(username_from_url),
-		unsigned int UNUSED(allowed_types),
-		void * UNUSED(payload))
-{
-	char username[128] = {0};
-	char password[128] = {0};
-
-	printf("Username: ");
-	scanf("%s", username);
-
-	/* Yup. Right there on your terminal. Careful where you copy/paste output. */
-	printf("Password: ");
-	scanf("%s", password);
-
-	return git_cred_userpass_plaintext_new(out, username, password);
-}
-
 int do_clone(git_repository *repo, int argc, char **argv)
 {
 	int err = 0;
@@ -109,7 +90,7 @@ int do_clone(git_repository *repo, int argc, char **argv)
 	clone_opts.local = GIT_CLONE_NO_LOCAL;
 	clone_opts.checkout_opts = checkout_opts;
 	clone_opts.remote_callbacks.transfer_progress = &fetch_progress;
-	clone_opts.remote_callbacks.credentials = &cred_acquire;
+	clone_opts.remote_callbacks.credentials = &cred_acquire_cb;
 	clone_opts.remote_callbacks.payload = &pd;
 	clone_opts.remote_callbacks.certificate_check = certificate_check;
 
