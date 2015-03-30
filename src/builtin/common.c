@@ -1,9 +1,12 @@
 #include "common.h"
 
+#include <git2.h>
 #include <stdio.h>
+#include <unistd.h>
 
+#include "date.h"
 #include "environment.h"
-#include "utils/date.h"
+#include "strbuf.h"
 
 /* Shamelessly borrowed from http://stackoverflow.com/questions/3417837/
  * with permission of the original author, Martin Pool.
@@ -19,22 +22,34 @@
 #endif
 
 int cred_acquire_cb(git_cred **out,
-		const char * UNUSED(url),
+		const char *url,
 		const char * UNUSED(username_from_url),
 		unsigned int UNUSED(allowed_types),
 		void * UNUSED(payload))
 {
-	char username[128] = {0};
-	char password[128] = {0};
+	char buf[100];
+	char username[40];
+	char *passwd;
 
-	printf("Username: ");
-	scanf("%s", username);
+	int i;
 
-	/* Yup. Right there on your terminal. Careful where you copy/paste output. */
-	printf("Password: ");
-	scanf("%s", password);
+	if (prefixcmp(url,"https:"))
+		return -1;
 
-	return git_cred_userpass_plaintext_new(out, username, password);
+	printf("Enter user name for %s: ",url);
+	fgets(username,sizeof(username),stdin);
+
+	snprintf(buf,sizeof(buf),"Enter password for %s: ",url);
+	passwd = getpass(buf);
+
+	for (i = strlen(username) - 1; i>=0; i--)
+		if (username[i]=='\n')
+			username[i] = 0;
+
+	if (git_cred_userpass_plaintext_new(out,username,passwd) != GIT_OK)
+		return -1;
+
+	return 0;
 }
 
 int certificate_check(git_cert *cert, int valid, const char *host, void *payload)
