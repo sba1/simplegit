@@ -9,9 +9,16 @@
 
 int cmd_branch(git_repository *repo, int argc, char **argv)
 {
+	int err = GIT_OK;
+	int rc = EXIT_FAILURE;
+
 	int i;
 	unsigned int list_flags;
 	char *branch = NULL;
+
+	git_branch_iterator *iter = NULL;
+	git_reference *head_ref = NULL;
+	git_reference *new_branch_ref = NULL;
 
 	list_flags = 0;
 
@@ -28,46 +35,42 @@ int cmd_branch(git_repository *repo, int argc, char **argv)
 	if (branch && list_flags)
 	{
 		fprintf(stderr,"Options -a and -r do not make sense with a branch name");
-		return EXIT_FAILURE;
-
+		goto out;
 	}
 
 	if (!branch)
 	{
-		git_branch_iterator *iter;
+		struct git_reference *branch_ref;
+		git_branch_t type;
 
 		/* If no list flag has been specified, assume the default one */
 		if (!list_flags) list_flags = GIT_BRANCH_LOCAL;
 
-		if (!git_branch_iterator_new(&iter, repo, list_flags))
-		{
-			struct git_reference *branch_ref;
-			git_branch_t type;
+		if ((err = git_branch_iterator_new(&iter, repo, list_flags)))
+			goto out;
 
-			while (!git_branch_next(&branch_ref, &type, iter))
-			{
-				const char *branch_name;
-				if (!git_branch_name(&branch_name, branch_ref))
-					printf("%s%s\n",git_branch_is_head(branch_ref)?"* ":"  ",branch_name);
-			}
-			git_branch_iterator_free(iter);
+		while (!git_branch_next(&branch_ref, &type, iter))
+		{
+			const char *branch_name;
+			if (!git_branch_name(&branch_name, branch_ref))
+				printf("%s%s\n",git_branch_is_head(branch_ref)?"* ":"  ",branch_name);
 		}
 	} else
 	{
-		int err;
+		if ((err = git_repository_head(&head_ref,repo)))
+			goto out;
 
-		git_reference *head_ref;
-
-		if ((err = git_repository_head(&head_ref,repo)) == 0)
-		{
-			git_reference *new_branch_ref;
-			if ((err = git2_create_branch_from_ref(&new_branch_ref,head_ref,repo,branch)) == 0)
-			{
-				git_reference_free(new_branch_ref);
-			}
-			git_reference_free(head_ref);
-		}
+		if ((err = git2_create_branch_from_ref(&new_branch_ref,head_ref,repo,branch)))
+			goto out;
 	}
 
-	return EXIT_SUCCESS;
+out:
+	if (err != GIT_OK)
+		libgit_error();
+
+	if (iter) git_branch_iterator_free(iter);
+	if (head_ref) git_reference_free(head_ref);
+	if (new_branch_ref) git_reference_free(new_branch_ref);
+
+	return rc;
 }
