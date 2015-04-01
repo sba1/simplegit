@@ -14,20 +14,30 @@ int cmd_config(git_repository *repo, int argc, char **argv)
 	int i;
 	int rc = EXIT_FAILURE;
 	int err = 0;
+	int global = 0;
+
+	git_config *config = NULL;
 
 	const char *name = NULL;
 	const char *val = NULL;
 
-	git_config *config;
+	for (i = 1; i < argc; i++)
+	{
+		if (!strcmp(argv[i], "--global"))
+		{
+			global = 1;
+			break;
+		}
+	}
 
-	if (repo)
+	if (repo && !global)
 	{
 		if ((err = git_repository_config(&config,repo)) != GIT_OK)
 			goto out;
 	} else
 	{
-		fprintf(stderr,"Config needs a repo for now\n!");
-		goto out;
+		if ((err = git_config_open_default(&config)))
+			goto out;
 	}
 
 	for (i=1;i<argc;i++)
@@ -64,6 +74,7 @@ int cmd_config(git_repository *repo, int argc, char **argv)
 	rc = EXIT_SUCCESS;
 out:
 	if (err) libgit_error();
+	if (config) git_config_free(config);
 
 	return rc;
 }
