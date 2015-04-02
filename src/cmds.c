@@ -86,7 +86,7 @@ struct cmd_struct commands[] = {
 	{"tag",            1, "Manage tags", cmd_tag},
 	{"update-index",   0, "Update the index with files from the working directory", cmd_update_index},
 	{"write-tree",     0, "Create a write object from the current index", cmd_write_tree},
-	{"version",        1, "Show version information.", cmd_version},
+	{"version",        1, "Show version information", cmd_version},
 };
 
 void print_commands_overview()
