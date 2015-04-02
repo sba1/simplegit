@@ -99,6 +99,13 @@ int main(int argc, char **argv)
 		goto out;
 	}
 
+	if (!strcmp(argv[0], "help"))
+	{
+		cmd_help(NULL, 1, &cmd);
+		rc = EXIT_SUCCESS;
+		goto out;
+	}
+
 	err = git_repository_open(&repo, ".git");
 	if (err < 0)
 	{
