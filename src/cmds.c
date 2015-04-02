@@ -96,17 +96,17 @@ void print_commands_overview()
 	size_t i;
 	size_t max = sizeof(commands) / sizeof(commands[0]);
 
-	fprintf(stderr, "Following plumbing commands are supported:\n");
+	fprintf(stdout, "Following plumbing commands are supported:\n");
 	for (i = 0; i < max; i++)
 	{
 		if (commands[i].plumbing)
-			fprintf(stderr, "  %-15s %s\n", commands[i].cmd, commands[i].desc);
+			fprintf(stdout, "  %-15s %s\n", commands[i].cmd, commands[i].desc);
 	}
-	fprintf(stderr, "Following porcelaine commands are supported:\n");
+	fprintf(stdout, "Following porcelaine commands are supported:\n");
 	for (i = 0; i < max; i++)
 	{
 		if (!commands[i].plumbing)
-			fprintf(stderr, "  %-15s %s\n", commands[i].cmd, commands[i].desc);
+			fprintf(stdout, "  %-15s %s\n", commands[i].cmd, commands[i].desc);
 	}
 }
 
