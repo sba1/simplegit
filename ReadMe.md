@@ -60,7 +60,7 @@ Following plumbing commands are supported:
   reset           Reset the HEAD or the index to a specific state
   rm              Remove files
   show            Show objects
-  stash           Manage separate the separate stash of changes
+  stash           Manage a separate stash of changes
   status          Summarize working directory changes
   tag             Manage tags
   version         Show version information
@@ -69,7 +69,7 @@ Following porcelaine commands are supported:
   checkout-index  Copy files from the index
   commit-tree     Create a new commit object from a tree object
   diff-files      Show differences between files in the working directory and the index
-  help            Shows this help
+  help            Show this help
   index-pack      Build the index file for an existing pack file
   ls-files        Show information about files in the index and the working directory
   ls-remote       Show information about remote references
