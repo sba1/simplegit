@@ -23,6 +23,7 @@
 #include "builtin/diff-files.h"
 #include "builtin/diff.h"
 #include "builtin/fetch.h"
+#include "builtin/help.h"
 #include "builtin/index-pack.h"
 #include "builtin/init.h"
 #include "builtin/log.h"
@@ -66,6 +67,7 @@ struct cmd_struct commands[] = {
 	{"diff-files",     0, "Show differences between files in the working directory and the index", cmd_diff_files},
 	{"diff",           1, "Show differences between objects", cmd_diff},
 	{"fetch",          1, "Fetch objects from another repository", fetch},
+	{"help",           0, "Shows this help", cmd_help},
 	{"index-pack",     0, "Build the index file for an existing pack file", index_pack},
 	{"init",           1, "Create or reinitialize a git repository", cmd_init},
 	{"log",            1, "Show the commit logs", cmd_log},

@@ -15,6 +15,7 @@
 #include "cmds.h"
 #include "common.h"
 #include "errors.h"
+#include "help.h"
 #include "strbuf.h"
 
 static char *argv0_path;
@@ -94,8 +95,7 @@ int main(int argc, char **argv)
 
 	if (argc <= 0)
 	{
-		fprintf(stderr,"Usage: %s <command>\n", cmd);
-		print_commands_overview();
+		cmd_help(NULL, 1, &cmd);
 		goto out;
 	}
 
