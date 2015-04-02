@@ -37,6 +37,51 @@ set, and exists in the path. Edit the E[47m and E[45m entries to your liking.
 Ref: http://wiki.amigaos.net/wiki/AmigaOS_Manual:_AmigaDOS_Advanced_Features
 The script uses ```sed``` which is part of the SDK.
 
+Commands
+--------
+
+```
+Usage: sgit <command>
+Following plumbing commands are supported:
+  add             Add contents of file to the index
+  branch          Create, delete, or delete branches
+  checkout        Copy a branch or paths to the working directory
+  cherry-pick     Redo commits
+  clone           Fetch and checkout a repository into a new directory
+  commit          Create a new commit from the index
+  config          Get and set repository or global options
+  diff            Show differences between objects
+  fetch           Fetch objects from another repository
+  init            Create or reinitialize a git repository
+  log             Show the commit logs
+  merge           Join histories defined by commit together
+  push            Update the remote references and push associated objects
+  rebase          Reapply changes
+  reset           Reset the HEAD or the index to a specific state
+  rm              Remove files
+  show            Show objects
+  stash           Manage separate the separate stash of changes
+  status          Summarize working directory changes
+  tag             Manage tags
+  version         Show version information
+Following porcelaine commands are supported:
+  cat-file        Show content of repository objects
+  checkout-index  Copy files from the index
+  commit-tree     Create a new commit object from a tree object
+  diff-files      Show differences between files in the working directory and the index
+  help            Shows this help
+  index-pack      Build the index file for an existing pack file
+  ls-files        Show information about files in the index and the working directory
+  ls-remote       Show information about remote references
+  ls-tree         Show information about a tree object
+  mktag           Create a tag object
+  read-tree       Read a tree object into the index
+  rev-list        Show information about commit objects
+  update-index    Update the index with files from the working directory
+  write-tree      Create a write object from the current index
+
+```
+
 Bug reports
 -----------
 
