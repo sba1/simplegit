@@ -91,4 +91,11 @@ IF (NOT AMIGA)
 	add_executable(sgit-test ${UNIT_TESTS_DIRECTORY}/sgit-test.c)
 
 	add_test(sgit-git ${EXECUTABLE_OUTPUT_PATH}/sgit-test)
+
+	add_custom_target(update-readme
+		COMMAND
+			cd ${ROOT_DIRECTORY} &&
+			devscripts/update-readme.py ${ROOT_DIRECTORY}/ReadMe.md >${ROOT_DIRECTORY}/ReadMe.md.temp &&
+			mv ${ROOT_DIRECTORY}/ReadMe.md.temp ${ROOT_DIRECTORY}/ReadMe.md
+		DEPENDS sgit-bin)
 ENDIF()
