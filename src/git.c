@@ -19,9 +19,9 @@
 
 static char *argv0_path;
 
-static const char *git_extract_argv0_path(const char *argv0)
+static char *git_extract_argv0_path(char *argv0)
 {
-	const char *slash;
+	char *slash;
 
 	if (!argv0 || !*argv0)
 		return NULL;
@@ -54,7 +54,7 @@ __attribute__((unused)) static const char version_tag[] =
 int main(int argc, char **argv)
 {
 	git_repository *repo = NULL;
-	const char *cmd;
+	char *cmd;
 	int rc = EXIT_FAILURE;
 	int err;
 	int git_libgit2_initialied_err;
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 	if (!prefixcmp(cmd,"git-"))
 	{
 		cmd += 4;
-		argv[0] = (char*)cmd;
+		argv[0] = cmd;
 	} else
 	{
 		int i;
