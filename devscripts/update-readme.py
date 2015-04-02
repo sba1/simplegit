@@ -21,7 +21,7 @@ out = check_output(["bin/sgit", "help"])
 state = 0
 
 for line in lines:
-	line = line.strip()
+	line = line.rstrip()
 	if line == 'Commands' and state == 0:
 		state = 1
 	elif line == '--------' and state == 1:
