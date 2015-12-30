@@ -39,6 +39,7 @@ sgit: libgit2 pthread
 			-DUSE_SSL -I$(shell readlink -f interim-openssl/openssl/repo/include/)\
 			-I$(shell readlink -f build-deps/Local/common/include)\
 			-imacros $(shell readlink -f .)/build-amiga/sgit-version.h\
+			-fstack-usage -Wstack-usage=512\
 			"\
 		-DCMAKE_EXE_LINKER_FLAGS="-L$(shell readlink -f build-deps/Local/newlib/lib) -Wl,--gc-sections"\
 		-DAMIGA=1\
