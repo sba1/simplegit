@@ -80,7 +80,7 @@ int do_clone(git_repository *repo, int argc, char **argv)
 	}
 
 	// Set up options
-	checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE_CREATE;
+	checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE;
 	checkout_opts.progress_cb = checkout_progress;
 	checkout_opts.progress_payload = &pd;
 	/* Do not bypass git-aware transport as otherwise, non-local URLs, e.g.
@@ -89,10 +89,10 @@ int do_clone(git_repository *repo, int argc, char **argv)
 	 */
 	clone_opts.local = GIT_CLONE_NO_LOCAL;
 	clone_opts.checkout_opts = checkout_opts;
-	clone_opts.remote_callbacks.transfer_progress = &fetch_progress;
-	clone_opts.remote_callbacks.credentials = &cred_acquire_cb;
-	clone_opts.remote_callbacks.payload = &pd;
-	clone_opts.remote_callbacks.certificate_check = certificate_check;
+	clone_opts.fetch_opts.callbacks.transfer_progress = &fetch_progress;
+	clone_opts.fetch_opts.callbacks.credentials = &cred_acquire_cb;
+	clone_opts.fetch_opts.callbacks.payload = &pd;
+	clone_opts.fetch_opts.callbacks.certificate_check = certificate_check;
 
 	// Do the clone
 	err = git_clone(&cloned_repo, url, path, &clone_opts);

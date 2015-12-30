@@ -85,9 +85,9 @@ int cmd_push(git_repository *repo, int argc, char **argv)
 	callbacks.credentials = cred_acquire_cb;
 	callbacks.push_update_reference = push_update_reference_callback;
 	callbacks.certificate_check = certificate_check;
-	git_remote_set_callbacks(r, &callbacks);
+	push_options.callbacks = callbacks;
 
-	if ((err = git_remote_push(r, &refs, &push_options, NULL, NULL)))
+	if ((err = git_remote_push(r, &refs, &push_options)))
 		goto out;
 
 out:

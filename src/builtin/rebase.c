@@ -25,6 +25,8 @@ int cmd_rebase(git_repository *repo, int argc, char **argv)
 	git_reference *branch_ref = NULL;
 	git_annotated_commit *branch = NULL;
 
+	git_checkout_options checkout_opts = GIT_CHECKOUT_OPTIONS_INIT;
+	git_rebase_options rebase_opts = GIT_REBASE_OPTIONS_INIT;
 	git_rebase *rebase = NULL;
 
 	int abort = 0;
@@ -44,24 +46,23 @@ int cmd_rebase(git_repository *repo, int argc, char **argv)
 	if ((err = sgit_get_author_signature(repo, &sig)))
 		goto out;
 
+	checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE;
+	rebase_opts.checkout_options = checkout_opts;
+
 	if (abort)
 	{
-		if ((err = git_rebase_open(&rebase, repo)))
+		if ((err = git_rebase_open(&rebase, repo, &rebase_opts)))
 			goto out;
 
-		if ((err = git_rebase_abort(rebase, sig)))
+		if ((err = git_rebase_abort(rebase)))
 			goto out;
 	} else
 	{
 		git_rebase_operation *oper;
-		git_checkout_options checkout_opts = GIT_CHECKOUT_OPTIONS_INIT;
-		git_rebase_options rebase_opts = GIT_REBASE_OPTIONS_INIT;
-
-		checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE;
 
 		if (cont)
 		{
-			if ((err = git_rebase_open(&rebase, repo)))
+			if ((err = git_rebase_open(&rebase, repo, &rebase_opts)))
 				goto out;
 		} else
 		{
@@ -75,11 +76,11 @@ int cmd_rebase(git_repository *repo, int argc, char **argv)
 			if ((err = git_annotated_commit_from_ref(&branch, repo, branch_ref)))
 				goto out;
 
-			if ((err = git_rebase_init(&rebase, repo, branch, upstream, NULL, NULL, NULL)))
+			if ((err = git_rebase_init(&rebase, repo, branch, upstream, NULL, &rebase_opts)))
 				goto out;
 		}
 
-		while (!(err = git_rebase_next(&oper, rebase, &checkout_opts)))
+		while (!(err = git_rebase_next(&oper, rebase)))
 		{
 			git_oid oid;
 			if ((err = git_rebase_commit(&oid, rebase, NULL, sig, NULL, NULL)))
@@ -89,7 +90,7 @@ int cmd_rebase(git_repository *repo, int argc, char **argv)
 		if (err != GIT_ITEROVER && err != GIT_OK)
 			goto out;
 
-		if ((err = git_rebase_finish(rebase, sig, &rebase_opts)))
+		if ((err = git_rebase_finish(rebase, sig)))
 			goto out;
 	}
 out:

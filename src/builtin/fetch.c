@@ -50,6 +50,7 @@ int fetch(git_repository *repo, int argc, char **argv)
 	int err = GIT_OK;
 	int rc = EXIT_FAILURE;
 	git_remote_callbacks callbacks = GIT_REMOTE_CALLBACKS_INIT;
+	git_fetch_options fetch_options = GIT_FETCH_OPTIONS_INIT;
 
 	const git_transfer_progress *stats;
 	git_remote *remote = NULL;
@@ -62,7 +63,7 @@ int fetch(git_repository *repo, int argc, char **argv)
 	// Figure out whether it's a named remote or a URL
 	printf("Fetching %s for repo at %s\n", argv[1], git_repository_path(repo));
 	if (git_remote_lookup(&remote, repo, argv[1]) < 0) {
-		if ((err = git_remote_create_anonymous(&remote, repo, argv[1], NULL)) < 0)
+		if ((err = git_remote_create_anonymous(&remote, repo, argv[1])) < 0)
 			goto out;
 	}
 
@@ -71,17 +72,18 @@ int fetch(git_repository *repo, int argc, char **argv)
 	callbacks.sideband_progress = &progress_cb;
 	callbacks.credentials = cred_acquire_cb;
 	callbacks.certificate_check = certificate_check;
-	git_remote_set_callbacks(remote, &callbacks);
 
 	stats = git_remote_stats(remote);
 
-	if ((err = git_remote_connect(remote, GIT_DIRECTION_FETCH) < 0))
+	if ((err = git_remote_connect(remote, GIT_DIRECTION_FETCH, &callbacks) < 0))
 		goto out;
+
+	fetch_options.callbacks = callbacks;
 
 	// Download the packfile and index it. This function updates the
 	// amount of received data and the indexer stats which lets you
 	// inform the user about progress.
-	if ((err = git_remote_download(remote, NULL) < 0))
+	if ((err = git_remote_download(remote, NULL, &fetch_options) < 0))
 		goto out;
 
 	/**
@@ -104,7 +106,7 @@ int fetch(git_repository *repo, int argc, char **argv)
 	// right commits. This may be needed even if there was no packfile
 	// to download, which can happen e.g. when the branches have been
 	// changed but all the needed objects are available locally.
-	if ((err = git_remote_update_tips(remote, NULL, NULL)) < 0)
+	if ((err = git_remote_update_tips(remote, &callbacks, fetch_options.update_fetchhead, fetch_options.download_tags, NULL)) < 0)
 		goto out;
 
 	rc = EXIT_SUCCESS;

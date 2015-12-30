@@ -68,7 +68,7 @@ int cmd_checkout(git_repository *repo, int argc, char **argv)
 	}
 
 	printf("Checking out %s\n",branch_ref?git_reference_name(branch_ref):branch);
-	if ((err = git_repository_set_head(repo,branch_ref?git_reference_name(branch_ref):branch,NULL,NULL)) != 0)
+	if ((err = git_repository_set_head(repo,branch_ref?git_reference_name(branch_ref):branch)) != 0)
 	{
 		fprintf(stderr,"Error code %d\n",err);
 		libgit_error();

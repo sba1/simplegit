@@ -51,7 +51,7 @@ int cmd_reset(git_repository *repo, int argc, char **argv)
 			goto out;
 	} else
 	{
-		if ((err = git_reset(repo, treeobj, mode, NULL, NULL, NULL)))
+		if ((err = git_reset(repo, treeobj, mode, NULL)))
 			goto out;
 	}
 out:

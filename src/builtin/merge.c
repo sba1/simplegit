@@ -71,7 +71,7 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 	if ((err = git_merge_analysis(&analysis, &preference, repo, (const git_annotated_commit **)&commit_merge_head, 1)))
 		goto out;
 
-	checkout_options.checkout_strategy = GIT_CHECKOUT_SAFE_CREATE;
+	checkout_options.checkout_strategy = GIT_CHECKOUT_SAFE;
 
 	if (analysis & GIT_MERGE_ANALYSIS_FASTFORWARD && preference != GIT_MERGE_PREFERENCE_NO_FASTFORWARD)
 	{
@@ -89,7 +89,7 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 		if ((err = git_checkout_tree(repo, (git_object*)commit_tree_obj, &checkout_options)))
 			goto out;
 
-		if ((err = git_reference_set_target(&new_ref, head_ref, git_commit_id((git_commit*)commit_obj), NULL, NULL)))
+		if ((err = git_reference_set_target(&new_ref, head_ref, git_commit_id((git_commit*)commit_obj), NULL)))
 			goto out;
 
 		goto out;
