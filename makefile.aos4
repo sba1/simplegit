@@ -47,7 +47,7 @@ sgit: libgit2 pthread
 	rm -f bin/sgit bin/sgit.debug
 	cd build-amiga/ && $(MAKE) VERBOSE=1
 	mv bin/sgit bin/sgit.debug
-	ppc-amigaos-strip --strip-all -o bin/sgit bin/sgit.debug
+	ppc-amigaos-strip --strip-all --strip-unneeded-rel-relocs -R.comment -R.eh_frame -o bin/sgit bin/sgit.debug
 
 ####################################################
 # The libgit2 dependency
