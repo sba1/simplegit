@@ -106,6 +106,13 @@ int main(int argc, char **argv)
 		goto out;
 	}
 
+	if (!strcmp(argv[0], "version"))
+	{
+		cmd_version(NULL, 0, NULL);
+		rc = EXIT_SUCCESS;
+		goto out;
+	}
+
 	err = git_repository_open(&repo, ".git");
 	if (err < 0)
 	{
