@@ -6,7 +6,7 @@
  * No surprises, and works with signed and unsigned chars.
  */
 
-unsigned char sane_ctype[256] = {
+const unsigned char sane_ctype[256] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, S, S, 0, 0, S, 0, 0,		/*   0.. 15 */
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,		/*  16.. 31 */
 	S, 0, 0, 0, R, 0, 0, 0, R, R, G, R, 0, 0, R, 0,		/*  32.. 47 */

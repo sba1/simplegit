@@ -28,7 +28,7 @@
 #define toupper(x) sane_case((unsigned char)(x), 0)
 
 
-unsigned char sane_ctype[256];
+extern const unsigned char sane_ctype[256];
 
 enum {
 	S = GIT_SPACE,
