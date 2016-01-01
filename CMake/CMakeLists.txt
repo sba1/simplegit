@@ -82,6 +82,7 @@ add_custom_target(git-test-suite COMMAND $(MAKE) all WORKING_DIRECTORY ${TESTS_D
 add_library(sgit-lib STATIC ${C_SOURCE_FILES})
 add_executable(sgit-bin ${EXECUTABLE_SOURCE_FILE})
 set_target_properties(sgit-bin PROPERTIES OUTPUT_NAME sgit)
+set_target_properties(sgit-bin PROPERTIES LINK_FLAGS -Wl,--cref,-M,-Map=sgit.map)
 add_dependencies(sgit-bin build_libgit2)
 target_link_libraries(sgit-bin sgit-lib ${LIBS})
 
