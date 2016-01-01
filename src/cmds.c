@@ -47,13 +47,13 @@
 #include "builtin/write-tree.h"
 
 struct cmd_struct {
-	char *cmd;
+	const char *cmd;
 	int plumbing;
-	char *desc;
+	const char *desc;
 	git_cb handler;
 };
 
-struct cmd_struct commands[] = {
+static const struct cmd_struct commands[] = {
 	{"add",            1, "Add contents of file to the index", cmd_add},
 	{"branch",         1, "Create, delete, or delete branches", cmd_branch},
 	{"cat-file",       0, "Show content of repository objects", cmd_cat_file},
