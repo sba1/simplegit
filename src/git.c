@@ -17,6 +17,7 @@
 #include "errors.h"
 #include "help.h"
 #include "strbuf.h"
+#include "version.h"
 
 static char *argv0_path;
 
