@@ -75,7 +75,7 @@ int fetch(git_repository *repo, int argc, char **argv)
 
 	stats = git_remote_stats(remote);
 
-	if ((err = git_remote_connect(remote, GIT_DIRECTION_FETCH, &callbacks) < 0))
+	if ((err = git_remote_connect(remote, GIT_DIRECTION_FETCH, &callbacks, NULL) < 0))
 		goto out;
 
 	fetch_options.callbacks = callbacks;
