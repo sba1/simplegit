@@ -46,7 +46,40 @@ LIBGIT2_CFLAGS = \
 
 ###########################################
 
-all: $(LIBGIT2_OBJS)
+SGIT_SRC_DIR = src
+SGIT_SRCS = \
+	$(sort \
+		$(wildcard $(SGIT_SRC_DIR)/*.c) \
+		$(wildcard $(SGIT_SRC_DIR)/common/*.c) \
+		$(wildcard $(SGIT_SRC_DIR)/common/utils/*.c) \
+		$(wildcard $(SGIT_SRC_DIR)/builtin/*.c) \
+	)
+SGIT_BUILDDIR = $(BUILDDIR)/sgit
+SGIT_OBJS = $(patsubst $(SGIT_SRC_DIR)/%.c,$(SGIT_BUILDDIR)/%.o,$(SGIT_SRCS))
+SGIT_DEPS = $(SGIT_OBJS:.o=.d)
+SGIT_CFLAGS = \
+	-DNO_OPENSSL \
+	-DOPENSSL_SHA1 \
+	-Wno-missing-field-initializers \
+	-std=gnu99 \
+	-Wall \
+	-Wextra \
+	-DUSE_SSL \
+	-Ilibgit2/include \
+	-Isrc \
+	-Isrc/builtin \
+	-Isrc/common/ \
+	-Isrc/common/utils/ \
+	-Iinterim-openssl/openssl/repo/include \
+	-Ibuild-deps/Local/common/include \
+	-imacros $(SGIT_BUILDDIR)/sgit-version.h \
+	-fstack-usage \
+	-Wstack-usage=512 \
+	-g
+
+###########################################
+
+all: $(SGIT_BUILDDIR)/sgit-version.h $(LIBGIT2_OBJS) $(SGIT_OBJS)
 
 .PHONY:
 clean:
@@ -58,6 +91,22 @@ $(LIBGIT2_BUILDDIR)/%.o: $(LIBGIT2_SRC_DIR)/%.c
 	mkdir -p $(dir $@)
 	ppc-amigaos-gcc $(LIBGIT2_CFLAGS) -MMD -MP -c $< -o $@
 
+
 ###########################################
 
--include $(LIBGIT2_DEPS)
+COMMITS := $(shell git rev-list HEAD --count)
+
+$(SGIT_BUILDDIR)/sgit-version.h:
+	@mkdir -p $(SGIT_BUILDDIR)
+	echo "#define SIMPLEGIT_REVISION_STRING \"$(COMMITS)\"" >$@
+	echo "#define SIMPLEGIT_DATE_STRING \"$(shell date +%d.%m.%Y)\"" >>$@
+
+###########################################
+
+$(SGIT_BUILDDIR)/%.o: $(SGIT_SRC_DIR)/%.c
+	mkdir -p $(dir $@)
+	ppc-amigaos-gcc $(SGIT_CFLAGS) -MMD -MP -c $< -o $@
+
+###########################################
+
+-include $(LIBGIT2_DEPS) $(SGIT_DEPS)
