@@ -1,0 +1,57 @@
+###########################################
+
+BUILDDIR = build-amiga
+
+###########################################
+
+LIBGIT2_SRC_DIR = libgit2/src
+LIBGIT2_SRCS = \
+	$(sort $(wildcard $(LIBGIT2_SRC_DIR)/*.c))
+
+LIBGIT2_BUILDDIR = $(BUILDDIR)/libgit2
+LIBGIT2_OBJS = $(patsubst $(LIBGIT2_SRC_DIR)/%.c,$(LIBGIT2_BUILDDIR)/%.o,$(LIBGIT2_SRCS))
+LIBGIT2_DEPS = $(LIBGIT2_OBJS:.o=.d)
+LIBGIT2_CFLAGS = \
+	-DGIT_ARCH_32 \
+	-DNO_ADDRINFO \
+	-DNO_GZIP \
+	-DNO_MMAP \
+	-DNO_READDIR_R \
+	-DNO_VIZ \
+	-DSTDC \
+	-D_FILE_OFFSET_BITS=64 \
+	-D_GNU_SOURCE \
+	-DGIT_OPENSSL \
+	-Wall \
+	-Wextra \
+	-fstack-usage \
+	-Wstack-usage=512 \
+	-Wno-missing-field-initializers \
+	-Wstrict-aliasing=2 \
+	-Wstrict-prototypes \
+	-Wdeclaration-after-statement \
+	-Wno-unused-function \
+	-Ilibgit2/src \
+	-Ilibgit2/include \
+	-Ilibgit2/deps/regex \
+	-Ilibgit2/deps/http-parser \
+	-Ilibgit2/deps/zlib \
+	-Iinterim-openssl/openssl/repo/include
+
+###########################################
+
+all: $(LIBGIT2_OBJS)
+
+.PHONY:
+clean:
+	rm -Rf $(BUILDDIR)
+
+###########################################
+
+$(LIBGIT2_BUILDDIR)/%.o: $(LIBGIT2_SRC_DIR)/%.c
+	mkdir -p $(dir $@)
+	ppc-amigaos-gcc $(LIBGIT2_CFLAGS) -MMD -MP -c $< -o $@
+
+###########################################
+
+-include $(LIBGIT2_DEPS)
