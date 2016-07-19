@@ -4,9 +4,15 @@ BUILDDIR = build-amiga
 
 ###########################################
 
-LIBGIT2_SRC_DIR = libgit2/src
+LIBGIT2_SRC_DIR = libgit2
 LIBGIT2_SRCS = \
-	$(sort $(wildcard $(LIBGIT2_SRC_DIR)/*.c))
+	$(sort \
+		$(wildcard $(LIBGIT2_SRC_DIR)/src/*.c) \
+		$(wildcard $(LIBGIT2_SRC_DIR)/src/transports/*.c) \
+		$(wildcard $(LIBGIT2_SRC_DIR)/src/xdiff/*.c) \
+		$(wildcard $(LIBGIT2_SRC_DIR)/deps/zlib/*.c) \
+		$(LIBGIT2_SRC_DIR)/src/unix/realpath.c \
+	)
 
 LIBGIT2_BUILDDIR = $(BUILDDIR)/libgit2
 LIBGIT2_OBJS = $(patsubst $(LIBGIT2_SRC_DIR)/%.c,$(LIBGIT2_BUILDDIR)/%.o,$(LIBGIT2_SRCS))
