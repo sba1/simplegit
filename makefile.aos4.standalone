@@ -10,7 +10,10 @@ LIBGIT2_SRCS = \
 		$(wildcard $(LIBGIT2_SRC_DIR)/src/*.c) \
 		$(wildcard $(LIBGIT2_SRC_DIR)/src/transports/*.c) \
 		$(wildcard $(LIBGIT2_SRC_DIR)/src/xdiff/*.c) \
+		$(wildcard $(LIBGIT2_SRC_DIR)/deps/http-parser/*.c) \
 		$(wildcard $(LIBGIT2_SRC_DIR)/deps/zlib/*.c) \
+		$(LIBGIT2_SRC_DIR)/deps/regex/regex.c \
+		$(LIBGIT2_SRC_DIR)/src/hash/hash_generic.c \
 		$(LIBGIT2_SRC_DIR)/src/unix/realpath.c \
 	)
 
@@ -54,7 +57,7 @@ SGIT_SRCS = \
 		$(wildcard $(SGIT_SRC_DIR)/common/utils/*.c) \
 		$(wildcard $(SGIT_SRC_DIR)/builtin/*.c) \
 	)
-SGIT_BUILDDIR = $(BUILDDIR)/sgit
+SGIT_BUILDDIR = $(BUILDDIR)/sgit-objs
 SGIT_OBJS = $(patsubst $(SGIT_SRC_DIR)/%.c,$(SGIT_BUILDDIR)/%.o,$(SGIT_SRCS))
 SGIT_DEPS = $(SGIT_OBJS:.o=.d)
 SGIT_CFLAGS = \
@@ -77,10 +80,26 @@ SGIT_CFLAGS = \
 	-fstack-usage \
 	-Wstack-usage=512 \
 	-g
+SGIT_LDFLAGS = \
+	-Lbuild-deps/Local/newlib/lib \
+	-Linterim-openssl/openssl/repo/ \
+	-lauto -lssl -lcrypto \
+	-Wl,--gc-sections
 
 ###########################################
 
-all: $(SGIT_BUILDDIR)/sgit-version.h $(LIBGIT2_OBJS) $(SGIT_OBJS)
+.PHONY: all
+all: $(BUILDDIR)/sgit
+
+###########################################
+
+$(BUILDDIR)/sgit.debug: $(LIBGIT2_OBJS) $(SGIT_OBJS)
+	ppc-amigaos-gcc $(LIBGIT2_OBJS) $(SGIT_OBJS) -g -o$@ $(SGIT_LDFLAGS)
+
+$(BUILDDIR)/sgit: $(BUILDDIR)/sgit.debug
+	ppc-amigaos-strip --strip-all --strip-unneeded-rel-relocs -R.comment -R.eh_frame -o $@ $<
+
+###########################################
 
 .PHONY:
 clean:
