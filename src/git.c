@@ -19,6 +19,10 @@
 #include "strbuf.h"
 #include "version.h"
 
+#ifdef HAVE_SGIT_VERSION_H
+#include "sgit-version.h"
+#endif
+
 static char *argv0_path;
 
 static char *git_extract_argv0_path(char *argv0)

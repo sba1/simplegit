@@ -60,6 +60,7 @@ SGIT_DEPS = $(SGIT_OBJS:.o=.d)
 SGIT_CFLAGS = \
 	-DNO_OPENSSL \
 	-DOPENSSL_SHA1 \
+	-DHAVE_SGIT_VERSION_H \
 	-Wno-missing-field-initializers \
 	-std=gnu99 \
 	-Wall \
@@ -72,7 +73,7 @@ SGIT_CFLAGS = \
 	-Isrc/common/utils/ \
 	-Iinterim-openssl/openssl/repo/include \
 	-Ibuild-deps/Local/common/include \
-	-imacros $(SGIT_BUILDDIR)/sgit-version.h \
+	-I$(SGIT_BUILDDIR) \
 	-fstack-usage \
 	-Wstack-usage=512 \
 	-g
@@ -106,6 +107,10 @@ $(SGIT_BUILDDIR)/sgit-version.h:
 $(SGIT_BUILDDIR)/%.o: $(SGIT_SRC_DIR)/%.c
 	mkdir -p $(dir $@)
 	ppc-amigaos-gcc $(SGIT_CFLAGS) -MMD -MP -c $< -o $@
+
+# Manual dependencies for those files that depend on a generated file
+$(SGIT_BUILDDIR)/builtin/version.o: $(SGIT_BUILDDIR)/sgit-version.h
+$(SGIT_BUILDDIR)/git.o: $(SGIT_BUILDDIR)/sgit-version.h
 
 ###########################################
 

@@ -5,6 +5,10 @@
 #include <git2.h>
 #include <openssl/crypto.h>
 
+#ifdef HAVE_SGIT_VERSION_H
+#include "sgit-version.h"
+#endif
+
 int cmd_version(git_repository *repo, int argc, char **argv)
 {
 	int major, minor, rev;
