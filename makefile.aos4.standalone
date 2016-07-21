@@ -1,3 +1,7 @@
+#
+# This is a makefile for building SimpleGit for AmigaOS
+#
+
 ###########################################
 
 BUILDDIR = build-amiga
