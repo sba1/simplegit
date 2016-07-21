@@ -98,7 +98,11 @@ all: $(BUILDDIR)/sgit
 
 ###########################################
 
-$(BUILDDIR)/sgit.debug: $(LIBGIT2_OBJS) $(SGIT_OBJS)
+include makefile.aos4.common
+
+###########################################
+
+$(BUILDDIR)/sgit.debug: $(LIBGIT2_OBJS) $(SGIT_OBJS) openssl
 	ppc-amigaos-gcc $(LIBGIT2_OBJS) $(SGIT_OBJS) -g -o$@ $(SGIT_LDFLAGS)
 
 $(BUILDDIR)/sgit: $(BUILDDIR)/sgit.debug
