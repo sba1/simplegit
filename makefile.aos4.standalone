@@ -34,6 +34,7 @@ LIBGIT2_CFLAGS = \
 	-Wall \
 	-Wextra \
 	-fstack-usage \
+	-ffunction-sections -fdata-sections \
 	-Wstack-usage=512 \
 	-Wno-missing-field-initializers \
 	-Wstrict-aliasing=2 \
