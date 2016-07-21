@@ -1,0 +1,115 @@
+#
+# This is a makefile that is used for both build variants for SimpleGit
+# on AmigaOS. 
+#
+
+COMPILER := $(shell which ppc-amigaos-gcc)
+
+ifndef COMPILER
+$(error No cross compiler for AmigaOS has been found!)
+endif
+
+####################################################
+
+COMMITS := $(shell git rev-list HEAD --count)
+VERSION_TAG := $(shell date "+%Y%m%d")-$(shell printf %06d $(COMMITS))
+
+####################################################
+
+LHA = $(shell pwd)/build-deps/lha/lha-1.14i.orig/src/lha
+OPENSSL = interim-openssl/openssl/repo/libssl.a
+PTHREAD = build-deps/Local/common/include/pthread.h
+
+####################################################
+# The openssl dependency needed by libgit2
+# We use the interim openssl port to support ssl
+.PHONY: openssl
+openssl: $(OPENSSL)
+
+$(OPENSSL):
+	(cd interim-openssl && git pull) || \
+	    (git clone https://github.com/sba1/interim-openssl.git)
+	$(MAKE) -C interim-openssl checkout build CC=ppc-amigaos-gcc
+
+####################################################
+# The pthread dependency needed by sgit. We extract
+# it from the official AmigaOS SDK
+.PHONY: pthread
+pthread: $(PTHREAD)
+
+$(PTHREAD): build-deps/SDK_53.24.lha-done $(LHA)
+	cd build-deps && $(LHA) xf SDK_53.24.lha
+	cd build-deps && $(LHA) xf SDK_Install/pthread.lha
+	touch $@
+
+build-deps/SDK_53.24.lha-done:
+	mkdir -p build-deps
+	wget "http://www.hyperion-entertainment.biz/index.php?option=com_registration&amp;view=download&amp;format=raw&amp;file=69&amp;Itemid=63" -O build-deps/SDK_53.24.lha
+	touch $@
+
+
+####################################################
+# The lha dependency needed for serveral subtasks
+# such as building the release archive
+
+.PHONY: lha
+lha: $(LHA)
+
+$(LHA):
+	mkdir -p build-deps/lha
+	cd build-deps/lha && wget -N http://ftp.de.debian.org/debian/pool/non-free/l/lha/lha_1.14i.orig.tar.gz
+	cd build-deps/lha && wget -N http://ftp.de.debian.org/debian/pool/non-free/l/lha/lha_1.14i-10.3.diff.gz
+	cd build-deps/lha && tar -xzf lha_1.14i.orig.tar.gz
+	cd build-deps/lha && zcat lha_1.14i-10.3.diff.gz | patch -p0
+	cd build-deps/lha/lha-1.14i.orig/ && make
+
+.PHONY: libgit-repo
+libgit-repo:
+	# Git repo
+	git submodule init
+	git submodule update
+
+
+####################################################
+# Packaging
+
+ReadMe.plain: ReadMe.md
+	pandoc $< -t plain >$@
+
+AMIGA_README = build-amiga/ReadMe
+
+$(AMIGA_README): ReadMe.amiga.mak ReadMe.plain
+	mkdir -p build-amiga
+	# Generate the ReadMe file for Aminet
+	python -c "\
+	from mako.template import Template;\
+	from mako.lookup import TemplateLookup;\
+	print Template(\
+		filename='ReadMe.amiga.mak',\
+		input_encoding='utf-8',\
+		output_encoding='utf-8',\
+		lookup=TemplateLookup(['./'],input_encoding='utf-8')).render(SIMPLEGIT_VERSION='0.$(COMMITS)')\
+	" >$@.utf8
+	iconv --from-code=UTF8 --to-code=ISO-8859-15 $@.utf8 >$@
+
+.PHONY: prepare-os4-release
+prepare-os4-release: $(LHA) $(AMIGA_README)
+	rm -Rf dist
+	mkdir -p dist/sgit-$(VERSION_TAG)
+	cp bin/sgit dist/sgit-$(VERSION_TAG)
+	cp $(AMIGA_README) dist/sgit-$(VERSION_TAG)
+	cp contrib/* dist/sgit-$(VERSION_TAG)
+	cd dist && $(LHA) ao5 sgit-$(VERSION_TAG).lha sgit-$(VERSION_TAG)
+
+####################################################
+# Upload the distribution to the main Aminet server
+.PHONY: upload-os4-release
+upload-os4-release:
+	cd dist && cp sgit-$(VERSION_TAG).lha sgit.lha
+	lftp -e "put dist/sgit.lha && put dist/sgit-$(VERSION_TAG)/ReadMe -o sgit.readme && quit" ftp://main.aminet.net/new
+
+####################################################
+# Tag the current version
+.PHONY: tag
+tag:
+	git tag sgit-$(VERSION_TAG)
