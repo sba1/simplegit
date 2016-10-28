@@ -120,12 +120,6 @@ $(LIBGIT2_BUILDDIR)/%.o: $(LIBGIT2_SRC_DIR)/%.c
 	mkdir -p $(dir $@)
 	ppc-amigaos-gcc $(LIBGIT2_CFLAGS) -MMD -MP -c $< -o $@
 
-###########################################
-
-$(LIBGIT2_BUILDDIR)/%.o: $(LIBGIT2_SRC_DIR)/%.c
-	mkdir -p $(dir $@)
-	ppc-amigaos-gcc $(LIBGIT2_CFLAGS) -MMD -MP -c $< -o $@
-
 # The libgit2 depends on the presence of openssl
 # This macro adds the openssl dependency for the target
 define OPENSSL_DEP_template =
