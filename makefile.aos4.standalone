@@ -8,6 +8,41 @@ BUILDDIR = build-amiga
 
 ###########################################
 
+LIBSSH2_SRC_DIR = libssh2/src/
+LIBSSH2_SRCS = \
+	$(sort \
+		$(LIBSSH2_SRC_DIR)/agent.c \
+		$(LIBSSH2_SRC_DIR)/channel.c \
+		$(LIBSSH2_SRC_DIR)/comp.c \
+		$(LIBSSH2_SRC_DIR)/crypt.c \
+		$(LIBSSH2_SRC_DIR)/global.c \
+		$(LIBSSH2_SRC_DIR)/keepalive.c \
+		$(LIBSSH2_SRC_DIR)/kex.c \
+		$(LIBSSH2_SRC_DIR)/hostkey.c \
+		$(LIBSSH2_SRC_DIR)/mac.c \
+		$(LIBSSH2_SRC_DIR)/misc.c \
+		$(LIBSSH2_SRC_DIR)/openssl.c \
+		$(LIBSSH2_SRC_DIR)/packet.c \
+		$(LIBSSH2_SRC_DIR)/session.c \
+		$(LIBSSH2_SRC_DIR)/transport.c \
+		$(LIBSSH2_SRC_DIR)/userauth.c \
+	)
+LIBSSH2_BUILDDIR = $(BUILDDIR)/libssh2
+LIBSSH2_OBJS = $(patsubst $(LIBSSH2_SRC_DIR)/%.c,$(LIBSSH2_BUILDDIR)/%.o,$(LIBSSH2_SRCS))
+LIBSSH2_DEPS = $(LIBSSH2_OBJS:.o=.d)
+LIBSSH2_CFLAGS = \
+	-std=c11 \
+	-DHAVE_INTTYPES_H \
+	-DLIBSSH2_OPENSSL \
+	-DHAVE_IOCTLSOCKET_CASE \
+	-Ilibssh2/src \
+	-Ilibssh2/include \
+	-Ilibssh2-amiga \
+	-Iinterim-openssl/openssl/repo/include
+
+###########################################
+
+
 LIBGIT2_SRC_DIR = libgit2
 LIBGIT2_SRCS = \
 	$(sort \
@@ -35,6 +70,7 @@ LIBGIT2_CFLAGS = \
 	-D_FILE_OFFSET_BITS=64 \
 	-D_GNU_SOURCE \
 	-DGIT_OPENSSL \
+	-DGIT_SSH \
 	-Wall \
 	-Wextra \
 	-fstack-usage \
@@ -50,7 +86,8 @@ LIBGIT2_CFLAGS = \
 	-Ilibgit2/deps/regex \
 	-Ilibgit2/deps/http-parser \
 	-Ilibgit2/deps/zlib \
-	-Iinterim-openssl/openssl/repo/include
+	-Iinterim-openssl/openssl/repo/include \
+	-Ilibssh2/include
 
 ###########################################
 
@@ -102,8 +139,8 @@ include makefile.aos4.common
 
 ###########################################
 
-$(BUILDDIR)/sgit.debug: $(LIBGIT2_OBJS) $(SGIT_OBJS)
-	ppc-amigaos-gcc $(LIBGIT2_OBJS) $(SGIT_OBJS) -g -o$@ $(SGIT_LDFLAGS)
+$(BUILDDIR)/sgit.debug: $(LIBSSH2_OBJS) $(LIBGIT2_OBJS) $(SGIT_OBJS)
+	ppc-amigaos-gcc $(LIBSSH2_OBJS) $(LIBGIT2_OBJS) $(SGIT_OBJS) -g -o$@ $(SGIT_LDFLAGS)
 
 $(BUILDDIR)/sgit: $(BUILDDIR)/sgit.debug
 	ppc-amigaos-strip --strip-all --strip-unneeded-rel-relocs -R.comment -R.eh_frame -o $@ $<
@@ -113,6 +150,21 @@ $(BUILDDIR)/sgit: $(BUILDDIR)/sgit.debug
 .PHONY:
 clean:
 	rm -Rf $(BUILDDIR)
+
+###########################################
+
+define LIBSSH2_DEP_template =
+$(1): libssh2
+endef
+
+# Add the libssh2 template to each of the libgit2 objects
+$(foreach obj,$(LIBSSH2_SRCS),$(eval $(call LIBSSH2_DEP_template,$(obj))))
+
+###########################################
+
+$(LIBSSH2_BUILDDIR)/%.o: $(LIBSSH2_SRC_DIR)/%.c
+	mkdir -p $(dir $@)
+	ppc-amigaos-gcc $(LIBSSH2_CFLAGS) -MMD -MP -c $< -o $@
 
 ###########################################
 
@@ -150,4 +202,4 @@ $(SGIT_BUILDDIR)/git.o: $(SGIT_BUILDDIR)/sgit-version.h
 
 ###########################################
 
--include $(LIBGIT2_DEPS) $(SGIT_DEPS)
+-include $(LIBSSH2_DEPS) $(LIBGIT2_DEPS) $(SGIT_DEPS)

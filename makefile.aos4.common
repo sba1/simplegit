@@ -32,6 +32,13 @@ $(OPENSSL):
 	$(MAKE) -C interim-openssl checkout build CC=ppc-amigaos-gcc
 
 ####################################################
+# The libssh2 dependency needed by libgit2, sources are compiled
+# directly
+libssh2:
+	git clone https://github.com/libssh2/libssh2
+	cd libssh2 && git checkout libssh2-1.8.0
+
+####################################################
 # The pthread dependency needed by sgit. We extract
 # it from the official AmigaOS SDK
 .PHONY: pthread
