@@ -5,7 +5,7 @@
 
 COMPILER := $(shell which ppc-amigaos-gcc)
 
-ifndef COMPILER
+ifeq ($(COMPILER),)
 $(error No cross compiler for AmigaOS has been found!)
 endif
 
