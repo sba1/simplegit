@@ -140,7 +140,7 @@ include makefile.aos4.common
 ###########################################
 
 $(BUILDDIR)/sgit.debug: $(LIBSSH2_OBJS) $(LIBGIT2_OBJS) $(SGIT_OBJS)
-	ppc-amigaos-gcc $(LIBSSH2_OBJS) $(LIBGIT2_OBJS) $(SGIT_OBJS) -g -o$@ $(SGIT_LDFLAGS)
+	ppc-amigaos-gcc $(LIBSSH2_OBJS) $(LIBGIT2_OBJS) $(SGIT_OBJS) -g -o$@ $(SGIT_LDFLAGS) -lunix
 
 $(BUILDDIR)/sgit: $(BUILDDIR)/sgit.debug
 	ppc-amigaos-strip --strip-all --strip-unneeded-rel-relocs -R.comment -R.eh_frame -o $@ $<
