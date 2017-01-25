@@ -48,7 +48,7 @@ int cmd_tag(git_repository *repo, int argc, char **argv)
 		git_object *head_obj;
 		git_oid oid;
 
-		tagname = del?argv[1]:argv[2];
+		tagname = del?argv[2]:argv[1];
 
 		if ((err = git_repository_head(&head_ref,repo)))
 			goto out;
