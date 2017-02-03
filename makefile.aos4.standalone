@@ -87,7 +87,8 @@ LIBGIT2_CFLAGS = \
 	-Ilibgit2/deps/http-parser \
 	-Ilibgit2/deps/zlib \
 	-Iinterim-openssl/openssl/repo/include \
-	-Ilibssh2/include
+	-Ilibssh2/include \
+	-Ibuild-deps/Local/common/include
 
 ###########################################
 
