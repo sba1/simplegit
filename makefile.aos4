@@ -48,6 +48,7 @@ libgit2/build-amiga/libgit2.a: libgit-repo $(OPENSSL) pthread
 		-DCMAKE_SYSTEM_NAME=AmigaOS\
 		-DCMAKE_C_COMPILER=$(COMPILER)\
 		-DCMAKE_C_FLAGS="-DGIT_OPENSSL -I$(shell readlink -f interim-openssl/openssl/repo/include/)\
+			-I$(shell readlink -f build-deps/Local/common/include)\
 			-fstack-usage -Wstack-usage=512\
 			"\
 		-DAMIGA=1\
