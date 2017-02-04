@@ -106,8 +106,8 @@ Once everything is set up, building SimpleGit is as easy as typing
 ```
 in the shell command prompt. Snapshot builds are available from
  https://sonumina.de/jenkins/job/sgit.amiga/.
-That site's SHA1 fingerprint is ```5C 31 5A A3 AD C9 2A 79 CD 81 EC 0C 38 BA 4D 9A
-09 19 E5 13```.
+That site's SHA1 fingerprint is ```E5 7A 7E 48 FE 4C BC 36 1D A8 D9 EE 1B 43 04 C6
+10 B8 FF 81```.
 
 Building SimpleGit for other platforms
 --------------------------------------
