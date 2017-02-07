@@ -41,6 +41,7 @@
 #include "builtin/show.h"
 #include "builtin/stash.h"
 #include "builtin/status.h"
+#include "builtin/submodule.h"
 #include "builtin/tag.h"
 #include "builtin/update-index.h"
 #include "builtin/version.h"
@@ -85,6 +86,7 @@ static const struct cmd_struct commands[] = {
 	{"show",           1, "Show objects", cmd_show},
 	{"stash",          1, "Manage a separate stash of changes", cmd_stash},
 	{"status",         1, "Summarize working directory changes", cmd_status},
+	{"submodule",      1, "Manage submodules", cmd_submodule},
 	{"tag",            1, "Manage tags", cmd_tag},
 	{"update-index",   0, "Update the index with files from the working directory", cmd_update_index},
 	{"write-tree",     0, "Create a write object from the current index", cmd_write_tree},
