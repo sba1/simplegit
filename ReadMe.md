@@ -62,6 +62,7 @@ Following plumbing commands are supported:
   show            Show objects
   stash           Manage a separate stash of changes
   status          Summarize working directory changes
+  submodule       Manage submodules
   tag             Manage tags
   version         Show version information
 Following porcelaine commands are supported:
