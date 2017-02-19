@@ -12,7 +12,7 @@ struct dl_data {
 	int finished;
 };
 
-static int progress_cb(const char *str, int len, void *data)
+int progress_cb(const char *str, int len, void *data)
 {
 	(void)data;
 	printf("remote: %.*s", len, str);
@@ -25,7 +25,7 @@ static int progress_cb(const char *str, int len, void *data)
  * updated. The message we output depends on whether it's a new one or
  * an update.
  */
-static int update_cb(const char *refname, const git_oid *a, const git_oid *b, void *data)
+int update_cb(const char *refname, const git_oid *a, const git_oid *b, void *data)
 {
 	char a_str[GIT_OID_HEXSZ+1], b_str[GIT_OID_HEXSZ+1];
 	(void)data;
