@@ -42,6 +42,9 @@ struct graph_print_data
 	int collapse_goal;
 	int num_collapsing;
 	int *collapsing;
+
+	/* The actual node number */
+	int node;
 };
 
 typedef struct
