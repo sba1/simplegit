@@ -35,6 +35,7 @@
 #include "builtin/push.h"
 #include "builtin/read-tree.h"
 #include "builtin/rebase.h"
+#include "builtin/remote.h"
 #include "builtin/reset.h"
 #include "builtin/rev-list.h"
 #include "builtin/rm.h"
@@ -80,6 +81,7 @@ static const struct cmd_struct commands[] = {
 	{"push",           1, "Update the remote references and push associated objects", cmd_push},
 	{"read-tree",      0, "Read a tree object into the index", cmd_read_tree},
 	{"rebase",         1, "Reapply changes", cmd_rebase},
+	{"remote",         1, "Manage remotes", cmd_remote},
 	{"reset",          1, "Reset the HEAD or the index to a specific state", cmd_reset},
 	{"rev-list",       0, "Show information about commit objects", cmd_rev_list},
 	{"rm",             1, "Remove files", cmd_rm},
