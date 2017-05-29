@@ -11,7 +11,7 @@ import sys
 import string
 
 if len(sys.argv) < 2:
-	sys.exit(1)
+	sys.exit("Please specify the name of the ReadMe file (e.g., ReadMe.md)")
 
 f = open(sys.argv[1],"r")
 lines = f.readlines()
