@@ -57,6 +57,7 @@ Following plumbing commands are supported:
   merge           Join histories defined by commit together
   push            Update the remote references and push associated objects
   rebase          Reapply changes
+  remote          Manage remotes
   reset           Reset the HEAD or the index to a specific state
   rm              Remove files
   show            Show objects
