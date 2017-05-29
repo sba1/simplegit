@@ -25,6 +25,8 @@ int cmd_checkout(git_repository *repo, int argc, char **argv)
 	git_reference *branch_ref;
 	git_checkout_options checkout_opts;
 
+	git_strarray paths = {0};
+
 	branch = NULL;
 	rc = EXIT_FAILURE;
 
@@ -41,6 +43,7 @@ int cmd_checkout(git_repository *repo, int argc, char **argv)
 	if (!branch)
 	{
 		fprintf (stderr, "USAGE: %s <branch>\n", argv[0]);
+		fprintf (stderr, "       %s <path>\n", argv[0]);
 		return -1;
 	}
 
@@ -67,20 +70,33 @@ int cmd_checkout(git_repository *repo, int argc, char **argv)
 		}
 	}
 
-	printf("Checking out %s\n",branch_ref?git_reference_name(branch_ref):branch);
 	if ((err = git_repository_set_head(repo,branch_ref?git_reference_name(branch_ref):branch)) != 0)
 	{
+		if (err == GIT_EINVALIDSPEC)
+		{
+			paths.count = 1;
+			paths.strings = &branch;
+			goto cont;
+		}
+
 		fprintf(stderr,"Error code %d\n",err);
 		libgit_error();
 		goto out;
 	}
+cont:
 
 	/* Default options. Note by default we perform a dry checkout */
 	memset(&checkout_opts,0,sizeof(checkout_opts));
 	checkout_opts.version = GIT_CHECKOUT_OPTIONS_VERSION;
 	checkout_opts.notify_cb = notify_cb;
+	if (paths.count)
+	{
+		checkout_opts.paths = paths;
+	}
 
 	checkout_opts.checkout_strategy = GIT_CHECKOUT_FORCE|GIT_CHECKOUT_REMOVE_UNTRACKED;//GIT_CHECKOUT_SAFE|GIT_CHECKOUT_UPDATE_UNTRACKED;
+
+	printf("Checking out %s\n",branch_ref?git_reference_name(branch_ref):branch);
 	if (git_checkout_head(repo,&checkout_opts) != 0)
 	{
 		libgit_error();
