@@ -72,7 +72,7 @@ int cmd_checkout(git_repository *repo, int argc, char **argv)
 
 	if ((err = git_repository_set_head(repo,branch_ref?git_reference_name(branch_ref):branch)) != 0)
 	{
-		if (err == GIT_EINVALIDSPEC)
+		if (err == GIT_EINVALIDSPEC || err == GIT_ENOTFOUND)
 		{
 			paths.count = 1;
 			paths.strings = &branch;
