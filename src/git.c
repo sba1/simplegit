@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 		goto out;
 	}
 
-	err = git_repository_open(&repo, ".git");
+	err = git_repository_open_ext(&repo, ".", 0, NULL);
 	if (err < 0)
 	{
 		/* Does the command require a repo? Check against those that do not
