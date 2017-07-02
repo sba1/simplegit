@@ -56,6 +56,7 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 	int num_parents = 0;
 
 	int allow_empty = 0;
+	int amend = 0;
 
 	for (i=1;i<argc;i++)
 	{
@@ -73,6 +74,10 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 		else if (!strcmp(argv[i], "--allow-empty"))
 		{
 			allow_empty = 1;
+		}
+		else if (!strcmp(argv[i], "--amend"))
+		{
+			amend = 1;
 		}
 		else if (argv[i][0] == '-')
 		{
@@ -143,9 +148,22 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 		goto out;
 
 	/* Write tree as commit */
-	if ((err = git_commit_create(&commit_oid, repo, "HEAD", author_signature, committer_signature,
-				NULL, message, tree, num_parents, (const git_commit**)parents)) != GIT_OK)
-		goto out;
+	if (!amend)
+	{
+		if ((err = git_commit_create(&commit_oid, repo, "HEAD", author_signature, committer_signature,
+					NULL, message, tree, num_parents, (const git_commit**)parents)) != GIT_OK)
+			goto out;
+	} else
+	{
+		if (num_parents != 1 || parent == NULL)
+		{
+			fprintf(stderr, "Amending works only for a single parent!\n");
+			goto out;
+		}
+
+		if ((err = git_commit_amend(&commit_oid, parent, "HEAD", NULL, NULL, NULL, message, tree)))
+			goto out;
+	}
 
 	rc = EXIT_SUCCESS;
 out:
