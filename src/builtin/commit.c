@@ -42,6 +42,9 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 
 	git_index *idx = NULL;
 
+	git_status_list *status_list = NULL;
+	git_status_options status_opts = GIT_STATUS_OPTIONS_INIT;
+
 	git_signature *author_signature = NULL;
 	git_signature *committer_signature = NULL;
 	git_tree *tree = NULL;
@@ -51,6 +54,8 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 	int i;
 	int rc = EXIT_FAILURE;
 	int num_parents = 0;
+
+	int allow_empty = 0;
 
 	for (i=1;i<argc;i++)
 	{
@@ -64,6 +69,10 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 				fprintf(stderr,"Option -m misses argument\n");
 				goto out;
 			}
+		}
+		else if (!strcmp(argv[i], "--allow-empty"))
+		{
+			allow_empty = 1;
 		}
 		else if (argv[i][0] == '-')
 		{
@@ -119,9 +128,13 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 	/* Write index as tree */
 	if ((err = git_repository_index(&idx,repo)) != GIT_OK)
 		goto out;
-	if (git_index_entrycount(idx) == 0)
+
+	if ((err = git_status_list_new(&status_list, repo, &status_opts)))
+		goto out;
+
+	if (!allow_empty && git_status_list_entrycount(status_list) == 0)
 	{
-		fprintf(stderr,"Nothing to commit!\n");
+		fprintf(stderr,"Nothing to commit! Use --allow empty for an empty commit!\n");
 		goto out;
 	}
 	if ((err = git_index_write_tree_to(&tree_oid, idx, repo)) != GIT_OK)
@@ -139,6 +152,7 @@ out:
 	if (err) libgit_error();
 	if (head) git_reference_free(head);
 	if (tree) git_tree_free(tree);
+	if (status_list) git_status_list_free(status_list);
 	if (idx) git_index_free(idx);
 	if (parents)
 	{
