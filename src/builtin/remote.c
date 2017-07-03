@@ -218,7 +218,7 @@ static void parse_subcmd(struct opts *opt, int argc, char **argv)
 	} else if (!strcmp(arg, "show")) {
 		cmd = subcmd_show;
 	} else {
-		fprintf(stderr, "sub command is not valid\n");
+		fprintf(stderr, "The sub command %s is not supported!\n", arg);
 		goto out;
 	}
 
