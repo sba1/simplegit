@@ -203,7 +203,9 @@ static void parse_subcmd(struct opts *opt, int argc, char **argv)
 
 	if (argc < 2)
 	{
-		fprintf(stderr, "No sub command specified! Try add, remove, rename, set-url, or show\n");
+		cmd = subcmd_show;
+		opt->argc = 0;
+		opt->argv = NULL;
 		goto out;
 	}
 
@@ -217,6 +219,15 @@ static void parse_subcmd(struct opts *opt, int argc, char **argv)
 		cmd = subcmd_seturl;
 	} else if (!strcmp(arg, "show")) {
 		cmd = subcmd_show;
+	} else if (!strcmp(arg,"-v")) {
+		if (argc > 2) {
+			fprintf(stderr, "Only -v is supported!\n");
+			goto out;
+		}
+		opt->argv = &argv[1];
+		opt->argc = 1;
+		cmd = subcmd_show;
+		goto out;
 	} else {
 		fprintf(stderr, "The sub command %s is not supported!\n", arg);
 		goto out;
