@@ -211,7 +211,7 @@ static void parse_subcmd(struct opts *opt, int argc, char **argv)
 
 	if (!strcmp(arg, "add")) {
 		cmd = subcmd_add;
-	} else if (!strcmp(arg, "remove")) {
+	} else if (!strcmp(arg, "remove") || !strcmp(arg, "rm")) {
 		cmd = subcmd_remove;
 	} else if (!strcmp(arg, "rename")) {
 		cmd = subcmd_rename;
