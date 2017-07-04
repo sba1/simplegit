@@ -57,6 +57,7 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 
 	int allow_empty = 0;
 	int amend = 0;
+	int reset_author = 0;
 
 	for (i=1;i<argc;i++)
 	{
@@ -78,6 +79,10 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 		else if (!strcmp(argv[i], "--amend"))
 		{
 			amend = 1;
+		}
+		else if (!strcmp(argv[i], "--reset-author"))
+		{
+			reset_author = 1;
 		}
 		else if (argv[i][0] == '-')
 		{
@@ -161,7 +166,8 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 			goto out;
 		}
 
-		if ((err = git_commit_amend(&commit_oid, parent, "HEAD", NULL, NULL, NULL, message, tree)))
+		if ((err = git_commit_amend(&commit_oid, parent, "HEAD",
+					reset_author?author_signature:NULL, reset_author?committer_signature:NULL, NULL, message, tree)))
 			goto out;
 	}
 
