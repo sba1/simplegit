@@ -15,6 +15,7 @@ static int parse_cli(int argc, char *argv[], struct cli *cli)
 {
 	int i;
 	int cur_command = -1;
+	int cur_position = 0;
 	for (i=0; i < argc; i++)
 	{
 		if (!strcmp("--help", argv[i]))
