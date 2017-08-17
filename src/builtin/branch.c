@@ -5,6 +5,7 @@
 #include <git2.h>
 #include "checkout.h"
 
+#include "cli/branch_cli.c"
 #include "git-support.h"
 
 int cmd_branch(git_repository *repo, int argc, char **argv)
@@ -20,23 +21,39 @@ int cmd_branch(git_repository *repo, int argc, char **argv)
 	git_reference *head_ref = NULL;
 	git_reference *new_branch_ref = NULL;
 
-	list_flags = 0;
+	struct cli cli = {0};
 
-	for (i=1;i<argc;i++)
+	if (!parse_cli(argc - 1, &argv[1], &cli))
 	{
-		if (argv[i][0] != '-')
-		{
-			branch = argv[i];
-		}
-		else if (!strcmp(argv[i],"-a")) list_flags = GIT_BRANCH_LOCAL | GIT_BRANCH_REMOTE;
-		else if (!strcmp(argv[i],"-r")) list_flags = GIT_BRANCH_REMOTE;
+		return GIT_ERROR;
 	}
 
-	if (branch && list_flags)
+	if (!validate_cli(&cli))
+	{
+		return GIT_ERROR;
+	}
+
+	if (usage_cli(argv[0], &cli))
+	{
+		return GIT_OK;
+	}
+
+	if ((cli.a || cli.r) && cli.pattern)
 	{
 		fprintf(stderr,"Options -a and -r do not make sense with a branch name");
 		goto out;
 	}
+
+	list_flags = 0;
+
+	if (cli.a)
+	{
+		list_flags = GIT_BRANCH_LOCAL | GIT_BRANCH_REMOTE;
+	} else if (cli.r)
+	{
+		list_flags = GIT_BRANCH_REMOTE;
+	}
+	branch = cli.pattern;
 
 	if (!branch)
 	{
