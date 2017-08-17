@@ -8,7 +8,9 @@ struct cli
 	int help;
 	int help_cmd;
 	char **pathspec;
-	int pathspec_num;
+	int pathspec_count;
+	int variadic_argc;
+	char **variadic_argv;
 };
 
 static int parse_cli(int argc, char *argv[], struct cli *cli)
@@ -29,10 +31,10 @@ static int parse_cli(int argc, char *argv[], struct cli *cli)
 			cli->add_pos = i;
 			cur_command = 2;
 		}
-		else if (cur_position == 0)
+		else if (cur_position == 0 && cur_command == 2)
 		{
-			cli->pathspec = &argv[i];
-			cli->pathspec_num = argc - i;
+			cli->variadic_argv = &argv[i];
+			cli->variadic_argc = argc - i;
 			break;
 		}
 		else
@@ -48,6 +50,8 @@ static int validate_cli(struct cli *cli)
 {
 	if (cli->add)
 	{
+		cli->pathspec_count = cli->variadic_argc;
+		cli->pathspec = cli->variadic_argv;
 	}
 	else
 	{

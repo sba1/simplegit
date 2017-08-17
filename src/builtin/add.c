@@ -52,7 +52,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 		return GIT_OK;
 	}
 
-	if (cli.pathspec_num == 0)
+	if (cli.pathspec_count == 0)
 	{
 		return GIT_OK;
 	}
@@ -64,7 +64,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 	}
 	wd_len = strlen(wd);
 
-	if (!(relative_paths = (char**)malloc(sizeof(*relative_paths)*(cli.pathspec_num))))
+	if (!(relative_paths = (char**)malloc(sizeof(*relative_paths)*(cli.pathspec_count))))
 	{
 		fprintf(stderr,"Memory allocation failed!\n");
 		goto out;
@@ -75,7 +75,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 		goto out;
 
 	/* Check if any path points outside the directory and bailout if so */
-	for (i = 0; i < cli.pathspec_num; i++)
+	for (i = 0; i < cli.pathspec_count; i++)
 	{
 		/* Use a local buffer for the 2nd arg of realpath() on AmigaOS 4
 		 * doesn't accept a NULL pointer for the 2nd arg.
