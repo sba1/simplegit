@@ -46,12 +46,7 @@ int cmd_submodule(git_repository *repo, int argc, char **argv)
 
 	struct cli cli = {0};
 
-	if (!parse_cli(argc - 1, &argv[1], &cli))
-	{
-		return GIT_ERROR;
-	}
-
-	if (!validate_cli(&cli))
+	if (!parse_cli(argc - 1, &argv[1], &cli, POF_VALIDATE))
 	{
 		return GIT_ERROR;
 	}
@@ -60,6 +55,7 @@ int cmd_submodule(git_repository *repo, int argc, char **argv)
 	{
 		return GIT_OK;
 	}
+
 
 	if (cli.init)
 	{

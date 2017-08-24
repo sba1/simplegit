@@ -37,12 +37,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 
 	struct cli cli = {0};
 
-	if (!parse_cli(argc, argv, &cli))
-	{
-		return GIT_ERROR;
-	}
-
-	if (!validate_cli(&cli))
+	if (!parse_cli(argc - 1, &argv[1], &cli, POF_VALIDATE))
 	{
 		return GIT_ERROR;
 	}
