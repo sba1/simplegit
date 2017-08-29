@@ -36,6 +36,7 @@ static int validate_cli(struct cli *cli, struct cli_aux *aux)
 	else
 	{
 		fprintf(stderr,"Please specify a proper command. Use --help for usage.\n");
+		return 0;
 	}
 	return 1;
 }
