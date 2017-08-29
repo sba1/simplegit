@@ -1,1 +1,3 @@
 branch [-r | -a] [<pattern>]
+branch --unset-upstream
+branch --set-upstream-to=<upstream>

@@ -72,8 +72,19 @@ int cmd_branch(git_repository *repo, int argc, char **argv)
 		if ((err = git_repository_head(&head_ref,repo)))
 			goto out;
 
-		if ((err = git2_create_branch_from_ref(&new_branch_ref,head_ref,repo,branch)))
-			goto out;
+		if (cli->unset_upstream)
+		{
+			if ((err = git_branch_set_upstream(head_ref, NULL)))
+				goto out;
+		} else if (cli->set_upstream_to)
+		{
+			if ((err = git_branch_set_upstream(head_ref, cli->upstream)))
+				goto out;
+		} else
+		{
+			if ((err = git2_create_branch_from_ref(&new_branch_ref,head_ref,repo,branch)))
+				goto out;
+		}
 	}
 
 out:

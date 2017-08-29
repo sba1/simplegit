@@ -8,6 +8,9 @@ struct cli
 	int help;
 	char *pattern;
 	int r;
+	int set_upstream_to;
+	int unset_upstream;
+	char *upstream;
 };
 
 struct cli_aux
@@ -17,6 +20,8 @@ struct cli_aux
 	int help_cmd;
 	char *positional0;
 	int r_cmd;
+	int set_upstream_to_pos;
+	int unset_upstream_pos;
 };
 
 typedef enum
@@ -51,7 +56,13 @@ static int validate_cli(struct cli *cli, struct cli_aux *aux)
 			return 0;
 		}
 	}
-	if (cli->branch)
+	if (cli->branch && cli->unset_upstream)
+	{
+	}
+	else if (cli->branch && cli->set_upstream_to)
+	{
+	}
+	else if (cli->branch)
 	{
 		cli->pattern = aux->positional0;
 	}
@@ -75,6 +86,8 @@ static int usage_cli(char *cmd, struct cli *cli)
 		return 0;
 	}
 	fprintf(stderr, "usage: %s <command> [<options>]\n", cmd);
+	fprintf(stderr, "branch --set-upstream-to=<upstream>\n");
+	fprintf(stderr, "branch --unset-upstream\n");
 	fprintf(stderr, "branch [-r | -a] [<pattern>]\n");
 	return 1;
 }
@@ -90,6 +103,36 @@ static int parse_cli_simple(int argc, char *argv[], struct cli *cli, struct cli_
 		{
 			cli->help = 1;
 			aux->help_cmd = cur_command;
+		}
+		else if (!strncmp("--set-upstream-to", argv[i], 16) && (argv[i][16]=='=' || !argv[i][16]))
+		{
+			cli->set_upstream_to = 1;
+			aux->set_upstream_to_pos = i;
+			cur_command = 4;
+
+			if (!argv[i][16])
+			{
+				if (i + 1 < argc)
+				{
+					cli->upstream = argv[i+1];
+					i++;
+				}
+				else
+				{
+					fprintf(stderr, "Argument \"--set-upstream-to\" requires a value\n");
+					return 0;
+				}
+			}
+			else
+			{
+				cli->upstream = &argv[i][17];
+			}
+		}
+		else if (!strcmp("--unset-upstream", argv[i]))
+		{
+			cli->unset_upstream = 1;
+			aux->unset_upstream_pos = i;
+			cur_command = 3;
 		}
 		else if (!strcmp("-a", argv[i]))
 		{
