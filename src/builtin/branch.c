@@ -72,13 +72,13 @@ int cmd_branch(git_repository *repo, int argc, char **argv)
 		if ((err = git_repository_head(&head_ref,repo)))
 			goto out;
 
-		if (cli->unset_upstream)
+		if (cli.unset_upstream)
 		{
 			if ((err = git_branch_set_upstream(head_ref, NULL)))
 				goto out;
-		} else if (cli->set_upstream_to)
+		} else if (cli.set_upstream_to)
 		{
-			if ((err = git_branch_set_upstream(head_ref, cli->upstream)))
+			if ((err = git_branch_set_upstream(head_ref, cli.upstream)))
 				goto out;
 		} else
 		{
