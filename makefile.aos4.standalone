@@ -176,7 +176,7 @@ $(LIBGIT2_BUILDDIR)/%.o: $(LIBGIT2_SRC_DIR)/%.c
 # The libgit2 depends on the presence of openssl
 # This macro adds the openssl dependency for the target
 define OPENSSL_DEP_template =
-$(1): openssl
+$(1): $(OPENSSL)
 endef
 
 # Add the openssl template to each of the libgit2 objects
