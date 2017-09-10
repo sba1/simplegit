@@ -93,7 +93,7 @@ void print_commit(git_commit *wcommit, const char *fmt)
 									printf("    ");
 									nl = 0;
 								}
-								putc(c,stdout);
+								printf("%c", c);
 								if (c == '\n') nl = 1;
 							}
 						}
