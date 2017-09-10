@@ -20,4 +20,4 @@ env:
 
 script:
   - if [ "${BUILD}" == "CMAKE" ]; then make -f makefile.aos4; fi
-  - if [ "${BUILD}" == "STANDALONE" ]; then make -f makefile.aos4.standalone; fi
+  - if [ "${BUILD}" == "STANDALONE" ]; then make -f makefile.aos4.standalone libssh2 && make -f makefile.aos4.standalone; fi
