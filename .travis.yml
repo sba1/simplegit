@@ -13,4 +13,11 @@ before_install:
   - git config --global user.email "mail@sebastianbauer.info"
   - git config --global user.name "Sebastian Bauer"
 
-script: make -f makefile.aos4
+
+env:
+  - BUILD=STANDALONE
+  - BUILD=CMAKE
+
+script:
+  - if [ "${BUILD}" == "CMAKE" ]; then make -f makefile.aos4; fi
+  - if [ "${BUILD}" == "STANDALONE" ]; then make -f makefile.aos4.standalone; fi
