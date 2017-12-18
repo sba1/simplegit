@@ -20,8 +20,8 @@ struct cli_aux
 
 typedef enum
 {
-	POF_VALIDATE = (1<<0),
-	POF_USAGE = (1<<1)
+	POF_VALIDATE = 1,
+	POF_USAGE = 2,
 } parse_cli_options_t;
 
 static int validate_cli(struct cli *cli, struct cli_aux *aux)
@@ -70,18 +70,18 @@ static int parse_cli_simple(int argc, char **argv, struct cli *cli, struct cli_a
 	int cur_command = -1;
 	for (i=0; i < argc; i++)
 	{
-		if (!strcmp("--help", argv[i]))
+		if (!strcmp(argv[i], "--help"))
 		{
 			cli->help = 1;
 			aux->help_cmd = cur_command;
 		}
-		else if (!strcmp("init", argv[i]))
+		else if (!strcmp(argv[i], "init"))
 		{
 			cli->init = 1;
 			aux->init_pos = i;
 			cur_command = 2;
 		}
-		else if (!strcmp("update", argv[i]))
+		else if (!strcmp(argv[i], "update"))
 		{
 			cli->update = 1;
 			aux->update_pos = i;
@@ -111,8 +111,6 @@ static int parse_cli(int argc, char **argv, struct cli *cli, parse_cli_options_t
 {
 	struct cli_aux aux = {0};
 	char *cmd = argv[0];
-	argc--;
-	argv++;
 	if (!parse_cli_simple(argc, argv, cli, &aux))
 	{
 		return 0;

@@ -7,7 +7,7 @@ GENOPTS := ../../../genopts/genopts.py
 all: $(GENOPTS_SRCS)
 
 $(GENOPTS_SRCS): %_cli.c: %.genopts $(GENOPTS)
-	cat $< | $(GENOPTS) >$@
+	cat $< | $(GENOPTS) --dont-skip-first-arg >$@
 
 .PHONY: clean
 clean:

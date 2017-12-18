@@ -23,7 +23,7 @@ int cmd_branch(git_repository *repo, int argc, char **argv)
 
 	struct cli cli = {0};
 
-	if (!parse_cli(argc - 1, &argv[1], &cli, POF_VALIDATE))
+	if (!parse_cli(argc, argv, &cli, POF_VALIDATE))
 	{
 		return GIT_ERROR;
 	}

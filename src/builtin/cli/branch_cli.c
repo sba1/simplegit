@@ -29,8 +29,8 @@ struct cli_aux
 
 typedef enum
 {
-	POF_VALIDATE = (1<<0),
-	POF_USAGE = (1<<1)
+	POF_VALIDATE = 1,
+	POF_USAGE = 2,
 } parse_cli_options_t;
 
 static int validate_cli(struct cli *cli, struct cli_aux *aux)
@@ -99,7 +99,7 @@ static int parse_cli_simple(int argc, char **argv, struct cli *cli, struct cli_a
 	int cur_command = -1;
 	for (i=0; i < argc; i++)
 	{
-		if (!strcmp("--help", argv[i]))
+		if (!strcmp(argv[i], "--help"))
 		{
 			cli->help = 1;
 			aux->help_cmd = cur_command;
@@ -128,23 +128,23 @@ static int parse_cli_simple(int argc, char **argv, struct cli *cli, struct cli_a
 				cli->upstream = &argv[i][17];
 			}
 		}
-		else if (!strcmp("--unset-upstream", argv[i]))
+		else if (!strcmp(argv[i], "--unset-upstream"))
 		{
 			cli->unset_upstream = 1;
 			aux->unset_upstream_pos = i;
 			cur_command = 3;
 		}
-		else if (!strcmp("-a", argv[i]))
+		else if (!strcmp(argv[i], "-a"))
 		{
 			cli->a = 1;
 			aux->a_cmd = cur_command;
 		}
-		else if (!strcmp("-r", argv[i]))
+		else if (!strcmp(argv[i], "-r"))
 		{
 			cli->r = 1;
 			aux->r_cmd = cur_command;
 		}
-		else if (!strcmp("branch", argv[i]))
+		else if (!strcmp(argv[i], "branch"))
 		{
 			cli->branch = 1;
 			aux->branch_pos = i;
@@ -179,8 +179,6 @@ static int parse_cli(int argc, char **argv, struct cli *cli, parse_cli_options_t
 {
 	struct cli_aux aux = {0};
 	char *cmd = argv[0];
-	argc--;
-	argv++;
 	if (!parse_cli_simple(argc, argv, cli, &aux))
 	{
 		return 0;
