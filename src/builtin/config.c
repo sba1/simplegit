@@ -9,64 +9,59 @@
 #include "git-support.h"
 #include "utils.h"
 
+#include "cli/config_cli.c"
+
 int cmd_config(git_repository *repo, int argc, char **argv)
 {
-	int i;
 	int rc = EXIT_FAILURE;
 	int err = 0;
-	int global = 0;
 
 	git_config *config = NULL;
 
-	const char *name = NULL;
-	const char *val = NULL;
+	struct cli cli = {0};
 
-	for (i = 1; i < argc; i++)
+	if (!parse_cli(argc, argv, &cli, POF_VALIDATE))
 	{
-		if (!strcmp(argv[i], "--global"))
-		{
-			global = 1;
-			break;
-		}
+		return GIT_ERROR;
 	}
 
-	if (repo && !global)
+	if (usage_cli(argv[0], &cli))
 	{
-		if ((err = git_repository_config(&config,repo)) != GIT_OK)
-			goto out;
+		return GIT_OK;
+	}
+
+	if (repo && !cli.global)
+	{
+		if (!cli.value)
+		{
+			if ((err = git_repository_config_snapshot(&config,repo)) != GIT_OK)
+				goto out;
+		} else
+		{
+			if ((err = git_repository_config(&config,repo)) != GIT_OK)
+				goto out;
+		}
 	} else
 	{
 		if ((err = git_config_open_default(&config)))
 			goto out;
 	}
 
-	for (i=1;i<argc;i++)
-	{
-		if (argv[i][0] != '-')
-		{
-			if (!name) name = argv[i];
-			else if (!val) val = argv[i];
-			else
-			{
-				fprintf(stderr,"Invalid or not supported command line format!\n");
-				goto out;
-			}
-		}
-	}
-
-	if (!name)
+	if (!cli.name)
 	{
 		fprintf(stderr,"Invalid or not supported command line format!\n");
 		goto out;
 	}
 
-	if (val)
+	if (cli.value)
 	{
-		if ((err = git_config_set_string(config, name, val)))
+		if ((err = git_config_set_string(config, cli.name, cli.value)))
 			goto out;
 	} else
 	{
-		if ((err = git_config_get_string(&val,config,name)) != GIT_OK)
+		const char *val;
+
+		if ((err = git_config_get_string(&val, config, cli.name)) != GIT_OK)
 			goto out;
 		printf("%s\n",val);
 	}
