@@ -45,6 +45,17 @@ int cmd_config(git_repository *repo, int argc, char **argv)
 	{
 		if ((err = git_config_open_default(&config)))
 			goto out;
+
+		if (!cli.value)
+		{
+			git_config *snapshot;
+
+			if ((err = git_config_snapshot(&snapshot, config)))
+				goto out;
+
+			git_config_free(config);
+			config = snapshot;
+		}
 	}
 
 	if (!cli.name)
