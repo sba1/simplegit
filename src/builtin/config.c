@@ -43,6 +43,23 @@ int cmd_config(git_repository *repo, int argc, char **argv)
 		}
 	} else
 	{
+#ifdef __amigaos4__
+		FILE *f = fopen("ENVARC:gitconfig", "rb");
+		if (!f)
+		{
+			if ((f = fopen("ENVARC:gitconfig", "wb")))
+			{
+				fprintf(stderr, "Created global config in ENVARC:gitconfig\n");
+			} else
+			{
+				fprintf(stderr, "Unable to create ENVARC:gitconfig\n");
+			}
+		}
+		if (f)
+		{
+			fclose(f);
+		}
+#endif
 		if ((err = git_config_open_default(&config)))
 			goto out;
 
