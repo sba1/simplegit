@@ -101,12 +101,12 @@ static int parse_cli_simple(int argc, char **argv, struct cli *cli, struct cli_a
 		else if (cur_position == 0 && cur_command == 2)
 		{
 			aux->positional0 = argv[i];
-			cur_command++;
+			cur_position++;
 		}
 		else if (cur_position == 1 && cur_command == 2)
 		{
 			aux->positional1 = argv[i];
-			cur_command++;
+			cur_position++;
 		}
 		else
 		{
