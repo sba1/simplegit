@@ -121,7 +121,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 		paths.count = num_relative_paths;
 		paths.strings = relative_paths;
 
-		if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT, cmd_add_matched_paths_callback, &num_added)))
+		if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT|GIT_INDEX_ADD_CHECK_PATHSPEC, cmd_add_matched_paths_callback, &num_added)))
 			goto out;
 	}
 
@@ -154,12 +154,26 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 			paths.count = 1;
 			paths.strings = &dirname;
 
-			if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT, cmd_add_matched_paths_callback, &num_added)))
+			if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT|GIT_INDEX_ADD_CHECK_PATHSPEC, cmd_add_matched_paths_callback, &num_added)))
 				goto out;
 		}
 
 		closedir(dir);
 		dir = NULL;
+
+		/* Now add the plain root, this is mostly for seeing files that are
+		 * deleted in the worktree but not in the index.
+		 */
+		{
+			char *root = ".";
+
+			git_strarray root_path;
+			root_path.count = 1;
+			root_path.strings = &root;
+
+			if ((err = git_index_add_all(idx, &root_path, GIT_INDEX_ADD_DEFAULT|GIT_INDEX_ADD_CHECK_PATHSPEC, cmd_add_matched_paths_callback, &num_added)))
+				goto out;
+		}
 	}
 
 	if (num_added)
