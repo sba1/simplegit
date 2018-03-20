@@ -15,6 +15,10 @@
 static int cmd_add_matched_paths_callback(const char *path, const char *matched_pathspec, void *payload)
 {
 	int *num_added = (int*)payload;
+
+	(void)path;
+	(void)matched_pathspec;
+
 	*num_added = *num_added + 1;
 	return 0;
 }
