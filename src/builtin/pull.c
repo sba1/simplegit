@@ -22,8 +22,10 @@ int cmd_pull(git_repository *repo, int argc, char **argv)
 
 	struct cli cli = {0};
 	char *fetch_args[2] = {NULL};
-	char *merge_args[2] = {NULL};
+	char *merge_args[3] = {NULL};
 	char merge_ref_spec[96];
+
+	int arg;
 
 	if (!parse_cli(argc, argv, &cli, POF_VALIDATE))
 	{
@@ -43,10 +45,16 @@ int cmd_pull(git_repository *repo, int argc, char **argv)
 		goto out;
 
 	/* merge */
-	merge_args[0] = "merge";
+	arg = 0;
+	merge_args[arg++] = "merge";
+	if (cli.ff_only)
+	{
+		merge_args[arg++] = "--ff-only";
+	}
+
 	snprintf(merge_ref_spec, sizeof(merge_ref_spec), "%s/%s", cli.repository, cli.refspec);
-	merge_args[1] = merge_ref_spec;
-	if (cmd_merge(repo, 2, merge_args) != EXIT_SUCCESS)
+	merge_args[arg++] = merge_ref_spec;
+	if (cmd_merge(repo, arg, merge_args) != EXIT_SUCCESS)
 		goto out;
 
 	rc = EXIT_SUCCESS;

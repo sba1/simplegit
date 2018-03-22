@@ -1,1 +1,1 @@
-pull <repository> <refspec>
+pull [--ff-only] <repository> <refspec>
