@@ -53,6 +53,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 
 	if (cli.pathspec_count == 0)
 	{
+		fprintf(stderr, "No files specified.");
 		return GIT_OK;
 	}
 
