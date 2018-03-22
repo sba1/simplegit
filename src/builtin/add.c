@@ -51,11 +51,14 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 		return GIT_OK;
 	}
 
-	if (cli.pathspec_count == 0)
+	if (cli.pathspec_count == 0 && !cli.A)
 	{
 		fprintf(stderr, "No files specified.");
 		return GIT_OK;
 	}
+
+	/* If -A has been specified, we assume that the root have been added */
+	root_added = cli.A;
 
 	if (!(wd = git_repository_workdir(repo)))
 	{

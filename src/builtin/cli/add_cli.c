@@ -6,6 +6,7 @@
 
 struct cli
 {
+	int A;
 	int add;
 	int help;
 	char **pathspec;
@@ -14,6 +15,7 @@ struct cli
 
 struct cli_aux
 {
+	int A_cmd;
 	int add_pos;
 	int help_cmd;
 	int variadic_argc;
@@ -31,6 +33,11 @@ static int validate_cli(struct cli *cli, struct cli_aux *aux)
 	if (cli->help)
 	{
 		return 1;
+	}
+	if (aux->A_cmd != 0 && aux->A_cmd != 2)
+	{
+		fprintf(stderr, "Option -A may be given only for the \"add\" command\n");
+		return 0;
 	}
 	if (cli->add)
 	{
@@ -59,7 +66,7 @@ static int usage_cli(char *cmd, struct cli *cli)
 		return 0;
 	}
 	fprintf(stderr, "usage: %s <command> [<options>]\n", cmd);
-	fprintf(stderr, "add [<pathspec>...]\n");
+	fprintf(stderr, "add [-A] [<pathspec>...]\n");
 	return 1;
 }
 
@@ -74,6 +81,11 @@ static int parse_cli_simple(int argc, char **argv, struct cli *cli, struct cli_a
 		{
 			cli->help = 1;
 			aux->help_cmd = cur_command;
+		}
+		else if (!strcmp(argv[i], "-A"))
+		{
+			cli->A = 1;
+			aux->A_cmd = cur_command;
 		}
 		else if (!strcmp(argv[i], "add"))
 		{
