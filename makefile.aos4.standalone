@@ -148,7 +148,7 @@ $(BUILDDIR)/sgit: $(BUILDDIR)/sgit.debug
 
 ###########################################
 
-.PHONY:
+.PHONY: clean
 clean:
 	rm -Rf $(BUILDDIR)
 
