@@ -11,9 +11,10 @@
 
 #include <git2.h>
 
+#include "cli/merge_cli.c"
+
 int cmd_merge(git_repository *repo, int argc, char **argv)
 {
-	int i;
 	int err = GIT_OK;
 	int rc = EXIT_FAILURE;
 	int autocommit = 1;
@@ -37,24 +38,21 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 
 	git_index *index = NULL;
 
-	if (argc < 2)
+	struct cli cli = {0};
+
+	if (!parse_cli(argc, argv, &cli, POF_VALIDATE))
 	{
-		fprintf (stderr, "USAGE: %s <commit> [--no-commit] [--ff-only]\n", argv[0]);
-		return -1;
+		return GIT_ERROR;
 	}
 
-	for (i=1; i < argc; i++)
+	if (usage_cli(argv[0], &cli))
 	{
-		if (!strcmp(argv[i], "--no-commit")) autocommit = 0;
-		else if (!strcmp(argv[i], "--ff-only")) ff_only = 1;
-		else if (!commit_str) commit_str = argv[i];
-		else
-		{
-			fprintf (stderr, "USAGE: %s <commit> [--no-commit]\n", argv[0]);
-			goto out;
-		}
+		return GIT_OK;
 	}
-	commit_str = argv[1];
+
+	commit_str = cli.commit;
+	ff_only = cli.ff_only;
+	autocommit = !cli.no_commit;
 
 	if ((err = git_branch_lookup(&commit_ref, repo, commit_str, GIT_BRANCH_LOCAL)))
 	{
