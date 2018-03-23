@@ -8,6 +8,10 @@ BUILDDIR = build-amiga
 
 ###########################################
 
+OPENSSL_INCLUDE=interim-openssl/openssl/repo/include
+
+###########################################
+
 LIBSSH2_SRC_DIR = libssh2/src/
 LIBSSH2_SRCS = \
 	$(sort \
@@ -38,7 +42,7 @@ LIBSSH2_CFLAGS = \
 	-Ilibssh2/src \
 	-Ilibssh2/include \
 	-Ilibssh2-amiga \
-	-Iinterim-openssl/openssl/repo/include
+	-I$(OPENSSL_INCLUDE)
 
 ###########################################
 
@@ -86,7 +90,7 @@ LIBGIT2_CFLAGS = \
 	-Ilibgit2/deps/regex \
 	-Ilibgit2/deps/http-parser \
 	-Ilibgit2/deps/zlib \
-	-Iinterim-openssl/openssl/repo/include \
+	-I$(OPENSSL_INCLUDE) \
 	-Ilibssh2/include \
 	-Ibuild-deps/Local/common/include
 
@@ -117,7 +121,7 @@ SGIT_CFLAGS = \
 	-Isrc/builtin \
 	-Isrc/common/ \
 	-Isrc/common/utils/ \
-	-Iinterim-openssl/openssl/repo/include \
+	-I$(OPENSSL_INCLUDE) \
 	-Ibuild-deps/Local/common/include \
 	-I$(SGIT_BUILDDIR) \
 	-fstack-usage \
