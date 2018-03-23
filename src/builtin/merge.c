@@ -79,6 +79,11 @@ int cmd_merge(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
+	if (cli.no_ff)
+	{
+		preference = GIT_MERGE_PREFERENCE_NO_FASTFORWARD;
+	}
+
 	if (analysis & GIT_MERGE_ANALYSIS_FASTFORWARD && preference != GIT_MERGE_PREFERENCE_NO_FASTFORWARD)
 	{
 		fprintf(stderr, "Fast forward merge\n");

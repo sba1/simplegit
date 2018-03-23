@@ -11,6 +11,7 @@ struct cli
 	int help;
 	int merge;
 	int no_commit;
+	int no_ff;
 };
 
 struct cli_aux
@@ -19,6 +20,7 @@ struct cli_aux
 	int help_cmd;
 	int merge_pos;
 	int no_commit_cmd;
+	int no_ff_cmd;
 	char *positional0;
 };
 
@@ -42,6 +44,11 @@ static int validate_cli(struct cli *cli, struct cli_aux *aux)
 	if (aux->ff_only_cmd != 0 && aux->ff_only_cmd != 2)
 	{
 		fprintf(stderr, "Option --ff-only may be given only for the \"merge\" command\n");
+		return 0;
+	}
+	if (aux->no_ff_cmd != 0 && aux->no_ff_cmd != 2)
+	{
+		fprintf(stderr, "Option --no-ff may be given only for the \"merge\" command\n");
 		return 0;
 	}
 	if (cli->merge)
@@ -75,7 +82,7 @@ static int usage_cli(char *cmd, struct cli *cli)
 		return 0;
 	}
 	fprintf(stderr, "usage: %s <command> [<options>]\n", cmd);
-	fprintf(stderr, "merge [--no-commit] [--ff-only] <commit>\n");
+	fprintf(stderr, "merge [--no-commit] [--ff-only] [--no-ff] <commit>\n");
 	return 1;
 }
 
@@ -100,6 +107,11 @@ static int parse_cli_simple(int argc, char **argv, struct cli *cli, struct cli_a
 		{
 			cli->no_commit = 1;
 			aux->no_commit_cmd = cur_command;
+		}
+		else if (!strcmp(argv[i], "--no-ff"))
+		{
+			cli->no_ff = 1;
+			aux->no_ff_cmd = cur_command;
 		}
 		else if (!strcmp(argv[i], "merge"))
 		{
