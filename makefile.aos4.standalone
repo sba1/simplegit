@@ -11,6 +11,10 @@ BUILDDIR = build-amiga
 
 ###########################################
 
+COMMON_CFLAGS=-O2
+
+###########################################
+
 ifeq ($(USE_AMISSL),yes)
 
 OPENSSL_CFLAGS=\
@@ -206,13 +210,13 @@ $(foreach obj,$(LIBSSH2_SRCS),$(eval $(call LIBSSH2_DEP_template,$(obj))))
 
 $(LIBSSH2_BUILDDIR)/%.o: $(LIBSSH2_SRC_DIR)/%.c $(GCH)
 	mkdir -p $(dir $@)
-	ppc-amigaos-gcc $(LIBSSH2_CFLAGS) -MMD -MP -c $< -o $@
+	ppc-amigaos-gcc $(COMMON_CFLAGS) $(LIBSSH2_CFLAGS) -MMD -MP -c $< -o $@
 
 ###########################################
 
 $(LIBGIT2_BUILDDIR)/%.o: $(LIBGIT2_SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	ppc-amigaos-gcc $(LIBGIT2_CFLAGS) -MMD -MP -c $< -o $@
+	ppc-amigaos-gcc $(COMMON_CFLAGS) $(LIBGIT2_CFLAGS) -MMD -MP -c $< -o $@
 
 # The libgit2 depends on the presence of openssl
 # This macro adds the openssl dependency for the target
@@ -236,7 +240,7 @@ $(SGIT_BUILDDIR)/sgit-version.h:
 
 $(SGIT_BUILDDIR)/%.o: $(SGIT_SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	ppc-amigaos-gcc $(SGIT_CFLAGS) -MMD -MP -c $< -o $@
+	ppc-amigaos-gcc $(COMMON_CFLAGS) $(SGIT_CFLAGS) -MMD -MP -c $< -o $@
 
 # Manual dependencies for those files that depend on a generated file
 $(SGIT_BUILDDIR)/builtin/version.o: $(SGIT_BUILDDIR)/sgit-version.h
