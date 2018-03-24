@@ -1,6 +1,9 @@
 #
 # This is a makefile for building SimpleGit for AmigaOS
 #
+# Define USE_AMISSL=yes if you wish to build the AmiSSL-based
+# version.
+#
 
 ###########################################
 
@@ -8,7 +11,17 @@ BUILDDIR = build-amiga
 
 ###########################################
 
-OPENSSL_INCLUDE=interim-openssl/openssl/repo/include
+ifeq ($(USE_AMISSL),yes)
+
+OPENSSL_CFLAGS=-Ibuild-deps/amissl4/AmiSSL/Developer/include/ -include "amissl-wrapper.h" -Wno-strict-prototypes -DUSE_AMISSL
+OPENSSL_LDFLAGS=-Ibuild-deps/amissl4/AmiSSL/Developer/include/ amissl-stubs.c
+
+else
+
+OPENSSL_CFLAGS=-Iinterim-openssl/openssl/repo/include
+OPENSSL_LDFLAGS=-Linterim-openssl/openssl/repo/ -lssl -lcrypto
+
+endif
 
 ###########################################
 
@@ -42,7 +55,7 @@ LIBSSH2_CFLAGS = \
 	-Ilibssh2/src \
 	-Ilibssh2/include \
 	-Ilibssh2-amiga \
-	-I$(OPENSSL_INCLUDE)
+	$(OPENSSL_CFLAGS)
 
 ###########################################
 
@@ -90,7 +103,7 @@ LIBGIT2_CFLAGS = \
 	-Ilibgit2/deps/regex \
 	-Ilibgit2/deps/http-parser \
 	-Ilibgit2/deps/zlib \
-	-I$(OPENSSL_INCLUDE) \
+	$(OPENSSL_CFLAGS) \
 	-Ilibssh2/include \
 	-Ibuild-deps/Local/common/include
 
@@ -121,7 +134,7 @@ SGIT_CFLAGS = \
 	-Isrc/builtin \
 	-Isrc/common/ \
 	-Isrc/common/utils/ \
-	-I$(OPENSSL_INCLUDE) \
+	$(OPENSSL_CFLAGS) \
 	-Ibuild-deps/Local/common/include \
 	-I$(SGIT_BUILDDIR) \
 	-fstack-usage \
@@ -129,8 +142,8 @@ SGIT_CFLAGS = \
 	-g
 SGIT_LDFLAGS = \
 	-Lbuild-deps/Local/newlib/lib \
-	-Linterim-openssl/openssl/repo/ \
-	-lauto -lssl -lcrypto \
+	-lauto \
+	$(OPENSSL_LDFLAGS) \
 	-Wl,--gc-sections
 
 ###########################################

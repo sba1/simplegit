@@ -55,6 +55,14 @@ build-deps/SDK_53.24.lha-done:
 	touch $@
 
 
+#####################################################
+# AmiSSL dependency
+build-deps/amissl4-done: $(LHA)
+	mkdir -p build-deps/amissl4
+	cd build-deps/amissl4 && wget -N https://github.com/jens-maus/amissl/releases/download/4.2/AmiSSL-4.2.lha
+	cd build-deps/amissl4 && $(LHA) xf AmiSSL-4.2.lha
+	touch $@
+
 ####################################################
 # The lha dependency needed for serveral subtasks
 # such as building the release archive
