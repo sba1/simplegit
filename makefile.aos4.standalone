@@ -26,7 +26,7 @@ OPENSSL_CFLAGS=\
 	-Wno-strict-prototypes \
 	-Winvalid-pch \
 	-DUSE_AMISSL
-OPENSSL_LDFLAGS=-Ibuild-deps/amissl4/AmiSSL/Developer/include/ amissl-stubs.c
+OPENSSL_LDFLAGS=-Ibuild-deps/amissl4/AmiSSL/Developer/include/ amissl-support/amissl-stubs.c
 
 else
 
@@ -98,6 +98,8 @@ LIBGIT2_CFLAGS = \
 	-DSTDC \
 	-D_FILE_OFFSET_BITS=64 \
 	-D_GNU_SOURCE \
+	-U__STRICT_ANSI__ \
+	-DAMIGA \
 	-DGIT_OPENSSL \
 	-DGIT_SSH \
 	-Wall \
