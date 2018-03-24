@@ -168,9 +168,15 @@ include makefile.aos4.common
 
 ifeq ($(USE_AMISSL),yes)
 
-build-amiga/amissl-wrapper.h.gch: amissl-support/amissl-wrapper.h
+GCH=build-amiga/amissl-wrapper.h.gch
+
+$(GCH): amissl-support/amissl-wrapper.h
 	mkdir -p $(dir $@)
-	ppc-amigaos-gcc $< -o $@ $(OPENSSL_CFLAGS) -ffunction-sections -fdata-sections
+	ppc-amigaos-gcc $< -o $@ $(COMMON_CFLAGS) $(OPENSSL_CFLAGS) -ffunction-sections -fdata-sections
+else
+
+GCH=
+
 endif
 
 ###########################################
@@ -198,7 +204,7 @@ $(foreach obj,$(LIBSSH2_SRCS),$(eval $(call LIBSSH2_DEP_template,$(obj))))
 
 ###########################################
 
-$(LIBSSH2_BUILDDIR)/%.o: $(LIBSSH2_SRC_DIR)/%.c build-amiga/amissl-wrapper.h.gch
+$(LIBSSH2_BUILDDIR)/%.o: $(LIBSSH2_SRC_DIR)/%.c $(GCH)
 	mkdir -p $(dir $@)
 	ppc-amigaos-gcc $(LIBSSH2_CFLAGS) -MMD -MP -c $< -o $@
 
