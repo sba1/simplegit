@@ -13,7 +13,15 @@ BUILDDIR = build-amiga
 
 ifeq ($(USE_AMISSL),yes)
 
-OPENSSL_CFLAGS=-Ibuild-deps/amissl4/AmiSSL/Developer/include/ -include "amissl-wrapper.h" -Wno-strict-prototypes -DUSE_AMISSL
+OPENSSL_CFLAGS=\
+	-std=c11 \
+	-Ibuild-deps/amissl4/AmiSSL/Developer/include/ \
+	-Ibuild-amiga \
+	-Iamissl-support \
+	-include "amissl-wrapper.h" \
+	-Wno-strict-prototypes \
+	-Winvalid-pch \
+	-DUSE_AMISSL
 OPENSSL_LDFLAGS=-Ibuild-deps/amissl4/AmiSSL/Developer/include/ amissl-stubs.c
 
 else
@@ -155,6 +163,16 @@ all: $(BUILDDIR)/sgit
 
 include makefile.aos4.common
 
+
+###########################################
+
+ifeq ($(USE_AMISSL),yes)
+
+build-amiga/amissl-wrapper.h.gch: amissl-support/amissl-wrapper.h
+	mkdir -p $(dir $@)
+	ppc-amigaos-gcc $< -o $@ $(OPENSSL_CFLAGS) -ffunction-sections -fdata-sections
+endif
+
 ###########################################
 
 $(BUILDDIR)/sgit.debug: $(LIBSSH2_OBJS) $(LIBGIT2_OBJS) $(SGIT_OBJS)
@@ -180,7 +198,7 @@ $(foreach obj,$(LIBSSH2_SRCS),$(eval $(call LIBSSH2_DEP_template,$(obj))))
 
 ###########################################
 
-$(LIBSSH2_BUILDDIR)/%.o: $(LIBSSH2_SRC_DIR)/%.c
+$(LIBSSH2_BUILDDIR)/%.o: $(LIBSSH2_SRC_DIR)/%.c build-amiga/amissl-wrapper.h.gch
 	mkdir -p $(dir $@)
 	ppc-amigaos-gcc $(LIBSSH2_CFLAGS) -MMD -MP -c $< -o $@
 
