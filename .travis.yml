@@ -16,8 +16,10 @@ before_install:
 
 env:
   - BUILD=STANDALONE
+  - BUILD=STANDALONE_AMISSL
   - BUILD=CMAKE
 
 script:
   - if [ "${BUILD}" == "CMAKE" ]; then make -f makefile.aos4; fi
   - if [ "${BUILD}" == "STANDALONE" ]; then make -f makefile.aos4.standalone pthread openssl libssh2 && make -f makefile.aos4.standalone; fi
+  - if [ "${BUILD}" == "STANDALONE_AMISSL" ]; then make -f makefile.aos4.standalone build-deps/amissl4-done USE_AMISSL=yes && make -f makefile.aos4.standalone USE_AMISSL=yes; fi
