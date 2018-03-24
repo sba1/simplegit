@@ -124,6 +124,7 @@ int main(int argc, char **argv)
 	if (!init_amissl())
 	{
 		fprintf(stderr, "The amissl initialization failed!\n");
+		git_libgit2_initialied_err = 1; /* don't call git_libgit2_shutdown() */
 		goto out;
 	}
 #endif
