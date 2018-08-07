@@ -134,7 +134,7 @@ int cmd_status(git_repository *repo, int argc, char **argv)
 
 			if (ahead && behind)
 			{
-				printf("# You branch and its upstream branch '%s' have diverged.\n", upstream_name);
+				printf("# Your branch and its upstream branch '%s' have diverged.\n", upstream_name);
 				printf("# They have %d and %d different commits each, respectively.\n", (int)ahead, (int)behind);
 			} else if (behind)
 			{
