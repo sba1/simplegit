@@ -1,7 +1,0 @@
-Usage:
-  submodule init
-  submodule update
-  submodule --help
-
-Options:
-  -h --help    Show this screen

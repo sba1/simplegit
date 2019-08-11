@@ -32,6 +32,7 @@
 #include "builtin/ls-tree.h"
 #include "builtin/merge.h"
 #include "builtin/mktag.h"
+#include "builtin/pull.h"
 #include "builtin/push.h"
 #include "builtin/read-tree.h"
 #include "builtin/rebase.h"
@@ -78,6 +79,7 @@ static const struct cmd_struct commands[] = {
 	{"ls-tree",        0, "Show information about a tree object", cmd_ls_tree},
 	{"mktag",          0, "Create a tag object", cmd_mktag},
 	{"merge",          1, "Join histories defined by commit together", cmd_merge},
+	{"pull",           1, "Fetch and merge changes from branches of remote repositories", cmd_pull},
 	{"push",           1, "Update the remote references and push associated objects", cmd_push},
 	{"read-tree",      0, "Read a tree object into the index", cmd_read_tree},
 	{"rebase",         1, "Reapply changes", cmd_rebase},

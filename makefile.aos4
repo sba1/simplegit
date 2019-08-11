@@ -54,6 +54,7 @@ libgit2/build-amiga/libgit2.a: libgit-repo $(OPENSSL) pthread
 		-DAMIGA=1\
 		-DUSE_SSH=OFF\
 		-DTHREADSAFE=OFF\
+		-DUSE_NSEC=OFF\
 		-DBUILD_CLAR=OFF\
 		-DBUILD_SHARED_LIBS=OFF
 	cd libgit2/build-amiga && $(MAKE)

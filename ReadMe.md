@@ -55,8 +55,10 @@ Following plumbing commands are supported:
   init            Create or reinitialize a git repository
   log             Show the commit logs
   merge           Join histories defined by commit together
+  pull            Fetch and merge changes from branches of remote repositories
   push            Update the remote references and push associated objects
   rebase          Reapply changes
+  remote          Manage remotes
   reset           Reset the HEAD or the index to a specific state
   rm              Remove files
   show            Show objects

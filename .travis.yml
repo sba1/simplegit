@@ -1,8 +1,11 @@
 sudo: required
 dist: trusty
 language: c
+git:
+  submodules: false
 
 before_install:
+  - git submodule update --init
   - echo "deb http://dl.bintray.com/sba1/adtools-deb /" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -qq
   - sudo apt-get install -y cmake pandoc python-mako
@@ -10,4 +13,13 @@ before_install:
   - git config --global user.email "mail@sebastianbauer.info"
   - git config --global user.name "Sebastian Bauer"
 
-script: make -f makefile.aos4
+
+env:
+  - BUILD=STANDALONE
+  - BUILD=STANDALONE_AMISSL
+  - BUILD=CMAKE
+
+script:
+  - if [ "${BUILD}" == "CMAKE" ]; then make -f makefile.aos4; fi
+  - if [ "${BUILD}" == "STANDALONE" ]; then make -f makefile.aos4.standalone pthread openssl libssh2 && make -f makefile.aos4.standalone; fi
+  - if [ "${BUILD}" == "STANDALONE_AMISSL" ]; then make -f makefile.aos4.standalone build-deps/amissl4-done pthread libssh2 USE_AMISSL=yes && make -f makefile.aos4.standalone USE_AMISSL=yes; fi

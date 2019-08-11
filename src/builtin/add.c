@@ -10,9 +10,15 @@
 
 #include "strbuf.h"
 
+#include "cli/add_cli.c"
+
 static int cmd_add_matched_paths_callback(const char *path, const char *matched_pathspec, void *payload)
 {
 	int *num_added = (int*)payload;
+
+	(void)path;
+	(void)matched_pathspec;
+
 	*num_added = *num_added + 1;
 	return 0;
 }
@@ -33,11 +39,26 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 	char **relative_paths = NULL;
 	int num_relative_paths = 0;
 
-	if (argc < 2)
+	struct cli cli = {0};
+
+	if (!parse_cli(argc, argv, &cli, POF_VALIDATE))
 	{
-		fprintf (stderr, "USAGE: %s <paths>\n", argv[0]);
-		return -1;
+		return GIT_ERROR;
 	}
+
+	if (usage_cli(argv[0], &cli))
+	{
+		return GIT_OK;
+	}
+
+	if (cli.pathspec_count == 0 && !cli.A)
+	{
+		fprintf(stderr, "No files specified.");
+		return GIT_OK;
+	}
+
+	/* If -A has been specified, we assume that the root have been added */
+	root_added = cli.A;
 
 	if (!(wd = git_repository_workdir(repo)))
 	{
@@ -46,7 +67,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 	}
 	wd_len = strlen(wd);
 
-	if (!(relative_paths = (char**)malloc(sizeof(*relative_paths)*(argc - 1))))
+	if (!(relative_paths = (char**)malloc(sizeof(*relative_paths)*(cli.pathspec_count))))
 	{
 		fprintf(stderr,"Memory allocation failed!\n");
 		goto out;
@@ -57,55 +78,48 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 		goto out;
 
 	/* Check if any path points outside the directory and bailout if so */
-	for (i=1;i<argc;i++)
+	for (i = 0; i < cli.pathspec_count; i++)
 	{
-		if (argv[i][0] != '-')
+		/* Use a local buffer for the 2nd arg of realpath() on AmigaOS 4
+		 * doesn't accept a NULL pointer for the 2nd arg.
+		 */
+		char path_buf[PATH_MAX+1];
+		char *path;
+		if ((path = realpath(cli.pathspec[i], path_buf)))
 		{
-			/* Use a local buffer for the 2nd arg of realpath() on AmigaOS 4
-			 * doesn't accept a NULL pointer for the 2nd arg.
-			 */
-			char path_buf[PATH_MAX+1];
-			char *path;
-			if ((path = realpath(argv[i],path_buf)))
+			int path_len;
+
+			/* Add directory delimiter if not already there */
+			path_len = strlen(path_buf);
+			if (path_buf[0] && path_buf[path_len-1] != '/')
 			{
-				int path_len;
+				path_buf[path_len] = '/';
+				path_buf[path_len+1] = 0;
+			}
 
-				/* Add directory delimiter if not already there */
-				path_len = strlen(path_buf);
-				if (path_buf[0] && path_buf[path_len-1] != '/')
-				{
-					path_buf[path_len] = '/';
-					path_buf[path_len+1] = 0;
-				}
+			if (prefixcmp(path,wd))
+			{
+				fprintf(stderr,"%s is outside the Git repository\n", cli.pathspec[i]);
+				goto out;
+			}
 
-				if (prefixcmp(path,wd))
+			if (strlen(&path[wd_len]))
+			{
+				if (!(relative_paths[num_relative_paths] = strdup(&path[wd_len])))
 				{
-					fprintf(stderr,"%s is outside the Git repository\n",argv[i]);
+					fprintf(stderr,"Memory allocation failed!\n");
 					goto out;
 				}
-
-				if (strlen(&path[wd_len]))
-				{
-					if (!(relative_paths[num_relative_paths] = strdup(&path[wd_len])))
-					{
-						fprintf(stderr,"Memory allocation failed!\n");
-						goto out;
-					}
-					num_relative_paths++;
-				} else
-				{
-					/* Remember that the root dir have been added.
-					 * TODO: Do we really have to add the other paths then? */
-					root_added = 1;
-				}
+				num_relative_paths++;
 			} else
 			{
-				fprintf(stderr,"Couldn't determine absolute path of %s: %s!\n",argv[i], strerror(errno));
-				goto out;
+				/* Remember that the root dir have been added.
+				 * TODO: Do we really have to add the other paths then? */
+				root_added = 1;
 			}
 		} else
 		{
-			fprintf(stderr,"Unknown option \"%s\"\n",argv[i]);
+			fprintf(stderr,"Couldn't determine absolute path of %s: %s!\n", cli.pathspec[i], strerror(errno));
 			goto out;
 		}
 	}
@@ -115,7 +129,7 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 		paths.count = num_relative_paths;
 		paths.strings = relative_paths;
 
-		if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT, cmd_add_matched_paths_callback, &num_added)))
+		if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT|GIT_INDEX_ADD_CHECK_PATHSPEC, cmd_add_matched_paths_callback, &num_added)))
 			goto out;
 	}
 
@@ -148,12 +162,26 @@ int cmd_add(git_repository *repo, int argc, char **argv)
 			paths.count = 1;
 			paths.strings = &dirname;
 
-			if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT, cmd_add_matched_paths_callback, &num_added)))
+			if ((err = git_index_add_all(idx, &paths, GIT_INDEX_ADD_DEFAULT|GIT_INDEX_ADD_CHECK_PATHSPEC, cmd_add_matched_paths_callback, &num_added)))
 				goto out;
 		}
 
 		closedir(dir);
 		dir = NULL;
+
+		/* Now add the plain root, this is mostly for seeing files that are
+		 * deleted in the worktree but not in the index.
+		 */
+		{
+			char *root = ".";
+
+			git_strarray root_path;
+			root_path.count = 1;
+			root_path.strings = &root;
+
+			if ((err = git_index_add_all(idx, &root_path, GIT_INDEX_ADD_DEFAULT|GIT_INDEX_ADD_CHECK_PATHSPEC, cmd_add_matched_paths_callback, &num_added)))
+				goto out;
+		}
 	}
 
 	if (num_added)

@@ -50,6 +50,61 @@ __attribute__((unused)) static const char version_tag[] =
 	"$VER: sgit 0." SIMPLEGIT_REVISION_STRING " (" SIMPLEGIT_DATE_STRING ")";
 #endif
 
+#if defined (USE_AMISSL)
+
+#include <libraries/amisslmaster.h>
+
+#include <proto/amissl.h>
+#include <proto/amisslmaster.h>
+#include <proto/exec.h>
+
+struct Library *AmiSSLMasterBase;
+struct AmiSSLMasterIFace *IAmiSSLMaster;
+
+struct AmiSSLIFace *IAmiSSL;
+struct Library *AmiSSLBase;
+
+static void cleanup_amissl(void)
+{
+	if (IAmiSSL)
+	{
+		IExec->DropInterface((struct Interface*)IAmiSSL);
+		IAmiSSLMaster->CloseAmiSSL();
+	}
+	if (IAmiSSLMaster)
+	{
+		IExec->DropInterface((struct Interface*)IAmiSSLMaster);
+		IExec->CloseLibrary(AmiSSLMasterBase);
+	}
+}
+
+static int init_amissl(void)
+{
+	if (!(AmiSSLMasterBase = IExec->OpenLibrary("amisslmaster.library", AMISSLMASTER_MIN_VERSION)))
+		goto out;
+
+	if (!(IAmiSSLMaster = (struct AmiSSLMasterIFace *)IExec->GetInterface(AmiSSLMasterBase, "main", 0, NULL)))
+		goto out;
+
+	if (!IAmiSSLMaster->InitAmiSSLMaster(AMISSL_CURRENT_VERSION, TRUE))
+		goto out;
+
+	if (!(AmiSSLBase = IAmiSSLMaster->OpenAmiSSL()))
+		goto out;
+
+	if (!(IAmiSSL = (struct AmiSSLIFace *)IExec->GetInterface(AmiSSLBase, "main", 0, NULL)))
+		goto out;
+
+	atexit(cleanup_amissl);
+	return 1;
+out:
+	cleanup_amissl();
+	return 0;
+}
+
+
+#endif
+
 /**
  * Main entry.
  *
@@ -64,6 +119,15 @@ int main(int argc, char **argv)
 	int rc = EXIT_FAILURE;
 	int err;
 	int git_libgit2_initialied_err;
+
+#if defined (USE_AMISSL)
+	if (!init_amissl())
+	{
+		fprintf(stderr, "The amissl initialization failed!\n");
+		git_libgit2_initialied_err = 1; /* don't call git_libgit2_shutdown() */
+		goto out;
+	}
+#endif
 
 	if ((git_libgit2_initialied_err = git_libgit2_init()) < 0)
 	{
@@ -118,7 +182,7 @@ int main(int argc, char **argv)
 		goto out;
 	}
 
-	err = git_repository_open(&repo, ".git");
+	err = git_repository_open_ext(&repo, ".", 0, NULL);
 	if (err < 0)
 	{
 		/* Does the command require a repo? Check against those that do not

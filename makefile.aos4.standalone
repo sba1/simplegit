@@ -1,10 +1,39 @@
 #
 # This is a makefile for building SimpleGit for AmigaOS
 #
+# Define USE_AMISSL=yes if you wish to build the AmiSSL-based
+# version.
+#
 
 ###########################################
 
 BUILDDIR = build-amiga
+
+###########################################
+
+COMMON_CFLAGS=-O2
+
+###########################################
+
+ifeq ($(USE_AMISSL),yes)
+
+OPENSSL_CFLAGS=\
+	-std=c11 \
+	-Ibuild-deps/amissl4/AmiSSL/Developer/include/ \
+	-Ibuild-amiga \
+	-Iamissl-support \
+	-include "amissl-wrapper.h" \
+	-Wno-strict-prototypes \
+	-Winvalid-pch \
+	-DUSE_AMISSL
+OPENSSL_LDFLAGS=-Ibuild-deps/amissl4/AmiSSL/Developer/include/ amissl-support/amissl-stubs.c
+
+else
+
+OPENSSL_CFLAGS=-Iinterim-openssl/openssl/repo/include
+OPENSSL_LDFLAGS=-Linterim-openssl/openssl/repo/ -lssl -lcrypto
+
+endif
 
 ###########################################
 
@@ -38,7 +67,7 @@ LIBSSH2_CFLAGS = \
 	-Ilibssh2/src \
 	-Ilibssh2/include \
 	-Ilibssh2-amiga \
-	-Iinterim-openssl/openssl/repo/include
+	$(OPENSSL_CFLAGS)
 
 ###########################################
 
@@ -69,6 +98,8 @@ LIBGIT2_CFLAGS = \
 	-DSTDC \
 	-D_FILE_OFFSET_BITS=64 \
 	-D_GNU_SOURCE \
+	-U__STRICT_ANSI__ \
+	-DAMIGA \
 	-DGIT_OPENSSL \
 	-DGIT_SSH \
 	-Wall \
@@ -86,7 +117,7 @@ LIBGIT2_CFLAGS = \
 	-Ilibgit2/deps/regex \
 	-Ilibgit2/deps/http-parser \
 	-Ilibgit2/deps/zlib \
-	-Iinterim-openssl/openssl/repo/include \
+	$(OPENSSL_CFLAGS) \
 	-Ilibssh2/include \
 	-Ibuild-deps/Local/common/include
 
@@ -117,7 +148,7 @@ SGIT_CFLAGS = \
 	-Isrc/builtin \
 	-Isrc/common/ \
 	-Isrc/common/utils/ \
-	-Iinterim-openssl/openssl/repo/include \
+	$(OPENSSL_CFLAGS) \
 	-Ibuild-deps/Local/common/include \
 	-I$(SGIT_BUILDDIR) \
 	-fstack-usage \
@@ -125,8 +156,8 @@ SGIT_CFLAGS = \
 	-g
 SGIT_LDFLAGS = \
 	-Lbuild-deps/Local/newlib/lib \
-	-Linterim-openssl/openssl/repo/ \
-	-lauto -lssl -lcrypto \
+	-lauto \
+	$(OPENSSL_LDFLAGS) \
 	-Wl,--gc-sections
 
 ###########################################
@@ -138,6 +169,22 @@ all: $(BUILDDIR)/sgit
 
 include makefile.aos4.common
 
+
+###########################################
+
+ifeq ($(USE_AMISSL),yes)
+
+GCH=build-amiga/amissl-wrapper.h.gch
+
+$(GCH): amissl-support/amissl-wrapper.h
+	mkdir -p $(dir $@)
+	ppc-amigaos-gcc $< -o $@ $(COMMON_CFLAGS) $(OPENSSL_CFLAGS) -ffunction-sections -fdata-sections
+else
+
+GCH=
+
+endif
+
 ###########################################
 
 $(BUILDDIR)/sgit.debug: $(LIBSSH2_OBJS) $(LIBGIT2_OBJS) $(SGIT_OBJS)
@@ -148,7 +195,7 @@ $(BUILDDIR)/sgit: $(BUILDDIR)/sgit.debug
 
 ###########################################
 
-.PHONY:
+.PHONY: clean
 clean:
 	rm -Rf $(BUILDDIR)
 
@@ -163,20 +210,20 @@ $(foreach obj,$(LIBSSH2_SRCS),$(eval $(call LIBSSH2_DEP_template,$(obj))))
 
 ###########################################
 
-$(LIBSSH2_BUILDDIR)/%.o: $(LIBSSH2_SRC_DIR)/%.c
+$(LIBSSH2_BUILDDIR)/%.o: $(LIBSSH2_SRC_DIR)/%.c $(GCH)
 	mkdir -p $(dir $@)
-	ppc-amigaos-gcc $(LIBSSH2_CFLAGS) -MMD -MP -c $< -o $@
+	ppc-amigaos-gcc $(COMMON_CFLAGS) $(LIBSSH2_CFLAGS) -MMD -MP -c $< -o $@
 
 ###########################################
 
 $(LIBGIT2_BUILDDIR)/%.o: $(LIBGIT2_SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	ppc-amigaos-gcc $(LIBGIT2_CFLAGS) -MMD -MP -c $< -o $@
+	ppc-amigaos-gcc $(COMMON_CFLAGS) $(LIBGIT2_CFLAGS) -MMD -MP -c $< -o $@
 
 # The libgit2 depends on the presence of openssl
 # This macro adds the openssl dependency for the target
 define OPENSSL_DEP_template =
-$(1): openssl
+$(1): $(OPENSSL)
 endef
 
 # Add the openssl template to each of the libgit2 objects
@@ -195,7 +242,7 @@ $(SGIT_BUILDDIR)/sgit-version.h:
 
 $(SGIT_BUILDDIR)/%.o: $(SGIT_SRC_DIR)/%.c
 	mkdir -p $(dir $@)
-	ppc-amigaos-gcc $(SGIT_CFLAGS) -MMD -MP -c $< -o $@
+	ppc-amigaos-gcc $(COMMON_CFLAGS) $(SGIT_CFLAGS) -MMD -MP -c $< -o $@
 
 # Manual dependencies for those files that depend on a generated file
 $(SGIT_BUILDDIR)/builtin/version.o: $(SGIT_BUILDDIR)/sgit-version.h

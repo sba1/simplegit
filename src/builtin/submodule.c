@@ -4,7 +4,7 @@
 
 #include "submodule.h"
 
-#include "submodule_parse.c"
+#include "cli/submodule_cli.c"
 
 #include "common.h"
 #include "fetch.h"
@@ -44,15 +44,24 @@ int cmd_submodule(git_repository *repo, int argc, char **argv)
 	int err = GIT_OK;
 	int rc = EXIT_FAILURE;
 
-	DocoptArgs args;
+	struct cli cli = {0};
 
-	args = docopt(argc, argv, true, NULL);
+	if (!parse_cli(argc, argv, &cli, POF_VALIDATE))
+	{
+		return GIT_ERROR;
+	}
 
-	if (args.init)
+	if (usage_cli(argv[0], &cli))
+	{
+		return GIT_OK;
+	}
+
+
+	if (cli.init)
 	{
 		if ((err = git_submodule_foreach(repo, submodule_init_cb, NULL)))
 			goto out;
-	} else if (args.update)
+	} else if (cli.update)
 	{
 		if ((err = git_submodule_foreach(repo, submodule_update_cb, NULL)))
 			goto out;
