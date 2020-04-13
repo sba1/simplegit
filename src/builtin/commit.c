@@ -59,6 +59,11 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 	int amend = 0;
 	int reset_author = 0;
 
+	FILE *message_file = NULL;
+	int file_len = 0;
+	const char *message_file_name = NULL;
+	char *message_file_contents = NULL;
+
 	for (i=1;i<argc;i++)
 	{
 		if (!strcmp(argv[i],"-m"))
@@ -69,6 +74,17 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 			} else
 			{
 				fprintf(stderr,"Option -m misses argument\n");
+				goto out;
+			}
+		}
+		else if (!strcmp(argv[i],"-F") || !strcmp(argv[i],"--file"))
+		{
+			if (++i < argc)
+			{
+				message_file_name = argv[i];
+			} else
+			{
+				fprintf(stderr,"Option -F misses argument\n");
 				goto out;
 			}
 		}
@@ -91,7 +107,40 @@ int cmd_commit(git_repository *repo, int argc, char **argv)
 		}
 	}
 
-	if (!message)
+	if (message_file_name)
+	{
+		message_file = fopen(message_file_name, "r");
+		if (!message_file)
+		{
+			fprintf(stderr,"Cannot open commit message file %s!\n", message_file_name);
+			goto out;
+		}
+		fseek(message_file, 0, SEEK_END);
+		file_len = ftell(message_file);
+		fseek(message_file, 0, SEEK_SET);
+
+		if (!file_len)
+		{
+			fprintf(stderr,"Commit message file %s is empty!\n", message_file_name);
+			fclose(message_file);
+			goto out;
+		}
+
+		message_file_contents = malloc(file_len + 1);
+		if (!message_file_contents)
+		{
+			fprintf(stderr,"Not enough memory!\n");
+			fclose(message_file);
+			goto out;
+		}
+		message_file_contents[file_len] = '\0';
+
+		fread(message_file_contents, 1, file_len, message_file);
+		fclose(message_file);
+
+		message = message_file_contents;
+	}
+	else if (!message)
 	{
 		fprintf(stderr,"A commit message is required (-m option)!\n");
 		goto out;
@@ -188,5 +237,6 @@ out:
 	if (committer_signature) git_signature_free(committer_signature);
 	if (commit) git_commit_free(commit);
 	if (branch) git_reference_free(branch);
+	if (message_file_name) free(message_file_name);
 	return rc;
 }
