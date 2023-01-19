@@ -12,7 +12,7 @@
 
 static void print_usage(char *name)
 {
-	fprintf (stderr, "USAGE: %s [apply|list|pop]\n", name);
+	fprintf (stderr, "USAGE: %s [apply|drop|list|pop]\n", name);
 }
 
 static int stash_cb(size_t index, const char* message, const git_oid *stash_id, void *payload)
@@ -38,12 +38,14 @@ int cmd_stash(git_repository *repo, int argc, char **argv)
 	int pop = 0;
 	int list = 0;
 	int apply = 0;
+	int drop = 0;
 
 	if (argc == 2)
 	{
 		if (!strcmp("pop", argv[1])) pop = 1;
 		else if (!strcmp("list", argv[1])) list = 1;
 		else if (!strcmp("apply", argv[1])) apply = 1;
+		else if (!strcmp("drop", argv[1])) drop = 1;
 		else
 		{
 			print_usage(argv[0]);
@@ -55,7 +57,7 @@ int cmd_stash(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
-	if (!pop && !list)
+	if (!apply && !pop && !drop && !list)
 	{
 		git_oid oid;
 		git_signature stasher = {0};
@@ -92,6 +94,10 @@ int cmd_stash(git_repository *repo, int argc, char **argv)
 			if ((err = git_stash_drop(repo, 0)))
 				goto out;
 		}
+	} else if (drop)
+	{
+		if ((err = git_stash_drop(repo, 0)))
+			goto out;
 	}
 
 	rc = EXIT_SUCCESS;
