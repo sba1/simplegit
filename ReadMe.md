@@ -26,6 +26,11 @@ environment variable to skip the SSL verification. E.g., enter
 to clone and the SimpleMail repository into the ```simplemail``` folder ignoring
 any SSL relatated problems.
 
+To configure user name and e-mail address for commits, enter:
+```
+1.> sgit config user.name johndoe
+1.> sgit config user.email johndoe@example.org
+```
 Generally note that this is software is in a very preliminary state. It may be not
 usable at all in terms of functions it provides but also in terms of bugs it
 contains. Consider it as a prototype and use it at your own risk.
