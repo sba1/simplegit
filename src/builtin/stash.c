@@ -55,7 +55,7 @@ int cmd_stash(git_repository *repo, int argc, char **argv)
 		goto out;
 	}
 
-	if (!pop && !list)
+	if (!apply && !pop && !list)
 	{
 		git_oid oid;
 		git_signature stasher = {0};
